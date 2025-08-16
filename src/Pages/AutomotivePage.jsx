@@ -130,27 +130,22 @@ const VehicleModal = ({ vehicle, isOpen, onClose, navigate }) => {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button 
-              onClick={() => {
-                onClose();
-                if(navigate) navigate('/contact');
-              }}
-              className="flex-1 bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 px-6 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-200 flex items-center justify-center"
-            >
-              <Phone className="mr-2" size={20} />
-              Call Us Now
-            </button>
-            <button 
-              onClick={onClose}
-              className="flex-1 border-2 border-gray-300 text-gray-700 py-4 px-6 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200"
-            >
-              Close Details
-            </button>
-          </div>
+                <div className="flex flex-col sm:flex-row gap-4">
+                <a 
+                  href="tel:+2348034931164"
+                  className="flex-1 bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 px-6 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-200 flex items-center justify-center"
+                >
+                  <Phone className="mr-2" size={20} />
+                  Call Us Now
+                </a>
+                <button 
+                  onClick={onClose}
+                  className="flex-1 border-2 border-gray-300 text-gray-700 py-4 px-6 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200"
+                >
+                  Close Details
+                </button>
+                </div>
 
-          {/* Contact Info */}
           <div className="mt-6 p-4 bg-emerald-50 rounded-lg text-center">
             <p className="text-emerald-800 font-medium">Interested in this vehicle?</p>
             <p className="text-emerald-600">Call us at +234 803 493 1164 or visit our contact page</p>
