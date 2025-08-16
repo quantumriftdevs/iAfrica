@@ -34,23 +34,23 @@ const TeamPage = () => {
   
   const leadership = [
     {
-      name: "Adaora Okafor",
-      position: "Chief Executive Officer",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      name: "Cosmos Enyinnaya Ogu",
+      position: "Chief Executive Officer/ Managing Director",
+      image: "/Members/CosmosEnyinnayaOgu.jpg",
       description: "Leading Cossy White with over 15 years of experience in business development and strategic management.",
       linkedin: "#"
     },
     {
-      name: "Chukwuma Nwankwo",
-      position: "Chief Technology Officer",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      description: "Driving innovation in security technologies with expertise in AI, IoT, and surveillance systems.",
+      name: "Chinyere Joy Ogu",
+      position: "Chief Finance Officer/ Vice President",
+      image: "/Members/ChinyereJoyOgu.jpg",
+      description: "Expert in financial planning and management, ensuring sustainable growth and fiscal responsibility at Cossy White.",
       linkedin: "#"
     },
     {
-      name: "Kemi Adebayo",
-      position: "Head of Agribusiness",
-      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      name: "Chioma Chivhetam Prisca",
+      position: "Chief Marketing Officer",
+      image: "/Members/ChiomaChivhetamPrisca.jpg",
       description: "Leading our export operations with deep knowledge of international trade and agricultural markets.",
       linkedin: "#"
     },
