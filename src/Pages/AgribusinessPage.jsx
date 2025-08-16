@@ -29,7 +29,7 @@ const useScrollAnimation = () => {
 
 
 // Agribusiness Page
-const AgribusinessPage = () => {
+const AgribusinessPage = ({navigate}) => {
   const [agriRef, agriVisible] = useScrollAnimation();
   const [commoditiesRef, commoditiesVisible] = useScrollAnimation();
   
@@ -137,7 +137,7 @@ const AgribusinessPage = () => {
                       </div>
                     ))}
                   </div>
-                  <button className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-200">
+                  <button onClick={() => navigate("/contact")} className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-200">
                     Request Quote
                   </button>
                 </div>

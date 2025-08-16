@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronRight, Shield, Truck, Sprout, Users, Phone, Mail, MapPin, Star, ShoppingCart, Eye, ArrowRight, Menu, X, ChevronDown } from 'lucide-react';
 import HomePage from './Pages/HomePage';
 import AboutPage from './Pages/AboutPage';
@@ -10,18 +11,6 @@ import TeamPage from './Pages/TeamPage';
 import InvestmentPage from './Pages/Investmentpage';
 import ContactPage from './Pages/ContactPage';
 import NotFoundPage from './Pages/404';
-
-// Router simulation for SPA
-const useRouter = () => {
-  const [currentPath, setCurrentPath] = useState('/');
-  
-  const navigate = (path) => {
-    setCurrentPath(path);
-    window.scrollTo(0, 0);
-  };
-  
-  return { currentPath, navigate };
-};
 
 // Animation hooks
 const useScrollAnimation = () => {
@@ -48,51 +37,45 @@ const useScrollAnimation = () => {
   return [ref, isVisible];
 };
 
+// Wrapper component to pass navigate function to pages
+const PageWrapper = ({ children }) => {
+  const navigate = useNavigate();
+  
+  return React.cloneElement(children, { navigate });
+};
 
-// Main App Component
+// Main App Component with Router
 const App = () => {
-  const { currentPath, navigate } = useRouter();
-  
-  const renderPage = () => {
-    switch (currentPath) {
-      case '/':
-        return <HomePage navigate={navigate} />;
-      case '/about':
-        return <AboutPage navigate={navigate} />;
-      case '/security':
-        return <SecurityPage navigate={navigate} />;
-      case '/agribusiness':
-        return <AgribusinessPage navigate={navigate} />;
-      case '/automotive':
-        return <AutomotivePage navigate={navigate} />;
-      case '/marketplace':
-        return <MarketplacePage navigate={navigate} />;
-      case '/team':
-        return <TeamPage navigate={navigate} />;
-      case '/investment':
-        return <InvestmentPage navigate={navigate} />;
-      case '/contact':
-        return <ContactPage navigate={navigate} />;
-      default:
-        return <NotFoundPage navigate={navigate} />;
-    }
-  };
-  
   return (
-    <div className="min-h-screen bg-white">
-      <Header currentPath={currentPath} navigate={navigate} />
-      <main>
-        {renderPage()}
-      </main>
-      <Footer navigate={navigate} />
-    </div>
+    <Router>
+      <div className="min-h-screen bg-white">
+        <Header />
+        <main>
+          <Routes>
+            <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
+            <Route path="/about" element={<PageWrapper><AboutPage /></PageWrapper>} />
+            <Route path="/security" element={<PageWrapper><SecurityPage /></PageWrapper>} />
+            <Route path="/agribusiness" element={<PageWrapper><AgribusinessPage /></PageWrapper>} />
+            <Route path="/automotive" element={<PageWrapper><AutomotivePage /></PageWrapper>} />
+            <Route path="/marketplace" element={<PageWrapper><MarketplacePage /></PageWrapper>} />
+            <Route path="/team" element={<PageWrapper><TeamPage /></PageWrapper>} />
+            <Route path="/investment" element={<PageWrapper><InvestmentPage /></PageWrapper>} />
+            <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
+            <Route path="*" element={<PageWrapper><NotFoundPage /></PageWrapper>} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 };
 
-// Header Component
-const Header = ({ currentPath, navigate }) => {
+// Header Component with React Router
+const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -102,6 +85,11 @@ const Header = ({ currentPath, navigate }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
   
   const navItems = [
     { name: 'Home', path: '/' },
@@ -121,7 +109,7 @@ const Header = ({ currentPath, navigate }) => {
     }`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-3">
+          <Link to="/" className="flex items-center space-x-3">
             <img
               src="/apple-touch-icon.png"
               alt="Cossy White Logo"
@@ -131,22 +119,22 @@ const Header = ({ currentPath, navigate }) => {
               <h1 className="text-xl font-bold text-gray-900">Cossy White Limited</h1>
               <p className="text-sm text-emerald-600">Innovating Excellence</p>
             </div>
-          </div>
+          </Link>
           
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex space-x-8">
             {navItems.map((item) => (
-              <button
+              <Link
                 key={item.path}
-                onClick={() => navigate(item.path)}
+                to={item.path}
                 className={`font-medium transition-colors duration-200 ${
-                  currentPath === item.path
+                  location.pathname === item.path
                     ? 'text-emerald-600 border-b-2 border-emerald-600'
                     : 'text-gray-700 hover:text-emerald-600'
                 }`}
               >
                 {item.name}
-              </button>
+              </Link>
             ))}
           </nav>
           
@@ -164,20 +152,18 @@ const Header = ({ currentPath, navigate }) => {
           <nav className="lg:hidden mt-4 pb-4 border-t border-gray-200">
             <div className="flex flex-col space-y-3 pt-4">
               {navItems.map((item) => (
-                <button
+                <Link
                   key={item.path}
-                  onClick={() => {
-                    navigate(item.path);
-                    setIsMenuOpen(false);
-                  }}
+                  to={item.path}
+                  onClick={() => setIsMenuOpen(false)}
                   className={`text-left py-2 px-4 rounded-md transition-colors ${
-                    currentPath === item.path
+                    location.pathname === item.path
                       ? 'text-emerald-600 bg-emerald-50'
                       : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
                   }`}
                 >
                   {item.name}
-                </button>
+                </Link>
               ))}
             </div>
           </nav>
@@ -187,8 +173,8 @@ const Header = ({ currentPath, navigate }) => {
   );
 };
 
-// Footer Component
-const Footer = ({ navigate }) => {
+// Footer Component with React Router
+const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white py-12">
       <div className="container mx-auto px-4">
@@ -224,26 +210,26 @@ const Footer = ({ navigate }) => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Divisions</h3>
             <ul className="space-y-2">
-              <li><button onClick={() => navigate('/security')} className="text-gray-400 hover:text-emerald-500 transition-colors">Security Technologies</button></li>
-              <li><button onClick={() => navigate('/agribusiness')} className="text-gray-400 hover:text-emerald-500 transition-colors">Agribusiness Export</button></li>
-              <li><button onClick={() => navigate('/automotive')} className="text-gray-400 hover:text-emerald-500 transition-colors">Automotive Imports</button></li>
+              <li><Link to="/security" className="text-gray-400 hover:text-emerald-500 transition-colors">Security Technologies</Link></li>
+              <li><Link to="/agribusiness" className="text-gray-400 hover:text-emerald-500 transition-colors">Agribusiness Export</Link></li>
+              <li><Link to="/automotive" className="text-gray-400 hover:text-emerald-500 transition-colors">Automotive Imports</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-lg font-semibold mb-4">Services</h3>
             <ul className="space-y-2">
-              <li><button onClick={() => navigate('/marketplace')} className="text-gray-400 hover:text-emerald-500 transition-colors">Marketplace</button></li>
-              <li><button onClick={() => navigate('/investment')} className="text-gray-400 hover:text-emerald-500 transition-colors">Investment Opportunities</button></li>
-              <li><button onClick={() => navigate('/team')} className="text-gray-400 hover:text-emerald-500 transition-colors">Our Team</button></li>
+              <li><Link to="/marketplace" className="text-gray-400 hover:text-emerald-500 transition-colors">Marketplace</Link></li>
+              <li><Link to="/investment" className="text-gray-400 hover:text-emerald-500 transition-colors">Investment Opportunities</Link></li>
+              <li><Link to="/team" className="text-gray-400 hover:text-emerald-500 transition-colors">Our Team</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-lg font-semibold mb-4">Company</h3>
             <ul className="space-y-2">
-              <li><button onClick={() => navigate('/about')} className="text-gray-400 hover:text-emerald-500 transition-colors">About Us</button></li>
-              <li><button onClick={() => navigate('/contact')} className="text-gray-400 hover:text-emerald-500 transition-colors">Contact</button></li>
+              <li><Link to="/about" className="text-gray-400 hover:text-emerald-500 transition-colors">About Us</Link></li>
+              <li><Link to="/contact" className="text-gray-400 hover:text-emerald-500 transition-colors">Contact</Link></li>
             </ul>
           </div>
         </div>
@@ -256,4 +242,4 @@ const Footer = ({ navigate }) => {
   );
 };
 
-export default App
+export default App;
