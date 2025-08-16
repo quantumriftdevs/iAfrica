@@ -48,13 +48,6 @@ const TeamPage = () => {
       linkedin: "#"
     },
     {
-      name: "Chioma Chivhetam Prisca",
-      position: "Chief Marketing Officer",
-      image: "/Members/ChiomaChivhetamPrisca.jpg",
-      description: "Driving our marketing strategy and brand growth with deep expertise in international trade and agricultural markets.",
-      linkedin: "#"
-    },
-    {
       name: "Ozuruigbo Abuoma Jubilate",
       position: "Chief Operations Officer",
       image: "/Members/OzuruigboAbuomaJubilate.jpg",
@@ -62,10 +55,31 @@ const TeamPage = () => {
       linkedin: "#"
     },
     {
+      name: "Chioma Chivhetam Prisca",
+      position: "Chief Marketing Officer",
+      image: "/Members/ChiomaChivhetamPrisca.jpg",
+      description: "Driving our marketing strategy and brand growth with deep expertise in international trade and agricultural markets.",
+      linkedin: "#"
+    },
+    {
       name: "Arinze Henry Nkemjieme",
-      position: "#",
+      position: "Head Of Trade",
       image: "/Members/ArinzeHenryNkemjieme.jpg",
-      description: "#",
+      description: "Expert in international trade and commodity exports, Arinze oversees global trading operations and builds strategic partnerships to expand Cossy White's market reach.",
+      linkedin: "#"
+    },
+    {
+      name: "Eddy Asuquo",
+      position: "Strategic Partnership Lead",
+      image: "/Members/eddy.jpg",
+      description: "Eddy drives strategic alliances and business collaborations, leveraging his expertise to foster growth and unlock new opportunities for Cossy White.",
+      linkedin: "#"
+    },
+    {
+      name: "Livinu Anekwe",
+      position: "Advisory Board Member",
+      image: "/Members/livi.jpg",
+      description: "Livinu brings strategic insight and industry expertise to the board, guiding Cossy White's growth and innovation initiatives with seasoned leadership.",
       linkedin: "#"
     }
   ];
@@ -75,14 +89,14 @@ const TeamPage = () => {
       title: "Security Technologies",
       team: [
         {
-          name: "Amara Okonkwo",
-          position: "Security Systems Engineer",
-          image: "https://images.unsplash.com/photo-1594736797933-d0ff14dc2a8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+          name: "Livinu Anekwe",
+          position: "Advisory Board Member",
+          image: "/Members/livi.jpg"
         },
         {
-          name: "Tunde Adeyemi",
-          position: "Drone Operations Specialist",
-          image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+          name: "Eddy Asuquo",
+          position: "Strategic Partnership Lead",
+          image: "/Members/eddy.jpg"
         },
         {
           name: "Grace Okoro",
@@ -95,9 +109,9 @@ const TeamPage = () => {
       title: "Agribusiness Export",
       team: [
         {
-          name: "Fatima Abdullahi",
-          position: "Export Operations Manager",
-          image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+          name: "Arinze Henry Nkemjieme",
+          position: "Head Of Trade",
+          image: "/Members/ArinzeHenryNkemjieme.jpg"
         },
         {
           name: "Samuel Oduya",

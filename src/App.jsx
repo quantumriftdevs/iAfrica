@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronRight, Shield, Truck, Sprout, Users, Phone, Mail, MapPin, Star, ShoppingCart, Eye, ArrowRight, Menu, X, ChevronDown } from 'lucide-react';
+import { ChevronRight, Shield, Truck, Sprout, Users, Phone, Mail, MapPin, Star, ShoppingCart, Eye, ArrowRight, Menu, X, ChevronDown, Facebook, Instagram } from 'lucide-react';
 import HomePage from './Pages/HomePage';
 import AboutPage from './Pages/AboutPage';
 import SecurityPage from './Pages/SecurityPage';
@@ -9,6 +9,8 @@ import AutomotivePage from './Pages/AutomotivePage';
 import MarketplacePage from './Pages/MarketPlace';
 import TeamPage from './Pages/TeamPage';
 import InvestmentPage from './Pages/Investmentpage';
+import PrivacyPage from './Pages/PrivacyPage';
+import TermsPage from './Pages/TermsPage';
 import ContactPage from './Pages/ContactPage';
 import NotFoundPage from './Pages/404';
 
@@ -60,6 +62,8 @@ const App = () => {
             <Route path="/marketplace" element={<PageWrapper><MarketplacePage /></PageWrapper>} />
             <Route path="/team" element={<PageWrapper><TeamPage /></PageWrapper>} />
             <Route path="/investment" element={<PageWrapper><InvestmentPage /></PageWrapper>} />
+            <Route path="/terms" element={<PageWrapper><TermsPage /></PageWrapper>} />
+            <Route path="/privacy" element={<PageWrapper><PrivacyPage /></PageWrapper>} />
             <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
             <Route path="*" element={<PageWrapper><NotFoundPage /></PageWrapper>} />
           </Routes>
@@ -205,6 +209,15 @@ const Footer = () => {
                 <span className="text-sm">info@cossywhite.com</span>
               </div>
             </div>
+            {/* Social Media Icons */}
+            <div className="flex items-center space-x-4 mt-6">
+              <a href="https://www.facebook.com/share/1CESLD3CVY/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <Facebook size={28} className="text-white hover:opacity-80 transition-opacity" />
+              </a>
+              <a href="https://www.instagram.com/cossywhitelimited1?igsh=bmhkcWpya3U2eHFk" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <Instagram size={28} className="text-white hover:opacity-80 transition-opacity" />
+              </a>
+            </div>
           </div>
           
           <div>
@@ -230,6 +243,8 @@ const Footer = () => {
             <ul className="space-y-2">
               <li><Link to="/about" className="text-gray-400 hover:text-emerald-500 transition-colors">About Us</Link></li>
               <li><Link to="/contact" className="text-gray-400 hover:text-emerald-500 transition-colors">Contact</Link></li>
+              <li><Link to="/terms" className="text-gray-400 hover:text-emerald-500 transition-colors">Terms &amp; Conditions</Link></li>
+              <li><Link to="/privacy" className="text-gray-400 hover:text-emerald-500 transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>

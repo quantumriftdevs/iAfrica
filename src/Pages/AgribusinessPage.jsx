@@ -38,25 +38,25 @@ const AgribusinessPage = ({navigate}) => {
       name: "Sesame Seeds",
       description: "High oil content sesame seeds, perfect for tahini and sesame oil production. Sourced from the finest farms across Nigeria.",
       specs: ["Oil Content: 50-55%", "Purity: 99%", "Moisture: <6%", "Origin: Nigeria"],
-      image: "https://images.unsplash.com/photo-1602498456745-e9503b30470b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "/sesame.png" // Sesame seeds bulk
     },
     {
       name: "Dried Hibiscus Flowers",
       description: "Premium quality dried hibiscus flowers with deep red color, organically grown for the global tea and beverage industry.",
       specs: ["Deep Red Color", "Organic Certified", "Moisture: <12%", "Pesticide Free"],
-      image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "/habi.png" // Dried hibiscus petals
     },
     {
       name: "Dried Split Ginger",
       description: "Pungent, fibrous, and perfectly sun-dried ginger that meets global spice industry standards for quality and flavor.",
       specs: ["Moisture: <10%", "Split & Clean", "Pungent Aroma", "Export Grade"],
-      image: "https://images.unsplash.com/photo-1614707267537-b85aaf00c4b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "/ginger.png" // Sliced dried ginger
     },
     {
       name: "Cashew Nuts",
       description: "Premium W320 grade cashew nuts, available both raw and roasted, perfect for snacking and processing industries.",
       specs: ["Grade: W320", "Broken: <5%", "Moisture: <5%", "Kernel Count: 320/kg"],
-      image: "https://images.unsplash.com/photo-1509814850881-9dfc084f8e86?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "/cashew.png" // Cashew nuts
     }
   ];
   

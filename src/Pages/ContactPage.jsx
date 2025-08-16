@@ -29,6 +29,11 @@ const useScrollAnimation = () => {
 
 // Contact Page Component
 const ContactPage = () => {
+  const colorClasses = {
+    emerald: "from-emerald-500 to-emerald-600",
+    green: "from-green-500 to-green-600",
+    teal: "from-teal-500 to-teal-600"
+  };
   const [contactRef, contactVisible] = useScrollAnimation();
   const [formRef, formVisible] = useScrollAnimation();
   const [mapRef, mapVisible] = useScrollAnimation();
@@ -119,27 +124,30 @@ const ContactPage = () => {
               Our team is here to provide personalized solutions that meet your requirements.
             </p>
             <div className="grid md:grid-cols-3 gap-8">
-              {contactInfo.map((info, index) => (
-                <div
-                  key={index}
-                  className={`bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 
-                             transform hover:-translate-y-2 group
-                             ${contactVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                  style={{ transitionDelay: `${index * 200}ms` }}
-                >
-                  <div className={`w-16 h-16 bg-gradient-to-br from-${info.color}-500 to-${info.color}-600 
-                                  rounded-full flex items-center justify-center mx-auto mb-4 
-                                  group-hover:scale-110 transition-transform duration-300`}>
-                    <info.icon className="text-white" size={24} />
+              {contactInfo.map((info, index) => {
+                const IconComponent = info.icon;
+                return (
+                  <div
+                    key={index}
+                    className={`bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 
+                               transform hover:-translate-y-2 group
+                               ${contactVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                    style={{ transitionDelay: `${index * 200}ms` }}
+                  >
+                    <div className={`w-16 h-16 bg-gradient-to-br ${colorClasses[info.color]} 
+                                    rounded-full flex items-center justify-center mx-auto mb-4 
+                                    group-hover:scale-110 transition-transform duration-300`}>
+                      <IconComponent className="text-white" size={24} />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{info.title}</h3>
+                    {info.details.map((detail, idx) => (
+                      <p key={idx} className={`${idx === 0 ? 'text-gray-900 font-semibold' : 'text-gray-600'} text-sm`}>
+                        {detail}
+                      </p>
+                    ))}
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{info.title}</h3>
-                  {info.details.map((detail, idx) => (
-                    <p key={idx} className={`${idx === 0 ? 'text-gray-900 font-semibold' : 'text-gray-600'} text-sm`}>
-                      {detail}
-                    </p>
-                  ))}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

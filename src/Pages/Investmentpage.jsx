@@ -48,7 +48,7 @@ const InvestmentPage = ({ navigate }) => {
       title: "Security Marketplace Expansion",
       description: "Expand our security marketplace across West Africa with flagship stores in Lagos, Ghana, and Ivory Coast.",
       target: "$2.5M",
-      roi: "35-45%",
+      roi: "19-25%",
       timeline: "18-24 months",
       image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       highlights: ["Market leadership position", "High-demand products", "Proven business model"]
