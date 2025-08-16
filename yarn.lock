@@ -2,11 +2,6 @@
 # yarn lockfile v1
 
 
-"@alloc/quick-lru@^5.2.0":
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
-  integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
-
 "@ampproject/remapping@^2.2.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@ampproject/remapping/-/remapping-2.3.0.tgz#ed441b6fa600072520ce18b43d2c8cc8caecc7f4"
@@ -675,15 +670,13 @@
     "@tailwindcss/oxide-win32-arm64-msvc" "4.1.12"
     "@tailwindcss/oxide-win32-x64-msvc" "4.1.12"
 
-"@tailwindcss/postcss@^4.1.12":
+"@tailwindcss/vite@^4.1.12":
   version "4.1.12"
-  resolved "https://registry.yarnpkg.com/@tailwindcss/postcss/-/postcss-4.1.12.tgz#ac2423c3cc69d673e2965c6d1413504a6398e415"
-  integrity sha512-5PpLYhCAwf9SJEeIsSmCDLgyVfdBhdBpzX1OJ87anT9IVR0Z9pjM0FNixCAUAHGnMBGB8K99SwAheXrT0Kh6QQ==
+  resolved "https://registry.yarnpkg.com/@tailwindcss/vite/-/vite-4.1.12.tgz#f2839180aa7ba938a5247114e32ee9d57215e7f8"
+  integrity sha512-4pt0AMFDx7gzIrAOIYgYP0KCBuKWqyW8ayrdiLEjoJTT4pKTjrzG/e4uzWtTLDziC+66R9wbUqZBccJalSE5vQ==
   dependencies:
-    "@alloc/quick-lru" "^5.2.0"
     "@tailwindcss/node" "4.1.12"
     "@tailwindcss/oxide" "4.1.12"
-    postcss "^8.4.41"
     tailwindcss "4.1.12"
 
 "@tybys/wasm-util@^0.10.0":
@@ -1448,7 +1441,7 @@ postcss-value-parser@^4.2.0:
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-postcss@^8.4.41, postcss@^8.5.6:
+postcss@^8.5.6:
   version "8.5.6"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.5.6.tgz#2825006615a619b4f62a9e7426cc120b349a8f3c"
   integrity sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==
