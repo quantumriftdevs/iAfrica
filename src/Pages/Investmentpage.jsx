@@ -120,9 +120,47 @@ const InvestmentPage = ({ navigate }) => {
   };
 
   const handleSubmit = () => {
-    // Handle form submission logic here
-    console.log('Investment inquiry submitted:', formData);
-    alert('Thank you for your interest! We will contact you within 24 hours.');
+    // Validate required fields
+    if (!formData.name || !formData.email || !formData.phone || !formData.investmentAmount || !formData.sector) {
+      alert('Please fill in all required fields marked with *');
+      return;
+    }
+
+    // Create email content
+    const subject = encodeURIComponent('Investment Inquiry - Cossy White');
+    const emailBody = encodeURIComponent(`Dear Cossy White Investment Team,
+
+I am interested in learning more about investment opportunities with your company. Please find my details below:
+
+CONTACT INFORMATION:
+- Full Name: ${formData.name}
+- Email: ${formData.email}
+- Phone: ${formData.phone}
+- Company/Organization: ${formData.company || 'N/A'}
+
+INVESTMENT DETAILS:
+- Investment Range: ${formData.investmentAmount}
+- Sector of Interest: ${formData.sector}
+
+MESSAGE:
+${formData.message || 'Please send me detailed information about your current investment opportunities.'}
+
+I would appreciate the opportunity to discuss these investment opportunities further. Please contact me at your earliest convenience to schedule a consultation.
+
+Thank you for your time and consideration.
+
+Best regards,
+${formData.name}
+${formData.phone}
+${formData.email}`);
+
+    // Create mailto link
+    const mailtoLink = `mailto:investments@cossywhite.com?subject=${subject}&body=${emailBody}`;
+    
+    // Open email client
+    window.location.href = mailtoLink;
+    
+    // Clear form after successful submission
     setFormData({
       name: '',
       email: '',
@@ -132,6 +170,9 @@ const InvestmentPage = ({ navigate }) => {
       sector: '',
       message: ''
     });
+    
+    // Show success message
+    alert('Your email client will open with the investment inquiry. Please review and send the email to complete your request.');
   };
 
   return (
@@ -244,7 +285,7 @@ const InvestmentPage = ({ navigate }) => {
                     ))}
                   </div>
 
-                  <button className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-3 rounded-lg
+                  <button onClick={() => navigate("/contact")} className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-3 rounded-lg
                                    hover:from-emerald-700 hover:to-green-700 transition-all duration-200 font-semibold
                                    transform hover:scale-105">
                     Learn More
