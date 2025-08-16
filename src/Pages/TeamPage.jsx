@@ -35,7 +35,7 @@ const TeamPage = () => {
   const leadership = [
     {
       name: "Cosmos Enyinnaya Ogu",
-      position: "Chief Executive Officer/ Managing Director",
+      position: "Chief Executive Officer / Managing Director",
       image: "/Members/CosmosEnyinnayaOgu.jpg",
       description: "Leading Cossy White with over 15 years of experience in business development and strategic management.",
       linkedin: "#"
@@ -51,14 +51,21 @@ const TeamPage = () => {
       name: "Chioma Chivhetam Prisca",
       position: "Chief Marketing Officer",
       image: "/Members/ChiomaChivhetamPrisca.jpg",
-      description: "Leading our export operations with deep knowledge of international trade and agricultural markets.",
+      description: "Driving our marketing strategy and brand growth with deep expertise in international trade and agricultural markets.",
       linkedin: "#"
     },
     {
-      name: "Ibrahim Hassan",
-      position: "Automotive Division Director",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      description: "Overseeing luxury vehicle imports with extensive experience in automotive financing and sales.",
+      name: "Ozuruigbo Abuoma Jubilate",
+      position: "Chief Operations Officer",
+      image: "/Members/OzuruigboAbuomaJubilate.jpg",
+      description: "Overseeing luxury vehicle imports and automotive operations with extensive experience in financing and sales.",
+      linkedin: "#"
+    },
+    {
+      name: "Arinze Henry Nkemjieme",
+      position: "#",
+      image: "/Members/ArinzeHenryNkemjieme.jpg",
+      description: "#",
       linkedin: "#"
     }
   ];
