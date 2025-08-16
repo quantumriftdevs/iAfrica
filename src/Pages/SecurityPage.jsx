@@ -27,7 +27,7 @@ const useScrollAnimation = () => {
 };
 
 // Security Technologies Page
-const SecurityPage = () => {
+const SecurityPage = ({ navigate }) => {
   const [securityRef, securityVisible] = useScrollAnimation();
   const [productsRef, productsVisible] = useScrollAnimation();
   
@@ -107,7 +107,7 @@ const SecurityPage = () => {
                       </div>
                     ))}
                   </div>
-                  <button className="mt-6 bg-gradient-to-r from-emerald-600 to-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-200">
+                  <button onClick={() => navigate("/contact")} className="mt-6 bg-gradient-to-r from-emerald-600 to-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-200">
                     Request Quote
                   </button>
                 </div>

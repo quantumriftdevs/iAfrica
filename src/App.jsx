@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Shield, Truck, Sprout, Users, Phone, Mail, MapPin, Star, ShoppingCart, Eye, ArrowRight, Menu, X, ChevronDown } from 'lucide-react';
+import HomePage from './Pages/HomePage';
+import AboutPage from './Pages/AboutPage';
+import SecurityPage from './Pages/SecurityPage';
+import AgribusinessPage from './Pages/AgribusinessPage';
+import AutomotivePage from './Pages/AutomotivePage';
+import MarketplacePage from './Pages/MarketPlace';
+import TeamPage from './Pages/TeamPage';
+import InvestmentPage from './Pages/Investmentpage';
+import ContactPage from './Pages/ContactPage';
+import NotFoundPage from './Pages/404';
 
 // Router simulation for SPA
 const useRouter = () => {
@@ -64,7 +74,7 @@ const App = () => {
       case '/contact':
         return <ContactPage navigate={navigate} />;
       default:
-        return <HomePage navigate={navigate} />;
+        return <NotFoundPage navigate={navigate} />;
     }
   };
   
@@ -112,9 +122,11 @@ const Header = ({ currentPath, navigate }) => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">CW</span>
-            </div>
+            <img
+              src="/apple-touch-icon.png"
+              alt="Cossy White Logo"
+              className="w-12 h-12 rounded-lg object-cover"
+            />
             <div>
               <h1 className="text-xl font-bold text-gray-900">Cossy White Limited</h1>
               <p className="text-sm text-emerald-600">Innovating Excellence</p>
@@ -184,9 +196,13 @@ const Footer = ({ navigate }) => {
           <div>
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">CW</span>
+                <img
+                  src="/apple-touch-icon.png"
+                  alt="Cossy White Logo"
+                  className="w-12 h-12 rounded-lg object-cover"
+                />
               </div>
-              <span className="text-xl font-bold">Cossy White</span>
+              <span className="text-xl font-bold">Cossy White Limited</span>
             </div>
             <p className="text-gray-400 mb-4">Innovating Security. Connecting Markets. Driving Excellence.</p>
             <div className="space-y-2">
