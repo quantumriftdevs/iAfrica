@@ -26,12 +26,146 @@ const useScrollAnimation = () => {
   return [ref, isVisible];
 };
 
+// Vehicle Details Modal Component
+const VehicleModal = ({ vehicle, isOpen, onClose, navigate }) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
+  if (!isOpen || !vehicle) return null;
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 0
+    }).format(price);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
+        {/* Modal Header */}
+        <div className="relative">
+          <img
+            src={vehicle.image}
+            alt={vehicle.name}
+            className="w-full h-80 object-cover"
+          />
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all"
+          >
+            <X size={24} />
+          </button>
+          <div className="absolute bottom-4 left-4 text-white">
+            <div className="text-3xl font-bold">{formatPrice(vehicle.price)}</div>
+            <div className="text-emerald-200">{vehicle.year} Model</div>
+          </div>
+          <div className="absolute top-4 left-4">
+            <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+              vehicle.status === 'Available' ? 'bg-green-500 text-white' :
+              vehicle.status === 'Pre-Order' ? 'bg-yellow-500 text-white' :
+              'bg-red-500 text-white'
+            }`}>
+              {vehicle.status}
+            </span>
+          </div>
+        </div>
+
+        {/* Modal Content */}
+        <div className="p-8">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">{vehicle.name}</h2>
+            <p className="text-lg text-gray-600 capitalize">{vehicle.category.replace('-', ' ')}</p>
+          </div>
+
+          {/* Specifications */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Specifications</h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              {vehicle.specs.map((spec, index) => (
+                <div key={index} className="flex items-center bg-gray-50 p-4 rounded-lg">
+                  <div className="w-3 h-3 bg-emerald-500 rounded-full mr-4"></div>
+                  <span className="text-gray-700 font-medium">{spec}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Additional Details */}
+          <div className="mb-8 grid md:grid-cols-3 gap-6 bg-gradient-to-r from-emerald-50 to-green-50 p-6 rounded-xl">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-emerald-600">{vehicle.year}</div>
+              <div className="text-gray-600">Model Year</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-emerald-600">{vehicle.condition}</div>
+              <div className="text-gray-600">Condition</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-emerald-600">{vehicle.warranty}</div>
+              <div className="text-gray-600">Warranty</div>
+            </div>
+          </div>
+
+          {/* Features */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Key Features</h3>
+            <div className="grid md:grid-cols-2 gap-3">
+              {vehicle.features?.map((feature, index) => (
+                <div key={index} className="flex items-center">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full mr-3"></div>
+                  <span className="text-gray-700">{feature}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button 
+              onClick={() => {
+                onClose();
+                if(navigate) navigate('/contact');
+              }}
+              className="flex-1 bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 px-6 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-200 flex items-center justify-center"
+            >
+              <Phone className="mr-2" size={20} />
+              Call Us Now
+            </button>
+            <button 
+              onClick={onClose}
+              className="flex-1 border-2 border-gray-300 text-gray-700 py-4 px-6 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200"
+            >
+              Close Details
+            </button>
+          </div>
+
+          {/* Contact Info */}
+          <div className="mt-6 p-4 bg-emerald-50 rounded-lg text-center">
+            <p className="text-emerald-800 font-medium">Interested in this vehicle?</p>
+            <p className="text-emerald-600">Call us at +234 803 493 1164 or visit our contact page</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Automotive Page Component
-const AutomotivePage = () => {
+const AutomotivePage = ({navigate}) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [viewMode, setViewMode] = useState('grid');
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [heroRef, heroVisible] = useScrollAnimation();
   const [carsRef, carsVisible] = useScrollAnimation();
   
@@ -50,9 +184,34 @@ const AutomotivePage = () => {
       category: "supercars",
       price: 85000000,
       image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      specs: ["V10 Engine", "630hp", "0-100km/h: 3.2s", "325km/h Top Speed"],
+      specs: [
+        "5.2L V10 Natural Aspirated Engine",
+        "630hp @ 8,000 RPM",
+        "443 lb-ft Torque",
+        "0-100km/h: 3.2 seconds",
+        "325km/h Top Speed",
+        "All-Wheel Drive System",
+        "7-Speed Dual-Clutch Transmission",
+        "Carbon Ceramic Brakes"
+      ],
       year: 2024,
-      status: "Available"
+      status: "Available",
+      condition: "Brand New",
+      warranty: "3 Years / 100,000km",
+      features: [
+        "Premium Alcantara Interior",
+        "Advanced Traction Control",
+        "Multiple Drive Modes",
+        "Premium Infotainment System",
+        "Smartphone Integration",
+        "Parking Sensors",
+        "Keyless Entry & Start",
+        "Premium Sound System",
+        "LED Headlights",
+        "Carbon Fiber Accents",
+        "Sport Exhaust System",
+        "Performance Monitoring"
+      ]
     },
     {
       id: 2,
@@ -60,9 +219,34 @@ const AutomotivePage = () => {
       category: "luxury-suv",
       price: 120000000,
       image: "https://images.unsplash.com/photo-1563720223185-11003d516935?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      specs: ["V12 Twin-Turbo", "563hp", "All-Wheel Drive", "Luxury Interior"],
+      specs: [
+        "6.75L V12 Twin-Turbocharged Engine",
+        "563hp @ 5,000 RPM",
+        "627 lb-ft Torque",
+        "0-100km/h: 5.2 seconds",
+        "250km/h Top Speed",
+        "All-Wheel Drive System",
+        "8-Speed Automatic Transmission",
+        "Air Suspension System"
+      ],
       year: 2024,
-      status: "Pre-Order"
+      status: "Pre-Order",
+      condition: "Brand New",
+      warranty: "4 Years / Unlimited Mileage",
+      features: [
+        "Bespoke Leather Interior",
+        "Starlight Headliner",
+        "Rear Theater Configuration",
+        "Champagne Cooler",
+        "Massage Seats",
+        "Panoramic Sunroof",
+        "Advanced Climate Control",
+        "Premium Audio System",
+        "Night Vision",
+        "Adaptive Cruise Control",
+        "Self-Leveling Suspension",
+        "Suicide Doors"
+      ]
     },
     {
       id: 3,
@@ -70,9 +254,34 @@ const AutomotivePage = () => {
       category: "executive",
       price: 45000000,
       image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      specs: ["V8 Biturbo", "469hp", "MBUX Interior", "Level 3 Autonomy"],
+      specs: [
+        "4.0L V8 Twin-Turbocharged Engine",
+        "469hp @ 5,500 RPM",
+        "516 lb-ft Torque",
+        "0-100km/h: 4.4 seconds",
+        "250km/h Top Speed",
+        "Rear-Wheel Drive",
+        "9-Speed Automatic Transmission",
+        "AIRMATIC Air Suspension"
+      ],
       year: 2024,
-      status: "Available"
+      status: "Available",
+      condition: "Brand New",
+      warranty: "4 Years / 80,000km",
+      features: [
+        "Nappa Leather Seats",
+        "MBUX Hyperscreen",
+        "Active Ambient Lighting",
+        "Burmester 4D Sound",
+        "Executive Rear Seating",
+        "Massage Function",
+        "Active Parking Assist",
+        "Driver Assistance Package",
+        "360° Camera System",
+        "Wireless Charging",
+        "Head-Up Display",
+        "Magic Body Control"
+      ]
     },
     {
       id: 4,
@@ -80,9 +289,34 @@ const AutomotivePage = () => {
       category: "convertible",
       price: 95000000,
       image: "https://images.unsplash.com/photo-1592853625511-ad0edcc69c07?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      specs: ["V8 Twin-Turbo", "661hp", "Retractable Hardtop", "Track Mode"],
+      specs: [
+        "3.9L V8 Twin-Turbocharged Engine",
+        "661hp @ 8,000 RPM",
+        "560 lb-ft Torque",
+        "0-100km/h: 3.0 seconds",
+        "325km/h Top Speed",
+        "Rear-Wheel Drive",
+        "7-Speed Dual-Clutch Transmission",
+        "Retractable Hard Top (14 seconds)"
+      ],
       year: 2024,
-      status: "Sold"
+      status: "Sold",
+      condition: "Brand New",
+      warranty: "3 Years / 100,000km",
+      features: [
+        "Racing-Inspired Interior",
+        "Ferrari Dynamic Enhancer",
+        "Side Slip Control",
+        "F1-Trac Traction Control",
+        "Launch Control",
+        "Carbon Fiber Steering Wheel",
+        "Manettino Drive Modes",
+        "Premium Navigation",
+        "Track Telemetry",
+        "Variable Torque Management",
+        "Electronic Differential",
+        "Adaptive Headlights"
+      ]
     },
     {
       id: 5,
@@ -90,9 +324,34 @@ const AutomotivePage = () => {
       category: "luxury-suv",
       price: 55000000,
       image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      specs: ["Supercharged V8", "518hp", "Air Suspension", "Terrain Response"],
+      specs: [
+        "5.0L Supercharged V8 Engine",
+        "518hp @ 6,000 RPM",
+        "461 lb-ft Torque",
+        "0-100km/h: 5.4 seconds",
+        "225km/h Top Speed",
+        "All-Wheel Drive System",
+        "8-Speed Automatic Transmission",
+        "Electronic Air Suspension"
+      ],
       year: 2024,
-      status: "Available"
+      status: "Available",
+      condition: "Brand New",
+      warranty: "5 Years / 100,000km",
+      features: [
+        "Semi-Aniline Leather Interior",
+        "Terrain Response 2",
+        "Wade Sensing Technology",
+        "Meridian Signature Sound",
+        "Heated & Cooled Seats",
+        "Panoramic Sunroof",
+        "Touch Pro Duo Interface",
+        "All-Terrain Progress Control",
+        "ClearSight Ground View",
+        "Adaptive Dynamics",
+        "Configurable Ambient Lighting",
+        "Activity Key Wristband"
+      ]
     },
     {
       id: 6,
@@ -100,9 +359,34 @@ const AutomotivePage = () => {
       category: "supercars",
       price: 75000000,
       image: "https://images.unsplash.com/photo-1544829099-b9a0c5303bea?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      specs: ["Twin-Turbo H6", "640hp", "PDK Transmission", "Sport Chrono"],
+      specs: [
+        "3.8L Twin-Turbocharged H6 Engine",
+        "640hp @ 6,750 RPM",
+        "590 lb-ft Torque",
+        "0-100km/h: 2.7 seconds",
+        "330km/h Top Speed",
+        "All-Wheel Drive System",
+        "8-Speed PDK Transmission",
+        "Active Suspension Management"
+      ],
       year: 2024,
-      status: "Available"
+      status: "Available",
+      condition: "Brand New",
+      warranty: "4 Years / 80,000km",
+      features: [
+        "Sport Seats Plus",
+        "Sport Chrono Package",
+        "Porsche Active Suspension",
+        "Dynamic Chassis Control",
+        "Porsche Stability Management",
+        "Launch Control",
+        "Sport Exhaust System",
+        "LED Matrix Headlights",
+        "Bose Surround Sound",
+        "PCM Infotainment",
+        "Adaptive Cruise Control",
+        "ParkAssist with Camera"
+      ]
     }
   ];
   
@@ -117,6 +401,16 @@ const AutomotivePage = () => {
       minimumFractionDigits: 0
     }).format(price);
   };
+
+  const handleViewDetails = (vehicle) => {
+    setSelectedVehicle(vehicle);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedVehicle(null);
+  };
   
   return (
     <div className="pt-20">
@@ -130,9 +424,9 @@ const AutomotivePage = () => {
             <h1 className="text-5xl font-bold mb-4">Luxury & Exotic Auto Imports</h1>
             <p className="text-xl mb-6 max-w-2xl">
               Drive prestige with world-class exotic vehicles. Custom imports, showroom sales, 
-              flexible financing, and exceptional after-sales service.
+              and exceptional after-sales service.
             </p>
-            <button className="bg-gradient-to-r from-emerald-600 to-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transform hover:scale-105 transition-all duration-200">
+            <button onClick={() => navigate && navigate("/contact")} className="bg-gradient-to-r from-emerald-600 to-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transform hover:scale-105 transition-all duration-200">
               Request Custom Import
             </button>
           </div>
@@ -205,7 +499,7 @@ const AutomotivePage = () => {
                   </h3>
                   
                   <div className="space-y-2 mb-6">
-                    {vehicle.specs.map((spec, specIndex) => (
+                    {vehicle.specs.slice(0, 4).map((spec, specIndex) => (
                       <div key={specIndex} className="flex items-center text-sm text-gray-600">
                         <div className="w-2 h-2 bg-emerald-500 rounded-full mr-3"></div>
                         {spec}
@@ -213,14 +507,13 @@ const AutomotivePage = () => {
                     ))}
                   </div>
 
-                  <div className="flex space-x-3">
-                    <button className="flex-1 bg-gradient-to-r from-emerald-600 to-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-200">
-                      View Details
-                    </button>
-                    <button className="border-2 border-emerald-600 text-emerald-600 py-3 px-4 rounded-lg font-semibold hover:bg-emerald-600 hover:text-white transition-all duration-200">
-                      Finance
-                    </button>
-                  </div>
+                  <button 
+                    onClick={() => handleViewDetails(vehicle)}
+                    className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-200 flex items-center justify-center"
+                  >
+                    <Eye className="mr-2" size={18} />
+                    View Details
+                  </button>
                 </div>
               </div>
             ))}
@@ -232,11 +525,10 @@ const AutomotivePage = () => {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Our Automotive Services</h2>
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
               { title: "Custom Imports", desc: "Any make, any model, anywhere in the world", icon: "🌍" },
               { title: "Showroom Sales", desc: "Ready-to-own vehicles in pristine condition", icon: "🏢" },
-              { title: "Flexible Financing", desc: "Partnership with leading banks for easy payments", icon: "💳" },
               { title: "After-Sales Service", desc: "Maintenance, servicing, and genuine parts", icon: "🔧" }
             ].map((service, index) => (
               <div key={index} className="bg-white rounded-xl p-6 text-center shadow-md hover:shadow-lg transition-shadow">
@@ -248,9 +540,16 @@ const AutomotivePage = () => {
           </div>
         </div>
       </section>
+
+      {/* Vehicle Details Modal */}
+      <VehicleModal 
+        vehicle={selectedVehicle}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        navigate={navigate}
+      />
     </div>
   );
 };
-
 
 export default AutomotivePage;
