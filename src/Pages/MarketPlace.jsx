@@ -13,7 +13,7 @@ const useScrollAnimation = () => {
           setIsVisible(true);
         }
       },
-      { threshold: 0.
+      { threshold: 0.}
     );
     
     if (ref.current) {

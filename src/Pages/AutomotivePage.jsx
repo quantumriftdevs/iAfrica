@@ -451,7 +451,7 @@ const AutomotivePage = ({navigate}) => {
             </div>
           </div>
 
-          {/* Vehicles Grid
+          {/* Vehicles Grid */}
           <div ref={carsRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredVehicles.map((vehicle, index) => (
               <div
