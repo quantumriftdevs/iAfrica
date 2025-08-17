@@ -67,7 +67,7 @@ const VehicleModal = ({ vehicle, isOpen, onClose, navigate }) => {
             <X size={24} />
           </button>
           <div className="absolute bottom-4 left-4 text-white">
-            <div className="text-3xl font-bold">{formatPrice(vehicle.price)}</div>
+            {/* <div className="text-3xl font-bold">{formatPrice(vehicle.price)}</div> */}
             <div className="text-emerald-200">{vehicle.year} Model</div>
           </div>
           <div className="absolute top-4 left-4">
@@ -177,7 +177,6 @@ const AutomotivePage = ({navigate}) => {
       id: 1,
       name: "Lamborghini Huracán",
       category: "supercars",
-      price: 85000000,
       image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       specs: [
         "5.2L V10 Natural Aspirated Engine",
@@ -212,7 +211,6 @@ const AutomotivePage = ({navigate}) => {
       id: 2,
       name: "Rolls-Royce Cullinan",
       category: "luxury-suv",
-      price: 120000000,
       image: "https://images.unsplash.com/photo-1563720223185-11003d516935?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       specs: [
         "6.75L V12 Twin-Turbocharged Engine",
@@ -247,7 +245,6 @@ const AutomotivePage = ({navigate}) => {
       id: 3,
       name: "Mercedes S-Class",
       category: "executive",
-      price: 45000000,
       image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       specs: [
         "4.0L V8 Twin-Turbocharged Engine",
@@ -282,7 +279,6 @@ const AutomotivePage = ({navigate}) => {
       id: 4,
       name: "Ferrari 488 Spider",
       category: "convertible",
-      price: 95000000,
       image: "https://images.unsplash.com/photo-1592853625511-ad0edcc69c07?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       specs: [
         "3.9L V8 Twin-Turbocharged Engine",
@@ -317,7 +313,6 @@ const AutomotivePage = ({navigate}) => {
       id: 5,
       name: "Range Rover Autobiography",
       category: "luxury-suv",
-      price: 55000000,
       image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       specs: [
         "5.0L Supercharged V8 Engine",
@@ -352,7 +347,6 @@ const AutomotivePage = ({navigate}) => {
       id: 6,
       name: "Porsche 911 Turbo S",
       category: "supercars",
-      price: 75000000,
       image: "https://images.unsplash.com/photo-1544829099-b9a0c5303bea?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       specs: [
         "3.8L Twin-Turbocharged H6 Engine",
@@ -457,7 +451,7 @@ const AutomotivePage = ({navigate}) => {
             </div>
           </div>
 
-          {/* Vehicles Grid */}
+          {/* Vehicles Grid
           <div ref={carsRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredVehicles.map((vehicle, index) => (
               <div
@@ -483,7 +477,7 @@ const AutomotivePage = ({navigate}) => {
                     </span>
                   </div>
                   <div className="absolute bottom-4 left-4 text-white">
-                    <div className="text-2xl font-bold">{formatPrice(vehicle.price)}</div>
+                    {/* <div className="text-2xl font-bold">{formatPrice(vehicle.price)}</div> */}
                     <div className="text-emerald-200">{vehicle.year} Model</div>
                   </div>
                 </div>

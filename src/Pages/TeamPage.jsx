@@ -76,10 +76,10 @@ const TeamPage = () => {
       linkedin: "#"
     },
     {
-      name: "Livinu Anekwe",
+      name: "Livinus Anekwe",
       position: "Advisory Board Member",
       image: "/Members/livi.jpg",
-      description: "Livinu brings strategic insight and industry expertise to the board, guiding Cossy White's growth and innovation initiatives with seasoned leadership.",
+      description: "Livinus brings strategic insight and industry expertise to the board, guiding Cossy White's growth and innovation initiatives with seasoned leadership.",
       linkedin: "#"
     }
   ];
@@ -89,7 +89,7 @@ const TeamPage = () => {
       title: "Security Technologies",
       team: [
         {
-          name: "Livinu Anekwe",
+          name: "Livinus Anekwe",
           position: "Advisory Board Member",
           image: "/Members/livi.jpg"
         },
@@ -97,11 +97,6 @@ const TeamPage = () => {
           name: "Eddy Asuquo",
           position: "Strategic Partnership Lead",
           image: "/Members/eddy.jpg"
-        },
-        {
-          name: "Grace Okoro",
-          position: "Cybersecurity Analyst",
-          image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
         }
       ]
     },
@@ -112,39 +107,9 @@ const TeamPage = () => {
           name: "Arinze Henry Nkemjieme",
           position: "Head Of Trade",
           image: "/Members/ArinzeHenryNkemjieme.jpg"
-        },
-        {
-          name: "Samuel Oduya",
-          position: "Quality Assurance Specialist",
-          image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-        },
-        {
-          name: "Blessing Okafor",
-          position: "Supply Chain Coordinator",
-          image: "https://images.unsplash.com/photo-1494790108755-2616b332c169?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
         }
       ]
     },
-    {
-      title: "Automotive Division",
-      team: [
-        {
-          name: "David Olatunji",
-          position: "Sales Manager",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-        },
-        {
-          name: "Chioma Eze",
-          position: "Finance Specialist",
-          image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-        },
-        {
-          name: "Michael Adamu",
-          position: "Service Manager",
-          image: "https://images.unsplash.com/photo-1556157382-97eda2d62296?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-        }
-      ]
-    }
   ];
   
   return (
