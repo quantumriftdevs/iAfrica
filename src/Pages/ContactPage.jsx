@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Shield, Truck, Sprout, Users, Phone, Mail, MapPin, Star, ShoppingCart, Eye, ArrowRight, Menu, X, ChevronDown } from 'lucide-react';
+import { ChevronRight, BookOpen, GraduationCap, Users, Phone, Mail, MapPin, MessageCircle, Clock, HelpCircle, Video } from 'lucide-react';
 
 // Animation hooks
 const useScrollAnimation = () => {
@@ -26,7 +26,6 @@ const useScrollAnimation = () => {
   return [ref, isVisible];
 };
 
-
 // Contact Page Component
 const ContactPage = () => {
   const colorClasses = {
@@ -42,10 +41,10 @@ const ContactPage = () => {
     name: '',
     email: '',
     phone: '',
-    company: '',
+    currentLevel: '',
     subject: '',
     message: '',
-    service: 'general'
+    interest: 'general'
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,10 +70,10 @@ const ContactPage = () => {
         name: '',
         email: '',
         phone: '',
-        company: '',
+        currentLevel: '',
         subject: '',
         message: '',
-        service: 'general'
+        interest: 'general'
       });
       
       setTimeout(() => {
@@ -87,24 +86,24 @@ const ContactPage = () => {
     {
       icon: MapPin,
       title: "Our Location",
-      details: ["4 BDT 25, Canaan Estate", "Life Camp, Abuja, Nigeria"],
+      details: ["Abuja, Nigeria", "Federal Capital Territory"],
       color: "emerald"
     },
     {
       icon: Phone,
       title: "Phone Number",
-      details: ["+234 803 493 1164", "Available Mon-Sat 9AM-6PM"],
+      details: ["+234 XXX XXX XXXX", "Available Mon-Sat 9AM-6PM"],
       color: "green"
     },
     {
       icon: Mail,
       title: "Email Address",
-      details: ["info@cossywhite.com", "We respond within 24 hours"],
+      details: ["education@iafrica.com", "We respond within 24 hours"],
       color: "teal"
     }
   ];
   
-  const officeHours = [
+  const supportHours = [
     { day: "Monday - Friday", hours: "9:00 AM - 6:00 PM" },
     { day: "Saturday", hours: "10:00 AM - 4:00 PM" },
     { day: "Sunday", hours: "Closed" }
@@ -120,8 +119,8 @@ const ContactPage = () => {
           }`}>
             <h1 className="text-5xl font-bold text-gray-900 mb-6">Get in Touch</h1>
             <p className="text-xl text-gray-600 leading-relaxed mb-8">
-              Ready to discuss your security, agricultural, or automotive needs? 
-              Our team is here to provide personalized solutions that meet your requirements.
+              Have questions about our programs, enrollment process, or technical support? 
+              Our dedicated Resources is here to guide you on your learning journey and help you choose the right path.
             </p>
             <div className="grid md:grid-cols-3 gap-8">
               {contactInfo.map((info, index) => {
@@ -206,34 +205,36 @@ const ContactPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Company</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Current Level</label>
                     <input
                       type="text"
-                      name="company"
-                      value={formData.company}
+                      name="currentLevel"
+                      value={formData.currentLevel}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 
                                focus:border-emerald-500 transition-all duration-200"
-                      placeholder="Enter your company name"
+                      placeholder="Beginner, Intermediate, etc."
                     />
                   </div>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Service Interest</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Area of Interest</label>
                   <select
-                    name="service"
-                    value={formData.service}
+                    name="interest"
+                    value={formData.interest}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 
                              focus:border-emerald-500 transition-all duration-200"
                   >
                     <option value="general">General Inquiry</option>
-                    <option value="security">Security Technologies</option>
-                    <option value="agribusiness">Agribusiness Export</option>
-                    <option value="automotive">Automotive Import</option>
-                    <option value="investment">Investment Opportunities</option>
-                    <option value="partnership">Partnership</option>
+                    <option value="web-dev">Web Development Program</option>
+                    <option value="digital-marketing">Digital Marketing Program</option>
+                    <option value="graphic-design">Graphic Design Program</option>
+                    <option value="data-analytics">Data Analytics Program</option>
+                    <option value="enrollment">Enrollment Process</option>
+                    <option value="technical">Technical Support</option>
+                    <option value="certificates">Certificate Verification</option>
                   </select>
                 </div>
                 
@@ -261,7 +262,7 @@ const ContactPage = () => {
                     rows={6}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 
                              focus:border-emerald-500 transition-all duration-200 resize-none"
-                    placeholder="Tell us more about your requirements..."
+                    placeholder="Tell us more about your inquiry..."
                   ></textarea>
                 </div>
                 
@@ -292,26 +293,26 @@ const ContactPage = () => {
               </form>
             </div>
             
-            {/* Contact Info & Hours */}
+            {/* Support Info & Hours */}
             <div ref={mapRef} className={`transition-all duration-1000 ${
               mapVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
             }`}>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Visit Our Office</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">Student Support</h2>
               
-              {/* Office Photo */}
+              {/* Support Photo */}
               <div className="mb-8">
                 <img
-                  src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                  alt="Modern office space"
+                  src="https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="Student support Resources"
                   className="w-full h-64 object-cover rounded-2xl shadow-lg"
                 />
               </div>
               
-              {/* Business Hours */}
+              {/* Support Hours */}
               <div className="bg-gray-50 p-6 rounded-2xl mb-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Business Hours</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Support Hours</h3>
                 <div className="space-y-3">
-                  {officeHours.map((schedule, index) => (
+                  {supportHours.map((schedule, index) => (
                     <div key={index} className="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0">
                       <span className="font-medium text-gray-700">{schedule.day}</span>
                       <span className="text-emerald-600 font-semibold">{schedule.hours}</span>
@@ -319,24 +320,52 @@ const ContactPage = () => {
                   ))}
                 </div>
               </div>
+
+              {/* FAQ Quick Links */}
+              <div className="bg-emerald-50 p-6 rounded-2xl mb-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                  <HelpCircle className="mr-2 text-emerald-600" size={24} />
+                  Quick Help
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-start">
+                    <Video className="mr-3 mt-1 text-emerald-600 flex-shrink-0" size={18} />
+                    <div>
+                      <p className="font-semibold text-gray-900">Having trouble joining classes?</p>
+                      <p className="text-sm text-gray-600">Check our technical support guide</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <BookOpen className="mr-3 mt-1 text-emerald-600 flex-shrink-0" size={18} />
+                    <div>
+                      <p className="font-semibold text-gray-900">Need help with enrollment?</p>
+                      <p className="text-sm text-gray-600">View our step-by-step guide</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <MessageCircle className="mr-3 mt-1 text-emerald-600 flex-shrink-0" size={18} />
+                    <div>
+                      <p className="font-semibold text-gray-900">Want to speak with an advisor?</p>
+                      <p className="text-sm text-gray-600">Schedule a consultation call</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
               
-              {/* Team Photo */}
+              {/* Ready to Enroll */}
               <div className="bg-gradient-to-br from-emerald-600 to-green-600 p-6 rounded-2xl text-white">
-                <h3 className="text-xl font-bold mb-4">Ready to Connect?</h3>
+                <h3 className="text-xl font-bold mb-4">Ready to Start Learning?</h3>
                 <p className="mb-4">
-                  Our experienced team is ready to help you find the perfect solution for your needs. 
-                  Whether you're looking for security systems, agricultural exports, or luxury vehicles, 
-                  we're here to make it happen.
+                  Our dedicated support Resources is here to guide you through every step of your educational journey. 
+                  From choosing the right program to technical assistance during live classes, we've got you covered.
                 </p>
                 <div className="flex items-center space-x-4">
-                  <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
-                    alt="Team representative"
-                    className="w-12 h-12 rounded-full border-2 border-white"
-                  />
+                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                    <GraduationCap className="text-emerald-600" size={24} />
+                  </div>
                   <div>
-                    <p className="font-semibold">Professional Team</p>
-                    <p className="text-emerald-100 text-sm">Ready to assist you</p>
+                    <p className="font-semibold">Expert Support Resources</p>
+                    <p className="text-emerald-100 text-sm">Available to assist you</p>
                   </div>
                 </div>
               </div>

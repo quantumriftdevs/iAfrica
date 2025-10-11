@@ -51,7 +51,7 @@ const PrivacyPage = ({ navigate }) => {
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Commitment to Your Privacy</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              At Cossy White Limited, we are committed to protecting your privacy and ensuring the security of your personal information. 
+              At Cossy White Limited, we are committed to protecting your privacy and ensuring the Programs of your personal information. 
               This Privacy Policy explains how we collect, use, and safeguard your data when you visit our website or use our services.
             </p>
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -136,7 +136,7 @@ const PrivacyPage = ({ navigate }) => {
                 <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
                   <Lock size={24} className="text-red-600" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">3. Data Protection & Security</h2>
+                <h2 className="text-2xl font-bold text-gray-900">3. Data Protection & Programs</h2>
               </div>
               <div className="text-gray-700 leading-relaxed space-y-4">
                 <p className="mb-4">
@@ -145,12 +145,12 @@ const PrivacyPage = ({ navigate }) => {
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <div className="flex items-center space-x-2 mb-2">
                     <AlertTriangle size={20} className="text-red-600" />
-                    <h4 className="font-semibold text-red-800">Security Measures</h4>
+                    <h4 className="font-semibold text-red-800">Programs Measures</h4>
                   </div>
                   <ul className="text-sm text-red-700 space-y-1 ml-6">
                     <li>• Encrypted data transmission</li>
                     <li>• Secure server infrastructure</li>
-                    <li>• Regular security updates</li>
+                    <li>• Regular Programs updates</li>
                     <li>• Access controls and monitoring</li>
                   </ul>
                 </div>
@@ -248,7 +248,7 @@ const PrivacyPage = ({ navigate }) => {
                     <ul className="text-xs text-green-600 space-y-1">
                       <li>• User authentication</li>
                       <li>• Shopping cart functionality</li>
-                      <li>• Security features</li>
+                      <li>• Programs features</li>
                       <li>• Form submissions</li>
                     </ul>
                   </div>
@@ -403,7 +403,7 @@ const PrivacyPage = ({ navigate }) => {
                   onClick={() => handleNavigation('/contact')}
                   className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors inline-flex items-center space-x-2"
                 >
-                  <span>Contact Privacy Team</span>
+                  <span>Contact Privacy Resources</span>
                   <ChevronRight size={20} />
                 </button>
               </div>

@@ -49,7 +49,7 @@ const NotFoundPage = ({ navigate }) => {
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
               The page you're looking for seems to have wandered off. Don't worry though, 
-              our team at Cossy White Limited is always here to help you find what you need.
+              our Resources at Cossy White Limited is always here to help you find what you need.
             </p>
           </div>
           
@@ -99,36 +99,36 @@ const NotFoundPage = ({ navigate }) => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Popular Pages</h3>
             <div className="flex flex-wrap justify-center gap-4">
               <button
-                onClick={() => navigate('/security')}
+                onClick={() => navigate('/Programs')}
                 className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors duration-200
                           flex items-center group"
               >
                 <Shield size={16} className="mr-1 group-hover:scale-110 transition-transform" />
-                Security
+                Programs
               </button>
               <button
-                onClick={() => navigate('/agribusiness')}
+                onClick={() => navigate('/Courses')}
                 className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors duration-200
                           flex items-center group"
               >
                 <Sprout size={16} className="mr-1 group-hover:scale-110 transition-transform" />
-                Agribusiness
+                Courses
               </button>
               <button
-                onClick={() => navigate('/automotive')}
+                onClick={() => navigate('/Lecturers')}
                 className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors duration-200
                           flex items-center group"
               >
                 <Truck size={16} className="mr-1 group-hover:scale-110 transition-transform" />
-                Automotive
+                Lecturers
               </button>
               <button
-                onClick={() => navigate('/marketplace')}
+                onClick={() => navigate('/Enroll')}
                 className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors duration-200
                           flex items-center group"
               >
                 <ShoppingCart size={16} className="mr-1 group-hover:scale-110 transition-transform" />
-                Marketplace
+                Enroll
               </button>
             </div>
           </div>

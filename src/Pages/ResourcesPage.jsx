@@ -27,9 +27,9 @@ const useScrollAnimation = () => {
   return [ref, isVisible];
 };
 
-// Team Page Component
-const TeamPage = () => {
-  const [teamRef, teamVisible] = useScrollAnimation();
+// Resources Page Component
+const ResourcesPage = () => {
+  const [ResourcesRef, ResourcesVisible] = useScrollAnimation();
   const [leadershipRef, leadershipVisible] = useScrollAnimation();
   
   const leadership = [
@@ -51,7 +51,7 @@ const TeamPage = () => {
       name: "Ozuruigbo Abuoma Jubilate",
       position: "Chief Operations Officer",
       image: "/Members/OzuruigboAbuomaJubilate.jpg",
-      description: "Overseeing luxury vehicle imports and automotive operations with extensive experience in financing and sales.",
+      description: "Overseeing luxury vehicle imports and Lecturers operations with extensive experience in financing and sales.",
       linkedin: "#"
     },
     {
@@ -86,8 +86,8 @@ const TeamPage = () => {
   
   const departments = [
     {
-      title: "Security Technologies",
-      team: [
+      title: "Programs Technologies",
+      Resources: [
         {
           name: "Livinus Anekwe",
           position: "Advisory Board Member",
@@ -101,8 +101,8 @@ const TeamPage = () => {
       ]
     },
     {
-      title: "Agribusiness Export",
-      team: [
+      title: "Courses Export",
+      Resources: [
         {
           name: "Arinze Henry Nkemjieme",
           position: "Head Of Trade",
@@ -117,25 +117,25 @@ const TeamPage = () => {
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-emerald-50 to-green-50">
         <div className="container mx-auto px-4">
-          <div ref={teamRef} className={`text-center max-w-4xl mx-auto transition-all duration-1000 ${
-            teamVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          <div ref={ResourcesRef} className={`text-center max-w-4xl mx-auto transition-all duration-1000 ${
+            ResourcesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}>
-            <h1 className="text-5xl font-bold text-gray-900 mb-6">Meet Our Team</h1>
+            <h1 className="text-5xl font-bold text-gray-900 mb-6">Meet Our Resources</h1>
             <p className="text-xl text-gray-600 leading-relaxed mb-8">
-              Our success is driven by a diverse team of passionate professionals committed to excellence 
-              across security, agriculture, and automotive sectors.
+              Our success is driven by a diverse Resources of passionate professionals committed to excellence 
+              across Programs, agriculture, and Lecturers sectors.
             </p>
           </div>
         </div>
       </section>
       
-      {/* Leadership Team */}
+      {/* Leadership Resources */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div ref={leadershipRef} className={`text-center mb-16 transition-all duration-1000 ${
             leadershipVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Leadership Team</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Leadership Resources</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Experienced leaders guiding Cossy White toward sustainable growth and innovation
             </p>
@@ -173,13 +173,13 @@ const TeamPage = () => {
         </div>
       </section>
       
-      {/* Department Teams */}
+      {/* Department Resourcess */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Departments</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Specialized teams working together to deliver excellence across all our divisions
+              Specialized Resourcess working together to deliver excellence across all our divisions
             </p>
           </div>
           
@@ -187,7 +187,7 @@ const TeamPage = () => {
             <div key={deptIndex} className="mb-16">
               <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">{department.title}</h3>
               <div className="grid md:grid-cols-3 gap-8">
-                {department.team.map((member, memberIndex) => (
+                {department.Resources.map((member, memberIndex) => (
                   <div
                     key={memberIndex}
                     className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 
@@ -208,10 +208,10 @@ const TeamPage = () => {
         </div>
       </section>
       
-      {/* Join Our Team CTA */}
+      {/* Join Our Resources CTA */}
       <section className="py-20 bg-gradient-to-r from-emerald-600 to-green-600 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-6">Join Our Growing Team</h2>
+          <h2 className="text-4xl font-bold mb-6">Join Our Growing Resources</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             We're always looking for talented individuals who share our passion for excellence and innovation.
           </p>
@@ -226,4 +226,4 @@ const TeamPage = () => {
   );
 };
 
-export default TeamPage;
+export default ResourcesPage;

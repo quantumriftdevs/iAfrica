@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Shield, Truck, Sprout, Users, Phone, Mail, MapPin, Star, ShoppingCart, Eye, ArrowRight, Menu, X, ChevronDown } from 'lucide-react';
+import { ChevronRight, BookOpen, GraduationCap, Users, Award, Video, Target, Heart, Zap, Shield } from 'lucide-react';
 
 // Animation hooks
 const useScrollAnimation = () => {
@@ -34,24 +34,24 @@ const AboutPage = () => {
   
   const values = [
     {
-      title: "Innovation",
-      description: "We embrace cutting-edge technologies to provide solutions that exceed expectations.",
-      icon: "🚀"
+      title: "Quality Education",
+      description: "We deliver world-class learning experiences with structured programs and expert lecturers.",
+      icon: "🎓"
     },
     {
-      title: "Quality",
-      description: "Every product and service we deliver meets the highest international standards.",
+      title: "Student Success",
+      description: "Every student's success is our priority, supported by comprehensive resources and guidance.",
       icon: "⭐"
     },
     {
-      title: "Trust",
-      description: "We build lasting relationships through transparency and reliable service delivery.",
-      icon: "🤝"
+      title: "Innovation",
+      description: "We leverage cutting-edge technology like LiveKit for immersive learning experiences.",
+      icon: "🚀"
     },
     {
-      title: "Excellence",
-      description: "Our commitment to excellence drives us to continuously improve and innovate.",
-      icon: "🏆"
+      title: "Accessibility",
+      description: "Education should be available to all, with flexible schedules and affordable programs.",
+      icon: "🌍"
     }
   ];
   
@@ -63,28 +63,31 @@ const AboutPage = () => {
           <div ref={aboutRef} className={`text-center max-w-4xl mx-auto transition-all duration-1000 ${
             aboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}>
-            <h1 className="text-5xl font-bold text-gray-900 mb-6">About Cossy White Limited</h1>
+            <h1 className="text-5xl font-bold text-gray-900 mb-6">About iAfrica Education</h1>
             <p className="text-xl text-gray-600 leading-relaxed mb-8">
-              Headquartered in Abuja, Nigeria, Cossy White Limited is a diversified enterprise driven by innovation, 
-              quality, and trust. We serve governments, corporations, investors, and discerning individuals who demand only the best.
+              iAfrica.com Educational Section is a comprehensive learning platform dedicated to empowering 
+              individuals with practical skills through structured programs, expert instruction, and interactive 
+              live classes. We bridge the gap between aspiration and achievement.
             </p>
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <img
-                  src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                  alt="Modern office building"
+                  src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="Students learning together"
                   className="rounded-2xl shadow-lg"
                 />
               </div>
               <div className="text-left">
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Story</h3>
                 <p className="text-gray-600 leading-relaxed mb-4">
-                  Founded with a vision to bridge the gap between cutting-edge technology and market needs, 
-                  Cossy White Limited has grown into a trusted partner across multiple industries.
+                  Founded with a vision to democratize quality education, iAfrica Education has become 
+                  a trusted platform for thousands of learners seeking to advance their careers and 
+                  acquire valuable skills.
                 </p>
                 <p className="text-gray-600 leading-relaxed">
-                  From our headquarters in Abuja, we've expanded our reach globally, serving clients across 
-                  Africa and beyond with our comprehensive range of security, agricultural, and automotive solutions.
+                  From our base in Nigeria, we've expanded our reach across Africa, offering programs 
+                  that combine theoretical knowledge with practical application, ensuring our students 
+                  are job-ready upon completion.
                 </p>
               </div>
             </div>
@@ -99,17 +102,25 @@ const AboutPage = () => {
             visionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}>
             <div className="bg-gradient-to-br from-emerald-600 to-green-600 p-8 rounded-2xl text-white">
-              <h3 className="text-3xl font-bold mb-4">Our Vision</h3>
+              <div className="flex items-center mb-4">
+                <Target className="mr-3" size={32} />
+                <h3 className="text-3xl font-bold">Our Vision</h3>
+              </div>
               <p className="text-lg leading-relaxed">
-                To become Africa's leading diversified enterprise, recognized globally for innovation, 
-                quality, and sustainable business practices that create value for all stakeholders.
+                To become Africa's premier online educational platform, recognized for transforming 
+                lives through accessible, high-quality education that empowers learners to achieve 
+                their full potential and contribute meaningfully to society.
               </p>
             </div>
             <div className="bg-gray-50 p-8 rounded-2xl">
-              <h3 className="text-3xl font-bold mb-4 text-gray-900">Our Mission</h3>
+              <div className="flex items-center mb-4">
+                <Heart className="mr-3 text-emerald-600" size={32} />
+                <h3 className="text-3xl font-bold text-gray-900">Our Mission</h3>
+              </div>
               <p className="text-lg text-gray-600 leading-relaxed">
-                To deliver world-class solutions across security, agriculture, and automotive sectors 
-                while empowering communities, protecting assets, and creating sustainable wealth for all stakeholders.
+                To deliver comprehensive, industry-relevant educational programs through live interactive 
+                classes, expert lecturers, and verified certification that enables students to build 
+                successful careers and create lasting impact in their communities.
               </p>
             </div>
           </div>
@@ -124,7 +135,7 @@ const AboutPage = () => {
           }`}>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Core Values</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              These values guide every decision we make and every relationship we build
+              These principles guide our approach to education and define our commitment to every student
             </p>
           </div>
           
@@ -145,9 +156,79 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
+
+      {/* How It Works Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">How Our Platform Works</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              A seamless learning experience designed for your success
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="bg-emerald-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="text-emerald-600" size={40} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Browse & Enroll</h3>
+              <p className="text-gray-600">
+                Explore our programs with beginner and advanced levels. Choose your path and 
+                enroll securely through Paystack payment gateway.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-emerald-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Video className="text-emerald-600" size={40} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Attend Live Classes</h3>
+              <p className="text-gray-600">
+                Join interactive live sessions with expert lecturers, access course materials, 
+                and collaborate with fellow students in real-time.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-emerald-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Award className="text-emerald-600" size={40} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Earn Certificates</h3>
+              <p className="text-gray-600">
+                Complete assessments, finish your program, and receive verified digital 
+                certificates with unique verification codes.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-20 bg-gradient-to-r from-emerald-600 to-green-600 text-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-4xl lg:text-5xl font-bold mb-2">1000+</div>
+              <div className="text-emerald-100 text-lg">Active Students</div>
+            </div>
+            <div>
+              <div className="text-4xl lg:text-5xl font-bold mb-2">50+</div>
+              <div className="text-emerald-100 text-lg">Expert Lecturers</div>
+            </div>
+            <div>
+              <div className="text-4xl lg:text-5xl font-bold mb-2">30+</div>
+              <div className="text-emerald-100 text-lg">Programs</div>
+            </div>
+            <div>
+              <div className="text-4xl lg:text-5xl font-bold mb-2">95%</div>
+              <div className="text-emerald-100 text-lg">Completion Rate</div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
 
-
-export default AboutPage
+export default AboutPage;

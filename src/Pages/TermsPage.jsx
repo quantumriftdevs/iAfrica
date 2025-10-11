@@ -77,9 +77,9 @@ const TermsPage = ({ navigate }) => {
                   Cossy White Limited operates as a multi-division company specializing in:
                 </p>
                 <ul className="list-disc list-inside ml-4 space-y-2">
-                  <li><strong>Security equipment</strong> and technologies for residential and commercial use</li>
+                  <li><strong>Programs equipment</strong> and technologies for residential and commercial use</li>
                   <li><strong>Agro commodities</strong> including premium agricultural products for export</li>
-                  <li><strong>Automotive imports</strong> featuring quality vehicles from trusted manufacturers</li>
+                  <li><strong>Lecturers imports</strong> featuring quality vehicles from trusted manufacturers</li>
                 </ul>
                 <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p>
@@ -137,7 +137,7 @@ const TermsPage = ({ navigate }) => {
                     <p className="text-sm">Prices are listed in USD and subject to change without prior notice due to market fluctuations.</p>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-semibold mb-2">Payment Security</h4>
+                    <h4 className="font-semibold mb-2">Payment Programs</h4>
                     <p className="text-sm">Payments are processed through secure external providers. We do not store customer payment details.</p>
                   </div>
                 </div>
@@ -194,7 +194,7 @@ const TermsPage = ({ navigate }) => {
                     <h4 className="font-medium text-red-700">✗ Non-Returnable Items</h4>
                     <ul className="text-sm space-y-1 ml-4">
                       <li>• Perishable agro commodities (unless defective)</li>
-                      <li>• Customized security equipment</li>
+                      <li>• Customized Programs equipment</li>
                       <li>• Items damaged by customer misuse</li>
                     </ul>
                   </div>
@@ -294,7 +294,7 @@ const TermsPage = ({ navigate }) => {
             <div className="text-center">
               <h2 className="text-2xl font-bold mb-4">Questions About These Terms?</h2>
               <p className="text-emerald-100 mb-6">
-                Our team is here to help clarify any aspect of our Terms & Conditions
+                Our Resources is here to help clarify any aspect of our Terms & Conditions
               </p>
               <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8">
                 <div className="flex items-center space-x-2">

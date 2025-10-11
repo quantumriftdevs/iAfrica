@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { TrendingUp, DollarSign, Users, BarChart3, Target, Calendar, CheckCircle, ArrowRight, Phone, Mail } from 'lucide-react';
 
-// Investment Page Component
-const InvestmentPage = ({ navigate }) => {
+// Certificates Page Component
+const CertificatesPage = ({ navigate }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     company: '',
-    investmentAmount: '',
+    CertificatesAmount: '',
     sector: '',
     message: ''
   });
@@ -43,10 +43,10 @@ const InvestmentPage = ({ navigate }) => {
   const [financialsRef, financialsVisible] = useScrollAnimation();
   const [formRef, formVisible] = useScrollAnimation();
 
-  const investmentOpportunities = [
+  const CertificatesOpportunities = [
     {
-      title: "Security Marketplace Expansion",
-      description: "Expand our security marketplace across West Africa with flagship stores in Lagos, Ghana, and Ivory Coast.",
+      title: "Programs Enroll Expansion",
+      description: "Expand our Programs Enroll across West Africa with flagship stores in Lagos, Ghana, and Ivory Coast.",
       target: "$2.5M",
       roi: "19-25%",
       timeline: "18-24 months",
@@ -54,7 +54,7 @@ const InvestmentPage = ({ navigate }) => {
       highlights: ["Market leadership position", "High-demand products", "Proven business model"]
     },
     {
-      title: "Agribusiness Processing Plants",
+      title: "Courses Processing Plants",
       description: "Establish value-add processing facilities for cashew, sesame, and ginger to increase export margins.",
       target: "$5.0M",
       roi: "40-55%",
@@ -64,7 +64,7 @@ const InvestmentPage = ({ navigate }) => {
     },
     {
       title: "Luxury Auto Showrooms",
-      description: "Premium automotive showrooms in Lagos, Abuja, and Port Harcourt with full service capabilities.",
+      description: "Premium Lecturers showrooms in Lagos, Abuja, and Port Harcourt with full service capabilities.",
       target: "$3.8M",
       roi: "30-40%",
       timeline: "12-18 months",
@@ -82,7 +82,7 @@ const InvestmentPage = ({ navigate }) => {
     {
       icon: Target,
       title: "Diversified Revenue Streams",
-      description: "Multiple income sources across security, agriculture, and automotive sectors minimize investment risk."
+      description: "Multiple income sources across Programs, agriculture, and Lecturers sectors minimize Certificates risk."
     },
     {
       icon: Users,
@@ -98,12 +98,12 @@ const InvestmentPage = ({ navigate }) => {
 
   const financialHighlights = [
     { metric: "Revenue Growth", value: "40%", description: "Annual growth rate" },
-    { metric: "Market Share", value: "25%", description: "In Nigerian security tech" },
+    { metric: "Market Share", value: "25%", description: "In Nigerian Programs tech" },
     { metric: "Export Countries", value: "15+", description: "International reach" },
     { metric: "ROI Target", value: "35-55%", description: "Projected returns" }
   ];
 
-  const investmentBenefits = [
+  const CertificatesBenefits = [
     "Quarterly financial reports and updates",
     "Board representation for major investors",
     "Priority access to new product lines",
@@ -121,16 +121,16 @@ const InvestmentPage = ({ navigate }) => {
 
   const handleSubmit = () => {
     // Validate required fields
-    if (!formData.name || !formData.email || !formData.phone || !formData.investmentAmount || !formData.sector) {
+    if (!formData.name || !formData.email || !formData.phone || !formData.CertificatesAmount || !formData.sector) {
       alert('Please fill in all required fields marked with *');
       return;
     }
 
     // Create email content
-    const subject = encodeURIComponent('Investment Inquiry - Cossy White');
-    const emailBody = encodeURIComponent(`Dear Cossy White Investment Team,
+    const subject = encodeURIComponent('Certificates Inquiry - Cossy White');
+    const emailBody = encodeURIComponent(`Dear Cossy White Certificates Resources,
 
-I am interested in learning more about investment opportunities with your company. Please find my details below:
+I am interested in learning more about Certificates opportunities with your company. Please find my details below:
 
 CONTACT INFORMATION:
 - Full Name: ${formData.name}
@@ -138,14 +138,14 @@ CONTACT INFORMATION:
 - Phone: ${formData.phone}
 - Company/Organization: ${formData.company || 'N/A'}
 
-INVESTMENT DETAILS:
-- Investment Range: ${formData.investmentAmount}
+Certificates DETAILS:
+- Certificates Range: ${formData.CertificatesAmount}
 - Sector of Interest: ${formData.sector}
 
 MESSAGE:
-${formData.message || 'Please send me detailed information about your current investment opportunities.'}
+${formData.message || 'Please send me detailed information about your current Certificates opportunities.'}
 
-I would appreciate the opportunity to discuss these investment opportunities further. Please contact me at your earliest convenience to schedule a consultation.
+I would appreciate the opportunity to discuss these Certificates opportunities further. Please contact me at your earliest convenience to schedule a consultation.
 
 Thank you for your time and consideration.
 
@@ -155,7 +155,7 @@ ${formData.phone}
 ${formData.email}`);
 
     // Create mailto link
-    const mailtoLink = `mailto:investments@cossywhite.com?subject=${subject}&body=${emailBody}`;
+    const mailtoLink = `mailto:Certificatess@cossywhite.com?subject=${subject}&body=${emailBody}`;
     
     // Open email client
     window.location.href = mailtoLink;
@@ -166,13 +166,13 @@ ${formData.email}`);
       email: '',
       phone: '',
       company: '',
-      investmentAmount: '',
+      CertificatesAmount: '',
       sector: '',
       message: ''
     });
     
     // Show success message
-    alert('Your email client will open with the investment inquiry. Please review and send the email to complete your request.');
+    alert('Your email client will open with the Certificates inquiry. Please review and send the email to complete your request.');
   };
 
   return (
@@ -195,7 +195,7 @@ ${formData.email}`);
               <div>
                 <img
                   src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                  alt="Investment growth"
+                  alt="Certificates growth"
                   className="rounded-2xl shadow-2xl w-full h-80 object-cover"
                 />
               </div>
@@ -225,20 +225,20 @@ ${formData.email}`);
         </div>
       </section>
 
-      {/* Investment Opportunities */}
+      {/* Certificates Opportunities */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div ref={opportunitiesRef} className={`text-center mb-16 transition-all duration-1000 ${
             opportunitiesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Current Investment Opportunities</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Current Certificates Opportunities</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Strategic expansion projects with clear ROI projections and defined timelines
             </p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {investmentOpportunities.map((opportunity, index) => (
+            {CertificatesOpportunities.map((opportunity, index) => (
               <div
                 key={index}
                 className={`bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 
@@ -255,7 +255,7 @@ ${formData.email}`);
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                   <div className="absolute bottom-4 left-4 text-white">
                     <div className="text-2xl font-bold">{opportunity.target}</div>
-                    <div className="text-sm text-emerald-300">Investment Target</div>
+                    <div className="text-sm text-emerald-300">Certificates Target</div>
                   </div>
                 </div>
 
@@ -360,7 +360,7 @@ ${formData.email}`);
         </div>
       </section>
 
-      {/* Investment Benefits */}
+      {/* Certificates Benefits */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -370,7 +370,7 @@ ${formData.email}`);
                 We provide comprehensive support and benefits to ensure our investors are informed and engaged.
               </p>
               <div className="space-y-4">
-                {investmentBenefits.map((benefit, index) => (
+                {CertificatesBenefits.map((benefit, index) => (
                   <div key={index} className="flex items-center space-x-3">
                     <CheckCircle className="text-emerald-600 flex-shrink-0" size={20} />
                     <span className="text-gray-700">{benefit}</span>
@@ -381,7 +381,7 @@ ${formData.email}`);
             <div>
               <img
                 src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                alt="Investment benefits"
+                alt="Certificates benefits"
                 className="rounded-2xl shadow-lg w-full h-96 object-cover"
               />
             </div>
@@ -389,16 +389,16 @@ ${formData.email}`);
         </div>
       </section>
 
-      {/* Investment Inquiry Form */}
+      {/* Certificates Inquiry Form */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div ref={formRef} className={`max-w-4xl mx-auto transition-all duration-1000 ${
             formVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}>
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Request Investment Prospectus</h2>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Request Certificates Prospectus</h2>
               <p className="text-xl text-gray-600">
-                Get detailed information about our investment opportunities and how you can participate.
+                Get detailed information about our Certificates opportunities and how you can participate.
               </p>
             </div>
 
@@ -465,10 +465,10 @@ ${formData.email}`);
 
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Investment Range *</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Certificates Range *</label>
                         <select
-                          name="investmentAmount"
-                          value={formData.investmentAmount}
+                          name="CertificatesAmount"
+                          value={formData.CertificatesAmount}
                           onChange={handleInputChange}
                           required
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 
@@ -492,9 +492,9 @@ ${formData.email}`);
                                    focus:border-emerald-500 transition-colors"
                         >
                           <option value="">Select sector</option>
-                          <option value="security">Security Technologies</option>
-                          <option value="agribusiness">Agribusiness Export</option>
-                          <option value="automotive">Luxury Automotive</option>
+                          <option value="Programs">Programs Technologies</option>
+                          <option value="Courses">Courses Export</option>
+                          <option value="Lecturers">Luxury Lecturers</option>
                           <option value="all">All Divisions</option>
                         </select>
                       </div>
@@ -509,7 +509,7 @@ ${formData.email}`);
                         rows="4"
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 
                                  focus:border-emerald-500 transition-colors resize-none"
-                        placeholder="Tell us about your investment interests and any specific questions..."
+                        placeholder="Tell us about your Certificates interests and any specific questions..."
                       ></textarea>
                     </div>
 
@@ -527,7 +527,7 @@ ${formData.email}`);
                 </div>
 
                 <div className="bg-gradient-to-br from-emerald-600 to-green-600 p-8 lg:p-12 text-white">
-                  <h3 className="text-2xl font-bold mb-6">Contact Our Investment Team</h3>
+                  <h3 className="text-2xl font-bold mb-6">Contact Our Certificates Resources</h3>
                   <div className="space-y-4 mb-8">
                     <div className="flex items-center space-x-3">
                       <Phone className="text-emerald-200" size={20} />
@@ -535,7 +535,7 @@ ${formData.email}`);
                     </div>
                     <div className="flex items-center space-x-3">
                       <Mail className="text-emerald-200" size={20} />
-                      <span>investments@cossywhite.com</span>
+                      <span>Certificatess@cossywhite.com</span>
                     </div>
                   </div>
                   
@@ -544,7 +544,7 @@ ${formData.email}`);
                     <ul className="space-y-2 text-sm text-emerald-100">
                       <li>• We'll review your inquiry within 24 hours</li>
                       <li>• Schedule a confidential consultation</li>
-                      <li>• Provide detailed investment prospectus</li>
+                      <li>• Provide detailed Certificates prospectus</li>
                       <li>• Discuss terms and partnership structure</li>
                     </ul>
                   </div>
@@ -558,4 +558,4 @@ ${formData.email}`);
   );
 };
 
-export default InvestmentPage;
+export default CertificatesPage;
