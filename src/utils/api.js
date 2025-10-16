@@ -10,6 +10,27 @@ const client = axios.create({
   timeout: 15000
 });
 
+// Helper to resolve bearer token based on role or current path
+function resolveAuthToken(role) {
+  try {
+    // explicit role passed via opts.role
+    if (role === 'admin') return localStorage.getItem('admin-token');
+    if (role === 'lecturer') return localStorage.getItem('lecturer-token');
+    if (role === 'student') return localStorage.getItem('student-token');
+
+    // infer from pathname, e.g., /admin, /lecturer, /student
+    if (typeof window !== 'undefined' && window.location && window.location.pathname) {
+      const p = window.location.pathname.toLowerCase();
+      if (p.startsWith('/admin')) return localStorage.getItem('admin-token');
+      if (p.startsWith('/lecturer')) return localStorage.getItem('lecturer-token');
+      if (p.startsWith('/student')) return localStorage.getItem('student-token');
+    }
+  } catch {
+    // ignore localStorage errors (SSR or restricted environments)
+  }
+  return null;
+}
+
 async function request(path, opts = {}) {
   try {
     const method = (opts.method || 'get').toLowerCase();
@@ -22,6 +43,17 @@ async function request(path, opts = {}) {
     if (opts.body) {
       // fetch used string bodies; axios expects data
       config.data = opts.body;
+    }
+
+    // attach Authorization header when token is resolvable for admin/lecturer/student
+    try {
+      const token = resolveAuthToken(opts.role);
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch {
+      // ignore token resolution errors
     }
 
     const res = await client.request(config);
