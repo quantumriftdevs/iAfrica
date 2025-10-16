@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { initializePayment, getPrograms } from '../utils/api';
 import { ChevronRight, BookOpen, GraduationCap, Users, Clock, Calendar, Award, Video, FileText, CheckCircle, ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
 
 // Animation hooks
@@ -24,202 +25,102 @@ const EnrollPage = () => {
   const [gradeRef, gradeVisible] = useScrollAnimation();
 
   useEffect(() => {
-    setTimeout(() => {
-      setPrograms([
-        {
-          id: 1,
-          name: "Web Development",
-          description: "Master modern web development from front-end to back-end. Build responsive, dynamic websites and web applications using the latest technologies.",
-          image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
-          students: "450+",
-          rating: "4.8",
-          grades: [
-            {
-              id: 11,
-              level: "Beginner",
-              duration: "8 weeks",
-              price: 50000,
-              courses: [
-                { name: "HTML & CSS Fundamentals", lecturer: "Dr. John Adeyemi" },
-                { name: "JavaScript Basics", lecturer: "Eng. Sarah Okafor" },
-                { name: "Responsive Design", lecturer: "Mr. David Mensah" }
-              ],
-              seasonInfo: {
-                name: "Fall 2025",
-                startDate: "October 15, 2025",
-                endDate: "December 10, 2025",
-                spotsLeft: 15
-              }
-            },
-            {
-              id: 12,
-              level: "Advanced",
-              duration: "10 weeks",
-              price: 75000,
-              courses: [
-                { name: "React.js Development", lecturer: "Dr. John Adeyemi" },
-                { name: "Node.js & Express", lecturer: "Eng. Chioma Nwankwo" },
-                { name: "Database Integration", lecturer: "Prof. Ahmed Ibrahim" }
-              ],
-              seasonInfo: {
-                name: "Fall 2025",
-                startDate: "October 15, 2025",
-                endDate: "December 22, 2025",
-                spotsLeft: 8
-              }
-            }
-          ],
-          features: ["Live Interactive Classes", "Real-world Projects", "Industry Mentorship", "Job Placement Support", "Verified Certificate"]
-        },
-        {
-          id: 2,
-          name: "Digital Marketing",
-          description: "Learn to create and execute successful digital marketing campaigns. Master SEO, social media, content marketing, and analytics.",
-          image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-          students: "380+",
-          rating: "4.7",
-          grades: [
-            {
-              id: 21,
-              level: "Beginner",
-              duration: "6 weeks",
-              price: 40000,
-              courses: [
-                { name: "Marketing Fundamentals", lecturer: "Mr. Tunde Bakare" },
-                { name: "Social Media Basics", lecturer: "Ms. Zainab Musa" },
-                { name: "Content Creation", lecturer: "Mrs. Efe Okoro" }
-              ],
-              seasonInfo: {
-                name: "Fall 2025",
-                startDate: "October 20, 2025",
-                endDate: "December 1, 2025",
-                spotsLeft: 20
-              }
-            },
-            {
-              id: 22,
-              level: "Advanced",
-              duration: "8 weeks",
-              price: 60000,
-              courses: [
-                { name: "SEO & SEM Strategies", lecturer: "Dr. Peter Obi" },
-                { name: "Analytics & Data", lecturer: "Mr. Tunde Bakare" },
-                { name: "Campaign Management", lecturer: "Eng. Ngozi Eze" }
-              ],
-              seasonInfo: {
-                name: "Fall 2025",
-                startDate: "October 20, 2025",
-                endDate: "December 15, 2025",
-                spotsLeft: 12
-              }
-            }
-          ],
-          features: ["Live Strategy Sessions", "Campaign Projects", "Industry Tools Access", "Portfolio Building", "Verified Certificate"]
-        },
-        {
-          id: 3,
-          name: "Graphic Design",
-          description: "Transform your creative ideas into stunning visual designs. Learn industry-standard tools and design principles for print and digital media.",
-          image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800&q=80",
-          students: "320+",
-          rating: "4.9",
-          grades: [
-            {
-              id: 31,
-              level: "Beginner",
-              duration: "7 weeks",
-              price: 45000,
-              courses: [
-                { name: "Design Principles", lecturer: "Mrs. Grace Okonkwo" },
-                { name: "Adobe Photoshop", lecturer: "Mr. Kwame Asante" },
-                { name: "Typography Basics", lecturer: "Ms. Amina Bello" }
-              ],
-              seasonInfo: {
-                name: "Fall 2025",
-                startDate: "October 18, 2025",
-                endDate: "December 8, 2025",
-                spotsLeft: 18
-              }
-            },
-            {
-              id: 32,
-              level: "Advanced",
-              duration: "9 weeks",
-              price: 70000,
-              courses: [
-                { name: "Adobe Illustrator Pro", lecturer: "Dr. Folake Adebayo" },
-                { name: "Brand Identity Design", lecturer: "Mr. Kwame Asante" },
-                { name: "UI/UX Fundamentals", lecturer: "Mrs. Grace Okonkwo" }
-              ],
-              seasonInfo: {
-                name: "Fall 2025",
-                startDate: "October 18, 2025",
-                endDate: "December 20, 2025",
-                spotsLeft: 10
-              }
-            }
-          ],
-          features: ["Live Design Sessions", "Portfolio Projects", "Adobe Suite Access", "Client Project Simulation", "Verified Certificate"]
-        },
-        {
-          id: 4,
-          name: "Data Analytics",
-          description: "Unlock the power of data to drive business decisions. Learn data analysis, visualization, and interpretation using industry-leading tools.",
-          image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-          students: "280+",
-          rating: "4.8",
-          grades: [
-            {
-              id: 41,
-              level: "Beginner",
-              duration: "8 weeks",
-              price: 55000,
-              courses: [
-                { name: "Data Fundamentals", lecturer: "Prof. Ahmed Ibrahim" },
-                { name: "Excel for Analysis", lecturer: "Eng. Sarah Okafor" },
-                { name: "Statistics Basics", lecturer: "Dr. Peter Obi" }
-              ],
-              seasonInfo: {
-                name: "Fall 2025",
-                startDate: "October 22, 2025",
-                endDate: "December 17, 2025",
-                spotsLeft: 14
-              }
-            },
-            {
-              id: 42,
-              level: "Advanced",
-              duration: "10 weeks",
-              price: 80000,
-              courses: [
-                { name: "Python for Data Science", lecturer: "Dr. Peter Obi" },
-                { name: "Power BI & Tableau", lecturer: "Eng. Chioma Nwankwo" },
-                { name: "Predictive Analytics", lecturer: "Prof. Ahmed Ibrahim" }
-              ],
-              seasonInfo: {
-                name: "Fall 2025",
-                startDate: "October 22, 2025",
-                endDate: "December 30, 2025",
-                spotsLeft: 6
-              }
-            }
-          ],
-          features: ["Live Data Labs", "Real Dataset Projects", "Industry Case Studies", "Tool Certifications", "Verified Certificate"]
+    // load programs via API
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await getPrograms();
+        if (!mounted) return;
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map((p, idx) => ({
+            id: p.id || idx + 1,
+            name: p.name || p.title || `Program ${idx + 1}`,
+            description: p.description || p.summary || '',
+            image: (p.image && p.image.url) || p.image || p.thumbnail || '',
+            students: p.students || '0',
+            rating: p.rating || '0',
+            grades: Array.isArray(p.grades) ? p.grades : (p.levels || []),
+            features: p.features || []
+          }));
+          setPrograms(mapped);
         }
-      ]);
-      setLoading(false);
-    }, 1000);
+      } catch (e) {
+        console.error('Programs fetch error', e);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+
+    return () => { mounted = false; };
   }, []);
 
-  const handleEnroll = (grade) => {
-    setProcessingPayment(true);
+  // Check for payment reference in URL when returning from gateway and verify
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('reference') || params.get('trxref') || params.get('payment_reference') || params.get('paymentRef');
+    if (!ref) return;
 
-    setTimeout(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setProcessingPayment(true);
+        const verifyRes = await (await import('../utils/api')).verifyPayment(ref);
+        if (!mounted) return;
+        const status = verifyRes?.status || verifyRes?.payment_status || verifyRes?.data?.status || (verifyRes?.success ? 'success' : 'failed');
+        if (status === 'success' || status === 'paid' || status === 'completed') {
+          alert('Payment confirmed — you are now enrolled. Check your email for access details.');
+          // Optionally clear selection
+          setSelectedProgram(null);
+          setSelectedGrade(null);
+        } else {
+          alert('Payment not confirmed. If you were charged, contact support.');
+        }
+      } catch (e) {
+        console.error('Payment verification error', e);
+        alert('Unable to verify payment. Please try again or contact support.');
+      } finally {
+        if (mounted) setProcessingPayment(false);
+      }
+    })();
+
+    return () => { mounted = false; };
+  }, []);
+
+  const handleEnroll = async (grade) => {
+    setProcessingPayment(true);
+    try {
+      // Build payload expected by backend initialize endpoint
+      const payload = {
+        programId: selectedProgram.id,
+        gradeId: grade.id,
+        amount: grade.price,
+        currency: 'NGN',
+        returnUrl: window.location.href,
+        metadata: {
+          programName: selectedProgram.name,
+          gradeLevel: grade.level
+        }
+      };
+
+      const res = await initializePayment(payload);
+
+      // Expecting a payment url in response; common keys: authorization_url, data.authorization_url, checkout_url
+      const paymentUrl = res?.authorization_url || res?.data?.authorization_url || res?.checkout_url || res?.data?.checkout_url || res?.payment_url || res?.gateway_url;
+
+      if (paymentUrl) {
+        // open in new tab to preserve app state; alternatively redirect
+        window.open(paymentUrl, '_blank');
+      } else {
+        // If API returned inline data (e.g., paystack reference), show it to the user
+        alert('Payment initialized. Please complete payment on the provided page.');
+      }
+    } catch (e) {
+      console.error('Payment initialization error', e);
+      alert('Failed to initialize payment. Please try again later.');
+    } finally {
       setProcessingPayment(false);
-      alert(`🎉 Payment successful!\n\nYou are now enrolled in ${selectedProgram.name} - ${grade.level} Level.\n\nCheck your email for class schedule and access details.\n\nYour certificate will be issued upon completion!`);
-      setSelectedProgram(null);
-      setSelectedGrade(null);
-    }, 2500);
+      // keep selection so user can retry or continue; do not auto-clear selection on init
+    }
   };
 
   if (loading) {

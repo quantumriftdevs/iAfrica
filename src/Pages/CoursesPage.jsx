@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getCourses } from '../utils/api';
 import { Book, PlayCircle, CheckCircle, Users, Clock, ChevronRight, Star } from 'lucide-react';
 
 // Animation Hook
@@ -6,6 +7,7 @@ const useScrollAnimation = () => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = React.useRef();
 
+  // fallback is a stable module-scope constant; suppress exhaustive-deps warning for this hook
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => entry.isIntersecting && setIsVisible(true),
@@ -18,61 +20,37 @@ const useScrollAnimation = () => {
   return [ref, isVisible];
 };
 
-// Courses Page
+
 const CoursesPage = ({ navigate }) => {
   const [coursesRef, coursesVisible] = useScrollAnimation();
   const [detailsRef, detailsVisible] = useScrollAnimation();
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const courses = [
-    {
-      title: "React Mastery",
-      category: "Web Development",
-      duration: "6 Weeks",
-      students: "500+",
-      rating: "4.9",
-      description:
-        "Learn to build dynamic, fast, and responsive web apps using React.js. Understand hooks, context API, and component architecture.",
-      modules: ["React Fundamentals", "Hooks & Context", "Routing", "State Management", "API Integration"],
-      price: "₦60,000",
-      image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      title: "UI/UX Design Bootcamp",
-      category: "Design",
-      duration: "8 Weeks",
-      students: "420+",
-      rating: "4.8",
-      description:
-        "Master design thinking, wireframing, prototyping, and user research using Figma and modern design workflows.",
-      modules: ["Design Thinking", "User Research", "Figma Prototyping", "Usability Testing", "Portfolio Project"],
-      price: "₦55,000",
-      image: "https://images.unsplash.com/photo-1558655146-364adaf1fcc9?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      title: "Python for Beginners",
-      category: "Programming",
-      duration: "5 Weeks",
-      students: "610+",
-      rating: "4.7",
-      description:
-        "Start coding with Python. Learn data structures, problem-solving, and automation fundamentals from scratch.",
-      modules: ["Syntax & Basics", "Loops & Functions", "Data Structures", "File Handling", "Mini Projects"],
-      price: "₦45,000",
-      image: "https://images.unsplash.com/photo-1581091012184-7a5a7f1bdf91?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      title: "Video Editing Essentials",
-      category: "Creative Media",
-      duration: "4 Weeks",
-      students: "350+",
-      rating: "4.9",
-      description:
-        "Learn video editing techniques with Adobe Premiere Pro and CapCut. Create engaging content ready for social media and brand work.",
-      modules: ["Editing Basics", "Transitions", "Sound Design", "Color Grading", "Exporting"],
-      price: "₦40,000",
-      image: "https://images.unsplash.com/photo-1590608897129-79da98d1591e?auto=format&fit=crop&w=800&q=80",
-    },
-  ];
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await getCourses();
+        if (!mounted) return;
+        if (Array.isArray(data) && data.length > 0) setCourses(data);
+      } catch {
+        // ignore
+      } finally {
+        mounted && setLoading(false);
+      }
+    })();
+
+    return () => { mounted = false; };
+  }, []);
+
+  if (loading) return <div className="pt-20 text-center">Loading courses...</div>;
+  if (!loading && (!Array.isArray(courses) || courses.length === 0)) return (
+    <div className="pt-20 text-center">
+      <h3 className="text-xl font-semibold">No courses available</h3>
+      <p className="text-gray-600">We're not showing any courses right now. Please check back later.</p>
+    </div>
+  );
 
   return (
     <div className="pt-20">

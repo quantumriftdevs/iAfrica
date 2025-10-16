@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getPrograms } from '../utils/api';
 import { ChevronRight, BookOpen, GraduationCap, Users, Clock, Calendar, Award, Video, FileText, CheckCircle } from 'lucide-react';
 
 // Animation hooks
@@ -23,102 +24,46 @@ const useScrollAnimation = () => {
   return [ref, isVisible];
 };
 
+
 // Programs Page
 const ProgramsPage = ({ navigate }) => {
   const [programsRef, programsVisible] = useScrollAnimation();
   const [detailsRef, detailsVisible] = useScrollAnimation();
+  const [programs, setPrograms] = useState([]);
+  const [loading, setLoading] = useState(true);
   
-  const programs = [
-    {
-      name: "Web Development",
-      description: "Master modern web development from front-end to back-end. Build responsive, dynamic websites and web applications using the latest technologies.",
-      grades: [
-        {
-          level: "Beginner",
-          duration: "3 Months",
-          price: "₦50,000",
-          courses: ["HTML & CSS Fundamentals", "JavaScript Basics", "Responsive Design"]
-        },
-        {
-          level: "Advanced",
-          duration: "3 Months",
-          price: "₦75,000",
-          courses: ["React.js Development", "Node.js & Express", "Database Integration"]
-        }
-      ],
-      features: ["Live Interactive Classes", "Real-world Projects", "Industry Mentorship", "Job Placement Support", "Verified Certificate"],
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
-      students: "450+",
-      rating: "4.8"
-    },
-    {
-      name: "Digital Marketing",
-      description: "Learn to create and execute successful digital marketing campaigns. Master SEO, social media, content marketing, and analytics.",
-      grades: [
-        {
-          level: "Beginner",
-          duration: "2 Months",
-          price: "₦40,000",
-          courses: ["Marketing Fundamentals", "Social Media Basics", "Content Creation"]
-        },
-        {
-          level: "Advanced",
-          duration: "2 Months",
-          price: "₦60,000",
-          courses: ["SEO & SEM Strategies", "Analytics & Data", "Campaign Management"]
-        }
-      ],
-      features: ["Live Strategy Sessions", "Campaign Projects", "Industry Tools Access", "Portfolio Building", "Verified Certificate"],
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-      students: "380+",
-      rating: "4.7"
-    },
-    {
-      name: "Graphic Design",
-      description: "Transform your creative ideas into stunning visual designs. Learn industry-standard tools and design principles for print and digital media.",
-      grades: [
-        {
-          level: "Beginner",
-          duration: "2.5 Months",
-          price: "₦45,000",
-          courses: ["Design Principles", "Adobe Photoshop", "Typography Basics"]
-        },
-        {
-          level: "Advanced",
-          duration: "2.5 Months",
-          price: "₦70,000",
-          courses: ["Adobe Illustrator Pro", "Brand Identity Design", "UI/UX Fundamentals"]
-        }
-      ],
-      features: ["Live Design Sessions", "Portfolio Projects", "Adobe Suite Access", "Client Project Simulation", "Verified Certificate"],
-      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800&q=80",
-      students: "320+",
-      rating: "4.9"
-    },
-    {
-      name: "Data Analytics",
-      description: "Unlock the power of data to drive business decisions. Learn data analysis, visualization, and interpretation using industry-leading tools.",
-      grades: [
-        {
-          level: "Beginner",
-          duration: "3 Months",
-          price: "₦55,000",
-          courses: ["Data Fundamentals", "Excel for Analysis", "Statistics Basics"]
-        },
-        {
-          level: "Advanced",
-          duration: "3 Months",
-          price: "₦80,000",
-          courses: ["Python for Data Science", "Power BI & Tableau", "Predictive Analytics"]
-        }
-      ],
-      features: ["Live Data Labs", "Real Dataset Projects", "Industry Case Studies", "Tool Certifications", "Verified Certificate"],
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-      students: "280+",
-      rating: "4.8"
-    }
-  ];
-  
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await getPrograms();
+        if (!mounted) return;
+        if (Array.isArray(data) && data.length > 0) setPrograms(data);
+      } catch {
+        // ignore
+      } finally {
+        mounted && setLoading(false);
+      }
+    })();
+
+    return () => { mounted = false; };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-white">
+        <div className="text-center">Loading programs...</div>
+      </div>
+    );
+  }
+
+  if (!loading && (!Array.isArray(programs) || programs.length === 0)) return (
+    <div className="pt-20 text-center">
+      <h3 className="text-xl font-semibold">No programs available</h3>
+      <p className="text-gray-600">We're not showing any programs right now. Please check back later.</p>
+    </div>
+  );
+
   return (
     <div className="pt-20">
       {/* Hero Section */}

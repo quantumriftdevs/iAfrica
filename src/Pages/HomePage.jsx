@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getPrograms } from '../utils/api';
 import { ChevronRight, BookOpen, Users, Award, Video, FileText, Calendar, ArrowRight, Menu, X, GraduationCap, Clock, Globe } from 'lucide-react';
 
 // Animation hooks
@@ -26,13 +27,13 @@ const useScrollAnimation = () => {
   return [ref, isVisible];
 };
 
-// Home Page Component
+
 const HomePage = ({ navigate }) => {
   const [heroRef, heroVisible] = useScrollAnimation();
   const [featuresRef, featuresVisible] = useScrollAnimation();
   const [statsRef, statsVisible] = useScrollAnimation();
   const [programsRef, programsVisible] = useScrollAnimation();
-  
+
   const features = [
     {
       icon: Video,
@@ -61,29 +62,25 @@ const HomePage = ({ navigate }) => {
     { number: "95%", label: "Completion Rate", icon: Award }
   ];
 
-  const programs = [
-    {
-      title: "Web Development",
-      levels: "Beginner & Advanced",
-      courses: "3 Comprehensive Courses",
-      duration: "6 Months",
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      title: "Digital Marketing",
-      levels: "Beginner & Advanced",
-      courses: "3 Comprehensive Courses",
-      duration: "4 Months",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      title: "Graphic Design",
-      levels: "Beginner & Advanced",
-      courses: "3 Comprehensive Courses",
-      duration: "5 Months",
-      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-    }
-  ];
+  const [programs, setPrograms] = useState([]);
+  
+  // module-scope fallback programs (stable reference for hooks)
+  
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await getPrograms();
+        if (!mounted) return;
+        if (Array.isArray(data) && data.length > 0) setPrograms(data.slice(0, 3));
+      } catch {
+        // ignore
+      }
+    })();
+
+    return () => { mounted = false; };
+  }, []);
   
   return (
     <div className="pt-20">

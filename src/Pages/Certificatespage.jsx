@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { TrendingUp, DollarSign, Users, BarChart3, Target, Calendar, CheckCircle, ArrowRight, Phone, Mail } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { getCertificates } from '../utils/api';
+import { TrendingUp, Users, BarChart3, Target, CheckCircle, ArrowRight, Phone, Mail } from 'lucide-react';
+
 
 // Certificates Page Component
 const CertificatesPage = ({ navigate }) => {
@@ -16,7 +18,7 @@ const CertificatesPage = ({ navigate }) => {
   const useScrollAnimation = () => {
     const [isVisible, setIsVisible] = useState(false);
     const ref = React.useRef();
-    
+
     React.useEffect(() => {
       const observer = new IntersectionObserver(
         ([entry]) => {
@@ -26,14 +28,14 @@ const CertificatesPage = ({ navigate }) => {
         },
         { threshold: 0.1 }
       );
-      
+
       if (ref.current) {
         observer.observe(ref.current);
       }
-      
+
       return () => observer.disconnect();
     }, []);
-    
+
     return [ref, isVisible];
   };
 
@@ -42,36 +44,9 @@ const CertificatesPage = ({ navigate }) => {
   const [whyInvestRef, whyInvestVisible] = useScrollAnimation();
   const [financialsRef, financialsVisible] = useScrollAnimation();
   const [formRef, formVisible] = useScrollAnimation();
-
-  const CertificatesOpportunities = [
-    {
-      title: "Programs Enroll Expansion",
-      description: "Expand our Programs Enroll across West Africa with flagship stores in Lagos, Ghana, and Ivory Coast.",
-      target: "$2.5M",
-      roi: "19-25%",
-      timeline: "18-24 months",
-      image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      highlights: ["Market leadership position", "High-demand products", "Proven business model"]
-    },
-    {
-      title: "Courses Processing Plants",
-      description: "Establish value-add processing facilities for cashew, sesame, and ginger to increase export margins.",
-      target: "$5.0M",
-      roi: "40-55%",
-      timeline: "24-36 months",
-      image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      highlights: ["Vertical integration", "Premium pricing", "Export ready products"]
-    },
-    {
-      title: "Luxury Auto Showrooms",
-      description: "Premium Lecturers showrooms in Lagos, Abuja, and Port Harcourt with full service capabilities.",
-      target: "$3.8M",
-      roi: "30-40%",
-      timeline: "12-18 months",
-      image: "https://images.unsplash.com/photo-1562141961-b06ffc730dd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      highlights: ["Luxury market growth", "High-margin services", "Exclusive partnerships"]
-    }
-  ];
+  const [opportunities, setOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
 
   const whyInvestReasons = [
     {
@@ -119,6 +94,23 @@ const CertificatesPage = ({ navigate }) => {
     });
   };
 
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await getCertificates();
+        if (!mounted) return;
+        if (Array.isArray(data) && data.length > 0) setOpportunities(data);
+      } catch {
+        // ignore
+      } finally {
+        mounted && setLoading(false);
+      }
+    })();
+
+    return () => { mounted = false; };
+  }, []);
+
   const handleSubmit = () => {
     // Validate required fields
     if (!formData.name || !formData.email || !formData.phone || !formData.CertificatesAmount || !formData.sector) {
@@ -130,29 +122,29 @@ const CertificatesPage = ({ navigate }) => {
     const subject = encodeURIComponent('Certificates Inquiry - Cossy White');
     const emailBody = encodeURIComponent(`Dear Cossy White Certificates Resources,
 
-I am interested in learning more about Certificates opportunities with your company. Please find my details below:
+    I am interested in learning more about Certificates opportunities with your company. Please find my details below:
 
-CONTACT INFORMATION:
-- Full Name: ${formData.name}
-- Email: ${formData.email}
-- Phone: ${formData.phone}
-- Company/Organization: ${formData.company || 'N/A'}
+    CONTACT INFORMATION:
+    - Full Name: ${formData.name}
+    - Email: ${formData.email}
+    - Phone: ${formData.phone}
+    - Company/Organization: ${formData.company || 'N/A'}
 
-Certificates DETAILS:
-- Certificates Range: ${formData.CertificatesAmount}
-- Sector of Interest: ${formData.sector}
+    Certificates DETAILS:
+    - Certificates Range: ${formData.CertificatesAmount}
+    - Sector of Interest: ${formData.sector}
 
-MESSAGE:
-${formData.message || 'Please send me detailed information about your current Certificates opportunities.'}
+    MESSAGE:
+    ${formData.message || 'Please send me detailed information about your current Certificates opportunities.'}
 
-I would appreciate the opportunity to discuss these Certificates opportunities further. Please contact me at your earliest convenience to schedule a consultation.
+    I would appreciate the opportunity to discuss these Certificates opportunities further. Please contact me at your earliest convenience to schedule a consultation.
 
-Thank you for your time and consideration.
+    Thank you for your time and consideration.
 
-Best regards,
-${formData.name}
-${formData.phone}
-${formData.email}`);
+    Best regards,
+    ${formData.name}
+    ${formData.phone}
+    ${formData.email}`);
 
     // Create mailto link
     const mailtoLink = `mailto:Certificatess@cossywhite.com?subject=${subject}&body=${emailBody}`;
@@ -226,6 +218,14 @@ ${formData.email}`);
       </section>
 
       {/* Certificates Opportunities */}
+      {loading ? (
+        <div className="py-20 text-center">Loading opportunities...</div>
+      ) : (!Array.isArray(opportunities) || opportunities.length === 0) ? (
+        <div className="py-20 text-center">
+          <h3 className="text-xl font-semibold">No certificate opportunities found</h3>
+          <p className="text-gray-600">There are no openings at the moment. Please check back later.</p>
+        </div>
+      ) : (
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div ref={opportunitiesRef} className={`text-center mb-16 transition-all duration-1000 ${
@@ -238,7 +238,7 @@ ${formData.email}`);
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {CertificatesOpportunities.map((opportunity, index) => (
+            {opportunities.map((opportunity, index) => (
               <div
                 key={index}
                 className={`bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 
@@ -296,6 +296,7 @@ ${formData.email}`);
           </div>
         </div>
       </section>
+      )}
 
       {/* Why Invest Section */}
       <section className="py-20 bg-gray-50">

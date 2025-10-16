@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getLecturers } from '../utils/api';
 import { ChevronRight, Award, BookOpen, Users, Mail, Linkedin, Star, Eye, X, GraduationCap, Video, CheckCircle } from 'lucide-react';
 
 // Animation hooks
@@ -65,72 +66,7 @@ const LecturerModal = ({ lecturer, isOpen, onClose, navigate }) => {
 
         {/* Modal Content */}
         <div className="p-8 pt-20">
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">{lecturer.name}</h2>
-            <p className="text-lg text-emerald-600 font-semibold mb-2">{lecturer.title}</p>
-            <p className="text-gray-600">{lecturer.specialization}</p>
-            <div className="flex items-center gap-4 mt-4">
-              <div className="flex items-center">
-                <Star className="text-yellow-500 fill-current" size={20} />
-                <span className="ml-2 font-semibold text-gray-900">{lecturer.rating}/5.0</span>
-              </div>
-              <div className="flex items-center">
-                <Users className="text-emerald-600" size={20} />
-                <span className="ml-2 text-gray-700">{lecturer.students} Students</span>
-              </div>
-              <div className="flex items-center">
-                <BookOpen className="text-emerald-600" size={20} />
-                <span className="ml-2 text-gray-700">{lecturer.courses} Courses</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Bio */}
-          <div className="mb-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">About</h3>
-            <p className="text-gray-700 leading-relaxed">{lecturer.bio}</p>
-          </div>
-
-          {/* Expertise */}
-          <div className="mb-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Areas of Expertise</h3>
-            <div className="grid md:grid-cols-2 gap-3">
-              {lecturer.expertise.map((skill, index) => (
-                <div key={index} className="flex items-center bg-emerald-50 p-3 rounded-lg">
-                  <CheckCircle className="text-emerald-600 mr-3" size={20} />
-                  <span className="text-gray-700 font-medium">{skill}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Qualifications */}
-          <div className="mb-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Qualifications & Certifications</h3>
-            <div className="space-y-3">
-              {lecturer.qualifications.map((qual, index) => (
-                <div key={index} className="flex items-start bg-gray-50 p-4 rounded-lg">
-                  <Award className="text-emerald-600 mr-3 mt-1 flex-shrink-0" size={20} />
-                  <span className="text-gray-700">{qual}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Teaching Programs */}
-          <div className="mb-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Teaching Programs</h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              {lecturer.programs.map((program, index) => (
-                <div key={index} className="border-2 border-emerald-200 p-4 rounded-lg hover:border-emerald-400 transition-colors">
-                  <h4 className="font-semibold text-gray-900 mb-2">{program.name}</h4>
-                  <p className="text-sm text-gray-600">{program.level}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* CTA Buttons */}
+  
           <div className="flex flex-col sm:flex-row gap-4">
             <button 
               onClick={() => {
@@ -161,13 +97,15 @@ const LecturerModal = ({ lecturer, isOpen, onClose, navigate }) => {
 };
 
 // Lecturers Page Component
+
 const LecturersPage = ({navigate}) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLecturer, setSelectedLecturer] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [heroRef, heroVisible] = useScrollAnimation();
+  const [, ,] = [null, null, null];
   const [lecturersRef, lecturersVisible] = useScrollAnimation();
-  
+  const [lecturers, setLecturers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const categories = [
     { id: 'all', name: 'All Lecturers' },
     { id: 'web-dev', name: 'Web Development' },
@@ -175,196 +113,31 @@ const LecturersPage = ({navigate}) => {
     { id: 'design', name: 'Graphic Design' },
     { id: 'data', name: 'Data Analytics' }
   ];
-  
-  const lecturers = [
-    {
-      id: 1,
-      name: "Dr. Adewale Johnson",
-      title: "Senior Web Development Instructor",
-      category: "web-dev",
-      specialization: "Full-Stack JavaScript Development",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      rating: 4.9,
-      students: "450+",
-      courses: 6,
-      experience: "12 Years",
-      bio: "Dr. Adewale Johnson is a seasoned full-stack developer with over 12 years of experience in web technologies. He has worked with Fortune 500 companies and led development teams on major projects. His teaching approach focuses on practical, real-world applications that prepare students for immediate employment.",
-      expertise: [
-        "React.js & Modern Frontend",
-        "Node.js Backend Development",
-        "Database Design & Management",
-        "API Development & Integration",
-        "Cloud Deployment (AWS, Azure)",
-        "Responsive Web Design"
-      ],
-      qualifications: [
-        "Ph.D. in Computer Science - MIT",
-        "AWS Certified Solutions Architect",
-        "Google Cloud Professional Developer",
-        "Microsoft Azure Developer Associate"
-      ],
-      programs: [
-        { name: "Web Development", level: "Beginner & Advanced" },
-        { name: "Full-Stack JavaScript", level: "Advanced" }
-      ]
-    },
-    {
-      id: 2,
-      name: "Chioma Okonkwo",
-      title: "Lead Digital Marketing Strategist",
-      category: "marketing",
-      specialization: "SEO & Social Media Marketing",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      rating: 4.8,
-      students: "380+",
-      courses: 5,
-      experience: "10 Years",
-      bio: "Chioma Okonkwo is a digital marketing expert who has managed campaigns for leading African brands. Her data-driven approach to marketing has helped businesses achieve 300% growth in online engagement. She specializes in creating strategies that work specifically for African markets.",
-      expertise: [
-        "Search Engine Optimization",
-        "Social Media Strategy",
-        "Content Marketing",
-        "Google Analytics & Data",
-        "Paid Advertising (PPC)",
-        "Email Marketing Campaigns"
-      ],
-      qualifications: [
-        "M.Sc. Marketing - London School of Economics",
-        "Google Ads Certification",
-        "Facebook Blueprint Certification",
-        "HubSpot Content Marketing Certified"
-      ],
-      programs: [
-        { name: "Digital Marketing", level: "Beginner & Advanced" },
-        { name: "Social Media Marketing", level: "Advanced" }
-      ]
-    },
-    {
-      id: 3,
-      name: "Ibrahim Yusuf",
-      title: "Creative Design Director",
-      category: "design",
-      specialization: "Brand Identity & UI/UX Design",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      rating: 4.9,
-      students: "320+",
-      courses: 4,
-      experience: "15 Years",
-      bio: "Ibrahim Yusuf is an award-winning designer who has created brand identities for over 200 companies across Africa. His portfolio includes work for international corporations and successful startups. He brings a unique blend of traditional design principles and modern digital aesthetics to his teaching.",
-      expertise: [
-        "Adobe Creative Suite Mastery",
-        "Brand Identity Design",
-        "UI/UX Design Principles",
-        "Typography & Layout",
-        "Print & Digital Media",
-        "Prototyping & Wireframing"
-      ],
-      qualifications: [
-        "B.F.A. Graphic Design - Central Saint Martins",
-        "Adobe Certified Expert (ACE)",
-        "Certified User Experience Professional",
-        "Award: African Design Excellence 2022"
-      ],
-      programs: [
-        { name: "Graphic Design", level: "Beginner & Advanced" },
-        { name: "UI/UX Design", level: "Advanced" }
-      ]
-    },
-    {
-      id: 4,
-      name: "Dr. Fatima Bello",
-      title: "Data Science Consultant",
-      category: "data",
-      specialization: "Business Intelligence & Predictive Analytics",
-      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      rating: 4.8,
-      students: "280+",
-      courses: 5,
-      experience: "11 Years",
-      bio: "Dr. Fatima Bello specializes in turning complex data into actionable business insights. She has consulted for government agencies, NGOs, and private corporations, helping them make data-driven decisions. Her teaching methodology emphasizes practical problem-solving with real datasets.",
-      expertise: [
-        "Python for Data Science",
-        "Statistical Analysis",
-        "Power BI & Tableau",
-        "Machine Learning Basics",
-        "Data Visualization",
-        "SQL & Database Queries"
-      ],
-      qualifications: [
-        "Ph.D. Statistics - University of Oxford",
-        "Microsoft Certified: Data Analyst",
-        "Tableau Desktop Specialist",
-        "IBM Data Science Professional Certificate"
-      ],
-      programs: [
-        { name: "Data Analytics", level: "Beginner & Advanced" },
-        { name: "Business Intelligence", level: "Advanced" }
-      ]
-    },
-    {
-      id: 5,
-      name: "Samuel Okafor",
-      title: "Frontend Development Specialist",
-      category: "web-dev",
-      specialization: "Modern JavaScript Frameworks",
-      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      rating: 4.7,
-      students: "290+",
-      courses: 4,
-      experience: "8 Years",
-      bio: "Samuel Okafor is a passionate frontend developer who believes in creating beautiful, performant web applications. He has contributed to major open-source projects and regularly speaks at tech conferences. His courses focus on modern best practices and cutting-edge frameworks.",
-      expertise: [
-        "React.js & Redux",
-        "Vue.js Development",
-        "TypeScript",
-        "CSS/SASS/Tailwind",
-        "Performance Optimization",
-        "Progressive Web Apps"
-      ],
-      qualifications: [
-        "B.Sc. Software Engineering - Carnegie Mellon",
-        "Meta Front-End Developer Certificate",
-        "freeCodeCamp Responsive Web Design",
-        "Open Source Contributor - React"
-      ],
-      programs: [
-        { name: "Web Development", level: "Beginner" },
-        { name: "Advanced Frontend", level: "Advanced" }
-      ]
-    },
-    {
-      id: 6,
-      name: "Amaka Nnamdi",
-      title: "Content Marketing Expert",
-      category: "marketing",
-      specialization: "Content Strategy & Copywriting",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      rating: 4.9,
-      students: "340+",
-      courses: 4,
-      experience: "9 Years",
-      bio: "Amaka Nnamdi is a master storyteller who has helped brands find their voice and connect with audiences. Her content strategies have generated millions in revenue for e-commerce businesses. She teaches students how to craft compelling narratives that drive engagement and conversions.",
-      expertise: [
-        "Content Strategy Development",
-        "SEO Copywriting",
-        "Brand Storytelling",
-        "Blog & Article Writing",
-        "Social Media Content",
-        "Video Script Writing"
-      ],
-      qualifications: [
-        "M.A. Communications - Columbia University",
-        "Content Marketing Institute Certification",
-        "Copyblogger Certified Content Marketer",
-        "Published Author - 'Digital Storytelling'"
-      ],
-      programs: [
-        { name: "Digital Marketing", level: "Beginner & Advanced" },
-        { name: "Content Marketing", level: "Advanced" }
-      ]
-    }
-  ];
-  
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await getLecturers();
+        if (!mounted) return;
+        if (Array.isArray(data) && data.length > 0) setLecturers(data);
+      } catch {
+        // ignore
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+
+    return () => { mounted = false; };
+  }, []);
+
+  if (loading) return <div className="pt-20 text-center">Loading lecturers...</div>;
+  if (!loading && (!Array.isArray(lecturers) || lecturers.length === 0)) return (
+    <div className="pt-20 text-center">
+      <h3 className="text-xl font-semibold">No lecturers available</h3>
+      <p className="text-gray-600">We're not showing any lecturers right now. Please check back later.</p>
+    </div>
+  );
+
   const filteredLecturers = selectedCategory === 'all' 
     ? lecturers 
     : lecturers.filter(lecturer => lecturer.category === selectedCategory);
@@ -378,34 +151,8 @@ const LecturersPage = ({navigate}) => {
     setIsModalOpen(false);
     setSelectedLecturer(null);
   };
-  
   return (
     <div className="pt-20">
-      {/* Hero Section */}
-      <section className="relative h-96 bg-gradient-to-br from-gray-900 to-emerald-900 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black/40"></div>
-        <div className="container mx-auto px-4 h-full flex items-center relative z-10">
-          <div ref={heroRef} className={`transition-all duration-1000 ${
-            heroVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-          }`}>
-            <h1 className="text-5xl font-bold mb-4">Meet Our Expert Lecturers</h1>
-            <p className="text-xl mb-6 max-w-2xl">
-              Learn from industry professionals with years of real-world experience. 
-              Our lecturers are passionate educators dedicated to your success.
-            </p>
-            <button onClick={() => navigate && navigate("/contact")} className="bg-gradient-to-r from-emerald-600 to-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transform hover:scale-105 transition-all duration-200">
-              Become a Lecturer
-            </button>
-          </div>
-        </div>
-        <div className="absolute right-0 top-0 h-full w-1/2 opacity-20">
-          <img 
-            src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-            alt="Teaching"
-            className="h-full w-full object-cover"
-          />
-        </div>
-      </section>
 
       {/* Lecturers Section */}
       <section className="py-16">

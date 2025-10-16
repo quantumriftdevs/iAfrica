@@ -1,26 +1,48 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import StatsCard from '../../components/lecturer/StatsCard';
 import DataTable from '../../components/lecturer/DataTable';
 import { PlusSquare } from 'lucide-react';
+import { getCourses, getPrograms } from '../../utils/api';
 
 const LecturerDashboard = () => {
-  const stats = [
-    { title: 'My Classes', value: '6' },
-    { title: 'Students', value: '240' },
-    { title: 'Active Courses', value: '4' },
-    { title: 'Pending Grades', value: '12' }
-  ];
-
-  const classes = [
-    { id: 1, title: 'Intro to React', schedule: 'Mon 10:00', students: 40 },
-    { id: 2, title: 'Advanced Node', schedule: 'Wed 14:00', students: 32 }
-  ];
+  const [loading, setLoading] = useState(true);
+  const [courses, setCourses] = useState([]);
+  const [programs, setPrograms] = useState([]);
 
   const columns = [
     { key: 'id', label: 'ID' },
     { key: 'title', label: 'Title' },
     { key: 'schedule', label: 'Schedule' },
     { key: 'students', label: 'Students' }
+  ];
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const [coursesRes, programsRes] = await Promise.allSettled([getCourses(), getPrograms()]);
+        if (!mounted) return;
+
+        const coursesArray = (coursesRes.status === 'fulfilled' && Array.isArray(coursesRes.value)) ? coursesRes.value : [];
+        const programsArray = (programsRes.status === 'fulfilled' && Array.isArray(programsRes.value)) ? programsRes.value : [];
+
+        setCourses(coursesArray);
+        setPrograms(programsArray);
+      } catch (e) {
+        console.error('Lecturer dashboard fetch error', e);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+
+    return () => { mounted = false; };
+  }, []);
+
+  const stats = [
+    { title: 'My Classes', value: loading ? '—' : (courses.length || '0') },
+    { title: 'Students', value: '—' },
+    { title: 'Active Courses', value: loading ? '—' : (programs.length || '0') },
+    { title: 'Pending Grades', value: '—' }
   ];
 
   return (
@@ -43,7 +65,13 @@ const LecturerDashboard = () => {
 
           <div className="bg-white rounded-lg shadow p-4">
             <h3 className="text-lg font-semibold mb-4">My Classes</h3>
-            <DataTable columns={columns} data={classes} />
+            {loading ? (
+              <div className="py-8 text-center">Loading classes...</div>
+            ) : courses.length === 0 ? (
+              <div className="py-8 text-center text-gray-500">No classes to display</div>
+            ) : (
+              <DataTable columns={columns} data={courses.map((c, idx) => ({ id: c.id || idx+1, title: c.name || c.title || 'Untitled', schedule: c.schedule || '-', students: c.students || 0 }))} />
+            )}
           </div>
         </main>
       </div>

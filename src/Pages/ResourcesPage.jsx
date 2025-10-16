@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { getResources } from '../utils/api';
 import { ChevronRight, Shield, Truck, Sprout, Users, Phone, Mail, MapPin, Star, ShoppingCart, Eye, ArrowRight, Menu, X, ChevronDown } from 'lucide-react';
 
 // Animation hooks
@@ -27,62 +28,14 @@ const useScrollAnimation = () => {
   return [ref, isVisible];
 };
 
-// Resources Page Component
+
 const ResourcesPage = () => {
   const [ResourcesRef, ResourcesVisible] = useScrollAnimation();
   const [leadershipRef, leadershipVisible] = useScrollAnimation();
+  const [leadership, setLeadership] = useState([]);
+  const [loading, setLoading] = useState(true);
   
-  const leadership = [
-    {
-      name: "Cosmos Enyinnaya Ogu",
-      position: "Chief Executive Officer / Managing Director",
-      image: "/Members/CosmosEnyinnayaOgu.jpg",
-      description: "Leading Cossy White with over 15 years of experience in business development and strategic management.",
-      linkedin: "#"
-    },
-    {
-      name: "Chinyere Joy Ogu",
-      position: "Chief Finance Officer/ Vice President",
-      image: "/Members/ChinyereJoyOgu.jpg",
-      description: "Expert in financial planning and management, ensuring sustainable growth and fiscal responsibility at Cossy White.",
-      linkedin: "#"
-    },
-    {
-      name: "Ozuruigbo Abuoma Jubilate",
-      position: "Chief Operations Officer",
-      image: "/Members/OzuruigboAbuomaJubilate.jpg",
-      description: "Overseeing luxury vehicle imports and Lecturers operations with extensive experience in financing and sales.",
-      linkedin: "#"
-    },
-    {
-      name: "Chioma Chivhetam Prisca",
-      position: "Chief Marketing Officer",
-      image: "/Members/ChiomaChivhetamPrisca.jpg",
-      description: "Driving our marketing strategy and brand growth with deep expertise in international trade and agricultural markets.",
-      linkedin: "#"
-    },
-    {
-      name: "Arinze Henry Nkemjieme",
-      position: "Head Of Trade",
-      image: "/Members/ArinzeHenryNkemjieme.jpg",
-      description: "Expert in international trade and commodity exports, Arinze oversees global trading operations and builds strategic partnerships to expand Cossy White's market reach.",
-      linkedin: "#"
-    },
-    {
-      name: "Eddy Asuquo",
-      position: "Strategic Partnership Lead",
-      image: "/Members/eddy.jpg",
-      description: "Eddy drives strategic alliances and business collaborations, leveraging his expertise to foster growth and unlock new opportunities for Cossy White.",
-      linkedin: "#"
-    },
-    {
-      name: "Livinus Anekwe",
-      position: "Advisory Board Member",
-      image: "/Members/livi.jpg",
-      description: "Livinus brings strategic insight and industry expertise to the board, guiding Cossy White's growth and innovation initiatives with seasoned leadership.",
-      linkedin: "#"
-    }
-  ];
+  
   
   const departments = [
     {
@@ -112,6 +65,31 @@ const ResourcesPage = () => {
     },
   ];
   
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await getResources();
+        if (!mounted) return;
+        if (Array.isArray(data) && data.length > 0) setLeadership(data);
+      } catch {
+        // keep leadership empty on error
+      } finally {
+        mounted && setLoading(false);
+      }
+    })();
+
+    return () => { mounted = false; };
+  }, []);
+
+  if (loading) return <div className="pt-20 text-center">Loading resources...</div>;
+  if (!loading && (!Array.isArray(leadership) || leadership.length === 0)) return (
+    <div className="pt-20 text-center">
+      <h3 className="text-xl font-semibold">No resources available right now</h3>
+      <p className="text-gray-600">We're not showing any resources at the moment. Check back later.</p>
+    </div>
+  );
+
   return (
     <div className="pt-20">
       {/* Hero Section */}
