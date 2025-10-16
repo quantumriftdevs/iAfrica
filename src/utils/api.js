@@ -67,8 +67,22 @@ export async function getUsers() {
   return data && data.data ? data.data : data;
 }
 
+// Create a new user (admin)
+export async function createUser(payload) {
+  if (!payload) throw new Error('Missing payload for createUser');
+  const data = await request('/api/v1/users', { method: 'post', body: payload });
+  return data && data.data ? data.data : data;
+}
+
 export async function getClasses() {
   const data = await request('/api/v1/classes');
+  return data && data.data ? data.data : data;
+}
+
+// Create a new class (lecturer)
+export async function createClass(payload) {
+  if (!payload) throw new Error('Missing payload for createClass');
+  const data = await request('/api/v1/classes', { method: 'post', body: payload });
   return data && data.data ? data.data : data;
 }
 

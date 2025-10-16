@@ -3,12 +3,15 @@ import StatsCard from '../../components/admin/StatsCard';
 import DataTable from '../../components/admin/DataTable';
 import { SiteBrand } from '../../components/Header';
 import { PlusSquare } from 'lucide-react';
-import { getPrograms, getLecturers } from '../../utils/api';
+import { getPrograms, getLecturers, createUser } from '../../utils/api';
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ students: 0, lecturers: 0, programs: 0, revenue: 0 });
   const [users, setUsers] = useState([]);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', role: 'Lecturer', password: '' });
 
   const columns = [
     { key: 'id', label: 'ID' },
@@ -56,7 +59,7 @@ const AdminDashboard = () => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold mb-6">Admin Dashboard</h2>
         <div className="flex items-center space-x-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-500"><PlusSquare size={16} /> Create User</button>
+          <button onClick={() => setIsCreateOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-500"><PlusSquare size={16} /> Create User</button>
         </div>
       </div>
 
@@ -89,6 +92,46 @@ const AdminDashboard = () => {
           </div>
         </main>
       </div>
+
+      {/* Create User Modal */}
+      {isCreateOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold mb-4">Create User</h3>
+            <div className="space-y-3">
+              <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" className="w-full border rounded px-3 py-2" />
+              <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" className="w-full border rounded px-3 py-2" />
+              <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full border rounded px-3 py-2">
+                <option>Lecturer</option>
+                <option>Student</option>
+                <option>Admin</option>
+              </select>
+              <input value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Password" type="password" className="w-full border rounded px-3 py-2" />
+            </div>
+
+            <div className="mt-4 flex justify-end gap-3">
+              <button onClick={() => setIsCreateOpen(false)} className="px-4 py-2 rounded border">Cancel</button>
+              <button disabled={creating} onClick={async () => {
+                setCreating(true);
+                try {
+                  const payload = { name: form.name, email: form.email, role: form.role, password: form.password };
+                  const res = await createUser(payload);
+                  // normalize returned shape
+                  const newUser = res && res.id ? res : (res && res.data ? res.data : res);
+                  setUsers((u) => [{ id: newUser.id || Date.now(), name: newUser.name || newUser.fullName || form.name, role: newUser.role || form.role, email: newUser.email || form.email }, ...u]);
+                  setIsCreateOpen(false);
+                  setForm({ name: '', email: '', role: 'Lecturer', password: '' });
+                } catch (err) {
+                  console.error('Create user failed', err);
+                  alert(err.message || 'Failed to create user');
+                } finally {
+                  setCreating(false);
+                }
+              }} className="px-4 py-2 rounded bg-emerald-600 text-white disabled:opacity-50">{creating ? 'Creating...' : 'Create'}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
