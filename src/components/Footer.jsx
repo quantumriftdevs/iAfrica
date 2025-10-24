@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { GraduationCap, MapPin, Phone, Mail, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
+import { MapPin, Phone, Mail, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -9,8 +9,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-green-600 rounded-lg flex items-center justify-center">
-                <GraduationCap className="text-white" size={24} />
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
+                <img src="/logo.png" alt="iAfrica logo" className="w-full h-full object-contain" />
               </div>
               <span className="text-xl font-bold">iAfrica Education</span>
             </div>
@@ -18,15 +18,15 @@ const Footer = () => {
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <MapPin size={16} className="text-emerald-500" />
-                <span className="text-sm">Abuja, Nigeria</span>
+                <span className="text-sm">Amina B Zakari, Yahaya Gwagwa Close, House 2 Plot 6a 46 Crescent Gwarimpa, Abuja, Nigeria</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone size={16} className="text-emerald-500" />
-                <span className="text-sm">+234 XXX XXX XXXX</span>
+                <span className="text-sm">+234 911 502 8534</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail size={16} className="text-emerald-500" />
-                <span className="text-sm">education@iafrica.com</span>
+                <span className="text-sm">info@iafricatrade.com</span>
               </div>
             </div>
             <div className="flex items-center space-x-4 mt-6">

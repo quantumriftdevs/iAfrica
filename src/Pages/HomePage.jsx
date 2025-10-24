@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getPrograms } from '../utils/api';
-import { ChevronRight, BookOpen, Users, Award, Video, FileText, Calendar, ArrowRight, Menu, X, GraduationCap, Clock, Globe } from 'lucide-react';
+import { ChevronRight, BookOpen, Users, Award, Video, FileText, Calendar, ArrowRight, Menu, X, School, Clock, Globe } from 'lucide-react';
 
 // Animation hooks
 const useScrollAnimation = () => {
@@ -57,7 +57,7 @@ const HomePage = ({ navigate }) => {
   
   const stats = [
     { number: "1000+", label: "Active Students", icon: Users },
-    { number: "50+", label: "Expert Lecturers", icon: GraduationCap },
+  { number: "50+", label: "Expert Lecturers", icon: School },
     { number: "30+", label: "Programs Available", icon: BookOpen },
     { number: "95%", label: "Completion Rate", icon: Award }
   ];
@@ -246,7 +246,7 @@ const HomePage = ({ navigate }) => {
                 <div className="p-6">
                   <div className="space-y-3 mb-6">
                     <div className="flex items-center gap-2 text-gray-600">
-                      <GraduationCap size={20} className="text-emerald-600" />
+                      <School size={20} className="text-emerald-600" />
                       <span>{program.levels}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">

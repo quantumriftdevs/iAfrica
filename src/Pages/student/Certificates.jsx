@@ -39,7 +39,7 @@ const CertificatesPage = () => {
         ) : certs.length === 0 ? (
           <div className="py-8 text-center text-gray-500">No certificates found</div>
         ) : (
-          <DataTable columns={columns} data={certs.map((c, idx) => ({ id: c.id || idx+1, title: c.title || c.name || 'Untitled', issued: c.issuedAt || c.issued || 'Unknown' }))} />
+          <DataTable columns={columns} data={certs.map((c, idx) => ({ id: c._id || idx+1, title: c.title || c.name || 'Untitled', issued: c.issuedAt || c.issued || 'Unknown' }))} />
         )}
       </div>
     </div>

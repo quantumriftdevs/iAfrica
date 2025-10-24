@@ -39,7 +39,7 @@ const MyClasses = () => {
         ) : classes.length === 0 ? (
           <div className="py-8 text-center text-gray-500">No classes found</div>
         ) : (
-          <DataTable columns={columns} data={classes.map((c, idx) => ({ id: c.id || idx+1, title: c.name || c.title || 'Untitled', schedule: c.schedule || 'TBA' }))} />
+          <DataTable columns={columns} data={classes.map((c, idx) => ({ id: c._id || idx+1, title: c.name || c.title || 'Untitled', schedule: c.schedule || 'TBA' }))} />
         )}
       </div>
     </div>

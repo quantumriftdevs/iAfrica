@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, GraduationCap, Phone, Mail, MapPin, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
+import { Menu, X, Phone, Mail, MapPin, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
 
 export const SiteLogo = ({ className = 'w-12 h-12' }) => (
-  <div className={`bg-gradient-to-br from-emerald-600 to-green-600 rounded-lg flex items-center justify-center ${className}`}>
-    <GraduationCap className="text-white" size={28} />
+  <div className={`rounded-lg flex items-center justify-center ${className}`}>
+    <img src="/logo.png" alt="iAfrica logo" className="w-full h-full object-contain" />
   </div>
 );
 
@@ -12,10 +12,6 @@ export const SiteLogo = ({ className = 'w-12 h-12' }) => (
 export const SiteBrand = ({ className = 'flex items-center space-x-3' }) => (
   <Link to="/" className={className}>
     <SiteLogo />
-    <div>
-      <h1 className="text-xl font-bold text-gray-900">iAfrica.com</h1>
-      <p className="text-sm text-emerald-600">Educational Excellence</p>
-    </div>
   </Link>
 );
 
@@ -65,7 +61,7 @@ const Header = () => {
         </div>
 
         {isMenuOpen && (
-          <nav className="lg:hidden mt-4 pb-4 border-t border-gray-200">
+          <nav className="lg:hidden mt-4 pb-4 border-t border-gray-200 bg-white">
             <div className="flex flex-col space-y-3 pt-4">
               {navItems.map((item) => (
                 <Link key={item.path} to={item.path} onClick={() => setIsMenuOpen(false)} className={`text-left py-2 px-4 rounded-md transition-colors ${location.pathname === item.path ? 'text-emerald-600 bg-emerald-50' : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'}`}>

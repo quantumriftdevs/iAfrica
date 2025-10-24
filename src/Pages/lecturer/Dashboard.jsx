@@ -2,15 +2,20 @@ import React, { useEffect, useState } from 'react';
 import StatsCard from '../../components/lecturer/StatsCard';
 import DataTable from '../../components/lecturer/DataTable';
 import { PlusSquare } from 'lucide-react';
-import { getCourses, getPrograms, createClass } from '../../utils/api';
+import { getCourses, getPrograms, getSeasons, createClass, formatApiError } from '../../utils/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../components/ui/ToastContext';
 
 const LecturerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [courses, setCourses] = useState([]);
   const [programs, setPrograms] = useState([]);
+  const [seasons, setSeasons] = useState([]);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ title: '', schedule: '', programId: '' });
+  const [form, setForm] = useState({ title: '', schedule: '', courseId: '' , seasonId: ''});
+  const { user } = useAuth();
+  const toast = useToast();
 
   const columns = [
     { key: 'id', label: 'ID' },
@@ -23,14 +28,16 @@ const LecturerDashboard = () => {
     let mounted = true;
     (async () => {
       try {
-        const [coursesRes, programsRes] = await Promise.allSettled([getCourses(), getPrograms()]);
+        const [coursesRes, programsRes, seasonsRes] = await Promise.allSettled([getCourses(), getPrograms(), getSeasons()]);
         if (!mounted) return;
 
         const coursesArray = (coursesRes.status === 'fulfilled' && Array.isArray(coursesRes.value)) ? coursesRes.value : [];
         const programsArray = (programsRes.status === 'fulfilled' && Array.isArray(programsRes.value)) ? programsRes.value : [];
+        const seasonsArray = (seasonsRes.status === 'fulfilled' && Array.isArray(seasonsRes.value)) ? seasonsRes.value : [];
 
         setCourses(coursesArray);
         setPrograms(programsArray);
+        setSeasons(seasonsArray);
       } catch (e) {
         console.error('Lecturer dashboard fetch error', e);
       } finally {
@@ -73,7 +80,7 @@ const LecturerDashboard = () => {
             ) : courses.length === 0 ? (
               <div className="py-8 text-center text-gray-500">No classes to display</div>
             ) : (
-              <DataTable columns={columns} data={courses.map((c, idx) => ({ id: c.id || idx+1, title: c.name || c.title || 'Untitled', schedule: c.schedule || '-', students: c.students || 0 }))} />
+              <DataTable columns={columns} data={courses.map((c, idx) => ({ id: c._id || idx+1, title: c.name || c.title || 'Untitled', schedule: c.schedule || '-', students: c.students || 0 }))} />
             )}
           </div>
         </main>
@@ -81,15 +88,20 @@ const LecturerDashboard = () => {
 
       {/* Create Class Modal */}
       {isCreateOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <h3 className="text-xl font-bold mb-4">Create Class</h3>
             <div className="space-y-3">
               <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Class title" className="w-full border rounded px-3 py-2" />
-              <input value={form.schedule} onChange={(e) => setForm({ ...form, schedule: e.target.value })} placeholder="Schedule (e.g. Mon 10:00)" className="w-full border rounded px-3 py-2" />
-              <select value={form.programId} onChange={(e) => setForm({ ...form, programId: e.target.value })} className="w-full border rounded px-3 py-2">
-                <option value="">Select program (optional)</option>
-                {programs.map((p) => <option key={p.id || p._id} value={p.id || p._id}>{p.name || p.title}</option>)}
+              {/* datetime-local expects a value like 2025-10-21T10:00 */}
+              <input value={form.schedule || ''} onChange={(e) => setForm({ ...form, schedule: e.target.value })} type="datetime-local" placeholder="Schedule" className="w-full border rounded px-3 py-2" />
+              <select value={form.courseId || form.programId || ''} onChange={(e) => setForm({ ...form, courseId: e.target.value })} className="w-full border rounded px-3 py-2">
+                <option value="">Select course (optional)</option>
+                {courses.map((c) => <option key={c._id || c._id} value={c._id || c._id}>{c.name || c.title}</option>)}
+              </select>
+              <select value={form.seasonId || ''} onChange={(e) => setForm({ ...form, seasonId: e.target.value })} className="w-full border rounded px-3 py-2">
+                <option value="">Select season (optional)</option>
+                {seasons.map((s) => <option key={s._id || s._id} value={s._id || s._id}>{s.name}</option>)}
               </select>
             </div>
 
@@ -98,15 +110,35 @@ const LecturerDashboard = () => {
               <button disabled={creating} onClick={async () => {
                 setCreating(true);
                 try {
-                  const payload = { name: form.title, schedule: form.schedule, programId: form.programId };
+                  const lecturerId = user?._id || user?._id;
+                  // Convert datetime-local (local time) to ISO string for backend
+                  let scheduledIso = undefined;
+                  if (form.schedule) {
+                    try {
+                      // create a Date from the local datetime input and convert to ISO
+                      scheduledIso = new Date(form.schedule).toISOString();
+                    } catch {
+                      scheduledIso = form.schedule;
+                    }
+                  }
+
+                  const payload = {
+                    title: form.title,
+                    scheduledDate: scheduledIso,
+                    course: form.courseId || form.programId || undefined,
+                    season: form.seasonId || undefined,
+                    // include lecturer id explicitly so backend can associate owner
+                    ...(lecturerId ? { lecturer: lecturerId } : {})
+                  };
                   const res = await createClass(payload);
-                  const newClass = res && res.id ? res : (res && res.data ? res.data : res);
-                  setCourses((c) => [{ id: newClass.id || Date.now(), name: newClass.name || newClass.title || form.title, schedule: newClass.schedule || form.schedule, students: newClass.students || 0 }, ...c]);
+                  const newClass = res && res._id ? res : (res && res.data ? res.data : res);
+                  setCourses((c) => [{ id: newClass._id || Date.now(), title: newClass.name || newClass.title || form.title, schedule: newClass.scheduledDate || form.schedule, students: newClass.students || 0 }, ...c]);
                   setIsCreateOpen(false);
                   setForm({ title: '', schedule: '', programId: '' });
+                  toast.push('Class created', { type: 'success' });
                 } catch (err) {
                   console.error('Create class failed', err);
-                  alert(err.message || 'Failed to create class');
+                  toast.push(formatApiError(err) || 'Failed to create class', { type: 'error' });
                 } finally {
                   setCreating(false);
                 }

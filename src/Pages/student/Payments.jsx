@@ -39,7 +39,7 @@ const Payments = () => {
         ) : payments.length === 0 ? (
           <div className="py-8 text-center text-gray-500">No payments found</div>
         ) : (
-          <DataTable columns={columns} data={payments.map((p, idx) => ({ id: p.id || idx+1, amount: p.amount || p.total || '0', status: p.status || 'unknown' }))} />
+          <DataTable columns={columns} data={payments.map((p, idx) => ({ id: p._id || idx+1, amount: p.amount || p.total || '0', status: p.status || 'unknown' }))} />
         )}
       </div>
     </div>

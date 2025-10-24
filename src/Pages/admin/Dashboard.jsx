@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import StatsCard from '../../components/admin/StatsCard';
 import DataTable from '../../components/admin/DataTable';
-import { SiteBrand } from '../../components/Header';
 import { PlusSquare } from 'lucide-react';
-import { getPrograms, getLecturers, createUser } from '../../utils/api';
+import { getPrograms, getLecturers, createUser, formatApiError } from '../../utils/api';
+import { useToast } from '../../components/ui/ToastContext';
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -11,10 +11,10 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ name: '', email: '', role: 'Lecturer', password: '' });
+  const toast = useToast();
+  const [form, setForm] = useState({ name: '', email: '', phone: '', role: 'lecturer', password: '' });
 
   const columns = [
-    { key: 'id', label: 'ID' },
     { key: 'name', label: 'Name' },
     { key: 'role', label: 'Role' },
     { key: 'email', label: 'Email' }
@@ -42,7 +42,7 @@ const AdminDashboard = () => {
         });
 
         // For users table show lecturers as users for now
-        setUsers(lecturers.map((l, idx) => ({ id: l.id || idx + 1, name: l.name || l.fullName || 'N/A', role: 'Lecturer', email: l.email || '' })));
+        setUsers(lecturers.map((l, idx) => ({ id: l._id || idx + 1, name: l.name || l.fullName || 'N/A', role: 'Lecturer', email: l.email || '' })));
       } catch (e) {
         // swallow - UI will show empty states when arrays are empty
         console.error('Admin dashboard data fetch error', e);
@@ -95,16 +95,17 @@ const AdminDashboard = () => {
 
       {/* Create User Modal */}
       {isCreateOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <h3 className="text-xl font-bold mb-4">Create User</h3>
             <div className="space-y-3">
               <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" className="w-full border rounded px-3 py-2" />
               <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" className="w-full border rounded px-3 py-2" />
+              <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Phone" className="w-full border rounded px-3 py-2" />
               <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full border rounded px-3 py-2">
-                <option>Lecturer</option>
-                <option>Student</option>
-                <option>Admin</option>
+                <option value="lecturer">Lecturer</option>
+                <option value="student">Student</option>
+                <option value="admin">Admin</option>
               </select>
               <input value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Password" type="password" className="w-full border rounded px-3 py-2" />
             </div>
@@ -114,16 +115,14 @@ const AdminDashboard = () => {
               <button disabled={creating} onClick={async () => {
                 setCreating(true);
                 try {
-                  const payload = { name: form.name, email: form.email, role: form.role, password: form.password };
-                  const res = await createUser(payload);
-                  // normalize returned shape
-                  const newUser = res && res.id ? res : (res && res.data ? res.data : res);
-                  setUsers((u) => [{ id: newUser.id || Date.now(), name: newUser.name || newUser.fullName || form.name, role: newUser.role || form.role, email: newUser.email || form.email }, ...u]);
+                  const payload = { name: form.name, email: form.email, phone: form.phone, role: form.role, password: form.password };
+                  await createUser(payload);
                   setIsCreateOpen(false);
-                  setForm({ name: '', email: '', role: 'Lecturer', password: '' });
+                  setForm({ name: '', email: '', role: 'lecturer', password: '' });
+                  toast.push('User created', { type: 'success' });
                 } catch (err) {
                   console.error('Create user failed', err);
-                  alert(err.message || 'Failed to create user');
+                  toast.push(formatApiError(err) || 'Failed to create user', { type: 'error' });
                 } finally {
                   setCreating(false);
                 }

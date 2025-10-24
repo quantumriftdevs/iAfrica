@@ -52,7 +52,7 @@ const DataTable = ({ columns = [], data = [], pageSize = 10 }) => {
           <tbody className="divide-y divide-gray-100">
             {paginatedData.map((row, idx) => (
               <tr 
-                key={row.id || idx} 
+                key={row._id || idx} 
                 className="hover:bg-gray-50 transition-colors duration-150"
               >
                 {columns.map((col) => (

@@ -72,7 +72,7 @@ const StudentDashboard = () => {
             ) : courses.length === 0 ? (
               <div className="py-8 text-center text-gray-500">No courses to display</div>
             ) : (
-              <DataTable columns={columns} data={courses.map((c, idx) => ({ id: c.id || idx+1, title: c.name || c.title || 'Untitled', progress: c.progress || '0%' }))} />
+              <DataTable columns={columns} data={courses.map((c, idx) => ({ id: c._id || idx+1, title: c.name || c.title || 'Untitled', progress: c.progress || '0%' }))} />
             )}
           </div>
         </main>

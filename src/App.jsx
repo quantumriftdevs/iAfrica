@@ -13,6 +13,8 @@ import TermsPage from './Pages/TermsPage';
 import ContactPage from './Pages/ContactPage';
 import NotFoundPage from './Pages/404';
 import LoginPage from './Pages/LoginPage';
+import ForgotPassword from './Pages/ForgotPassword';
+import ResetPassword from './Pages/ResetPassword';
 // Admin pages
 import AdminDashboard from './Pages/admin/Dashboard';
 import AdminUsers from './Pages/admin/Users';
@@ -25,7 +27,7 @@ import AdminSeasons from './Pages/admin/Seasons';
 // Lecturer pages
 import LecturerDashboard from './Pages/lecturer/Dashboard';
 import LecturerClasses from './Pages/lecturer/Classes';
-import LecturerGrades from './Pages/lecturer/Grades';
+import AdminGrades from './Pages/admin/Grades';
 import LecturerResources from './Pages/lecturer/Resources';
 // Student pages
 import StudentDashboard from './Pages/student/Dashboard';
@@ -69,6 +71,8 @@ const App = () => {
           <Route path="privacy" element={<PageWrapper><PrivacyPage /></PageWrapper>} />
           <Route path="contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
           <Route path="login" element={<PageWrapper><LoginPage /></PageWrapper>} />
+          <Route path="forgot-password" element={<PageWrapper><ForgotPassword /></PageWrapper>} />
+          <Route path="reset-password" element={<PageWrapper><ResetPassword /></PageWrapper>} />
           <Route path="*" element={<PageWrapper><NotFoundPage /></PageWrapper>} />
         </Route>
 
@@ -78,6 +82,7 @@ const App = () => {
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/programs" element={<AdminPrograms />} />
           <Route path="/admin/courses" element={<AdminCourses />} />
+          <Route path="/admin/grades" element={<AdminGrades />} />
           <Route path="/admin/classes" element={<AdminClasses />} />
           <Route path="/admin/payments" element={<AdminPayments />} />
           <Route path="/admin/certificates" element={<AdminCertificates />} />
@@ -88,7 +93,6 @@ const App = () => {
         <Route element={<LecturerLayout />}>
           <Route path="/lecturer/dashboard" element={<LecturerDashboard />} />
           <Route path="/lecturer/classes" element={<LecturerClasses />} />
-          <Route path="/lecturer/grades" element={<LecturerGrades />} />
           <Route path="/lecturer/resources" element={<LecturerResources />} />
         </Route>
 

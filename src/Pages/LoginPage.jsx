@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User, ArrowRight, BookOpen, GraduationCap, Users, Award } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../components/ui/ToastContext';
+import { formatApiError } from '../utils/api';
+import { Mail, Lock, User, ArrowRight, BookOpen, Users, Award } from 'lucide-react';
 
 const LoginPage = ({ navigate }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [userType, setUserType] = useState('student'); // student, admin, lecturer
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -16,7 +18,6 @@ const LoginPage = ({ navigate }) => {
     setIsAnimating(true);
     setTimeout(() => {
       setIsLogin(!isLogin);
-      setUserType('student'); // Reset to student when toggling
       setFormData({
         email: '',
         password: '',
@@ -36,52 +37,63 @@ const LoginPage = ({ navigate }) => {
     });
   };
 
+  const toast = useToast();
+
   const handleLogin = (e) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.password) {
-      alert('Please fill in all fields');
+      toast.push('Please fill in all fields', { type: 'error' });
       return;
     }
+    // Perform real login via AuthContext
+    (async () => {
+      try {
+        setIsAnimating(true);
+        const res = await auth.login(formData.email, formData.password);
 
-    // Simulate login
-    alert(`Logging in as ${userType}...\nEmail: ${formData.email}`);
-    
-    // Here you would make API call to authenticate
-    // On success, navigate to appropriate dashboard
-    if (userType === 'student') {
-      // Navigate to student dashboard
-      console.log('Navigate to student dashboard');
-    } else if (userType === 'admin') {
-      // Navigate to admin dashboard
-      console.log('Navigate to admin dashboard');
-    } else if (userType === 'lecturer') {
-      // Navigate to lecturer dashboard
-      console.log('Navigate to lecturer dashboard');
-    }
+        // on success, redirect based on user role
+        const role = res.user?.role;
+        if (role === 'admin') navigate('/admin/dashboard');
+        else if (role === 'lecturer') navigate('/lecturer/dashboard');
+        else navigate('/dashboard');
+      } catch (err) {
+        console.log('Login error', err);
+        const msg = formatApiError(err) || 'Login failed. Check your credentials.';
+        toast.push(msg, { type: 'error' });
+      } finally {
+        setIsAnimating(false);
+      }
+    })();
   };
 
   const handleSignUp = (e) => {
     e.preventDefault();
-    
+
     if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
-      alert('Please fill in all fields');
+      toast.push('Please fill in all fields', { type: 'error' });
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      toast.push('Passwords do not match', { type: 'error' });
       return;
     }
 
-    // Redirect to enrollment page for students to choose and pay for program
-    alert('Redirecting to enrollment page...\nAfter successful payment, your account will be created!');
-    
-    // Navigate to enroll page
-    if (navigate) {
-      navigate('/Enroll');
-    }
+    (async () => {
+      try {
+        setIsAnimating(true);
+        navigate('/Enroll');
+      } catch (err) {
+        console.error(err);
+        toast.push('Unable to proceed to enrollment', { type: 'error' });
+      } finally {
+        setIsAnimating(false);
+      }
+    })();
   };
+
+  const auth = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center p-4 pt-24">
@@ -89,7 +101,7 @@ const LoginPage = ({ navigate }) => {
         {/* Split Card Container */}
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
           <div className="grid lg:grid-cols-2 min-h-[600px]">
-            
+
             {/* Left Side - Illustration (switches with form during animation) */}
             <div 
               className={`bg-gradient-to-br from-emerald-600 to-emerald-800 p-12 flex flex-col justify-center items-center text-white transition-all duration-700 transform ${
@@ -102,7 +114,7 @@ const LoginPage = ({ navigate }) => {
             >
               <div className="max-w-md text-center">
                 <div className="mb-8">
-                  <GraduationCap size={80} className="mx-auto mb-6 text-emerald-200" />
+                  <img src="/logo.png" alt="iAfrica logo" className="w-20 h-20 mx-auto mb-6 object-contain" />
                   <h2 className="text-4xl font-bold mb-4">iAfrica Education</h2>
                   <p className="text-xl text-emerald-100 leading-relaxed">
                     Transform your future with expert-led programs, live interactive classes, and industry-recognized certificates.
@@ -163,43 +175,6 @@ const LoginPage = ({ navigate }) => {
                       <p className="text-gray-600">Sign in to continue your learning journey</p>
                     </div>
 
-                    {/* User Type Selection for Login */}
-                    <div className="flex gap-2 mb-6">
-                      <button
-                        type="button"
-                        onClick={() => setUserType('student')}
-                        className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
-                          userType === 'student'
-                            ? 'bg-emerald-600 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                      >
-                        Student
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setUserType('lecturer')}
-                        className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
-                          userType === 'lecturer'
-                            ? 'bg-emerald-600 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                      >
-                        Lecturer
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setUserType('admin')}
-                        className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
-                          userType === 'admin'
-                            ? 'bg-emerald-600 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                      >
-                        Admin
-                      </button>
-                    </div>
-
                     <form onSubmit={handleLogin} className="space-y-5">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -242,9 +217,9 @@ const LoginPage = ({ navigate }) => {
                           <input type="checkbox" className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500" />
                           <span className="ml-2 text-sm text-gray-600">Remember me</span>
                         </label>
-                        <a href="#" className="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
+                        <button onClick={() => navigate('/forgot-password')} className="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
                           Forgot password?
-                        </a>
+                        </button>
                       </div>
 
                       <button

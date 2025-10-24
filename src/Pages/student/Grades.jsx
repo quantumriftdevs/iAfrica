@@ -24,7 +24,7 @@ const GradesPage = () => {
           res.forEach((c) => {
             if (Array.isArray(c.grades)) {
               c.grades.forEach((g) => {
-                derived.push({ id: g.id || `${c.id}-${g.studentId || 's'}`, course: c.name || c.title || 'Untitled', grade: g.value ?? g.score ?? 'N/A' });
+                derived.push({ id: g._id || `${c._id}-${g.studentId || 's'}`, course: c.name || c.title || 'Untitled', grade: g.value ?? g.score ?? 'N/A' });
               });
             }
           });

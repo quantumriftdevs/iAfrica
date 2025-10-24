@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { initializePayment, getPrograms } from '../utils/api';
-import { ChevronRight, BookOpen, GraduationCap, Users, Clock, Calendar, Award, Video, FileText, CheckCircle, ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
+import { initializePayment, getPrograms, formatApiError } from '../utils/api';
+import { ChevronRight, BookOpen, School, Users, Clock, Calendar, Award, Video, FileText, CheckCircle, ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../components/ui/ToastContext';
+import { useNavigate } from 'react-router-dom';
 
 // Animation hooks
 const useScrollAnimation = () => {
@@ -16,6 +19,9 @@ const useScrollAnimation = () => {
 
 const EnrollPage = () => {
   const [programs, setPrograms] = useState([]);
+  const { user } = useAuth();
+  const toast = useToast();
+  const navigate = useNavigate();
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [selectedGrade, setSelectedGrade] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +39,7 @@ const EnrollPage = () => {
         if (!mounted) return;
         if (Array.isArray(data) && data.length > 0) {
           const mapped = data.map((p, idx) => ({
-            id: p.id || idx + 1,
+            id: p._id || idx + 1,
             name: p.name || p.title || `Program ${idx + 1}`,
             description: p.description || p.summary || '',
             image: (p.image && p.image.url) || p.image || p.thumbnail || '',
@@ -68,37 +74,40 @@ const EnrollPage = () => {
         if (!mounted) return;
         const status = verifyRes?.status || verifyRes?.payment_status || verifyRes?.data?.status || (verifyRes?.success ? 'success' : 'failed');
         if (status === 'success' || status === 'paid' || status === 'completed') {
-          alert('Payment confirmed — you are now enrolled. Check your email for access details.');
-          // Optionally clear selection
+          toast.push('Payment confirmed — you are now enrolled. Check your email for access details.', { type: 'success' });
+          // clear selection and navigate to student dashboard
           setSelectedProgram(null);
           setSelectedGrade(null);
+          navigate('/dashboard');
         } else {
-          alert('Payment not confirmed. If you were charged, contact support.');
+          toast.push('Payment not confirmed. If you were charged, contact support.', { type: 'error' });
         }
       } catch (e) {
         console.error('Payment verification error', e);
-        alert('Unable to verify payment. Please try again or contact support.');
+        const msg = formatApiError(e) || 'Unable to verify payment. Please try again or contact support.';
+        toast.push(msg, { type: 'error' });
       } finally {
         if (mounted) setProcessingPayment(false);
       }
     })();
 
     return () => { mounted = false; };
-  }, []);
+  }, [navigate, toast]);
 
   const handleEnroll = async (grade) => {
     setProcessingPayment(true);
     try {
       // Build payload expected by backend initialize endpoint
       const payload = {
-        programId: selectedProgram.id,
-        gradeId: grade.id,
+        programId: selectedProgram._id,
+        gradeId: grade._id,
         amount: grade.price,
         currency: 'NGN',
         returnUrl: window.location.href,
         metadata: {
           programName: selectedProgram.name,
-          gradeLevel: grade.level
+          gradeLevel: grade.level,
+          student: user ? { id: user._id || user._id, email: user.email, name: user.name || user.fullName || user.firstName } : undefined
         }
       };
 
@@ -108,15 +117,16 @@ const EnrollPage = () => {
       const paymentUrl = res?.authorization_url || res?.data?.authorization_url || res?.checkout_url || res?.data?.checkout_url || res?.payment_url || res?.gateway_url;
 
       if (paymentUrl) {
-        // open in new tab to preserve app state; alternatively redirect
-        window.open(paymentUrl, '_blank');
+        // redirect in same tab to make the flow simpler for verification
+        window.location.href = paymentUrl;
       } else {
-        // If API returned inline data (e.g., paystack reference), show it to the user
-        alert('Payment initialized. Please complete payment on the provided page.');
+        // If API returned inline data (e.g., paystack reference), show a toast so the user can continue
+        toast.push('Payment initialized. Please complete payment on the provided page.', { type: 'info' });
       }
     } catch (e) {
       console.error('Payment initialization error', e);
-      alert('Failed to initialize payment. Please try again later.');
+      const msg = formatApiError(e) || 'Failed to initialize payment. Please try again later.';
+      toast.push(msg, { type: 'error' });
     } finally {
       setProcessingPayment(false);
       // keep selection so user can retry or continue; do not auto-clear selection on init
@@ -144,7 +154,7 @@ const EnrollPage = () => {
               heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}>
               <div className="flex items-center justify-center mb-6">
-                <GraduationCap size={64} className="text-emerald-300" />
+                <img src="/logo.png" alt="iAfrica logo" className="w-24 h-24 object-contain" />
               </div>
               <h1 className="text-5xl font-bold mb-6">Enroll in a Program</h1>
               <p className="text-xl leading-relaxed mb-8 text-emerald-100">
@@ -190,7 +200,7 @@ const EnrollPage = () => {
             <div ref={programsRef} className="space-y-20">
               {programs.map((program, index) => (
                 <div
-                  key={program.id}
+                  key={program._id}
                   className={`transition-all duration-1000 ${
                     programsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                   }`}
@@ -269,7 +279,7 @@ const EnrollPage = () => {
               <div className="grid md:grid-cols-2 gap-8">
                 {selectedProgram.grades.map((grade, gradeIndex) => (
                   <div
-                    key={grade.id}
+                    key={grade._id}
                     className="bg-gradient-to-br from-gray-50 to-emerald-50 p-8 rounded-2xl border-2 border-emerald-100 hover:border-emerald-300 transition-all duration-300 hover:shadow-xl"
                     style={{ transitionDelay: `${gradeIndex * 150}ms` }}
                   >

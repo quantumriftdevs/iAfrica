@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getPrograms } from '../utils/api';
-import { ChevronRight, BookOpen, GraduationCap, Users, Clock, Calendar, Award, Video, FileText, CheckCircle } from 'lucide-react';
+import { ChevronRight, BookOpen, School, Users, Clock, Calendar, Award, Video, FileText, CheckCircle } from 'lucide-react';
 
 // Animation hooks
 const useScrollAnimation = () => {

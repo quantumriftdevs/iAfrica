@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, BookOpen, GraduationCap, Users, Phone, Mail, MapPin, MessageCircle, Clock, HelpCircle, Video } from 'lucide-react';
+import { ChevronRight, BookOpen, Users, Phone, Mail, MapPin, MessageCircle, Clock, HelpCircle, Video } from 'lucide-react';
 
 // Animation hooks
 const useScrollAnimation = () => {
@@ -361,7 +361,7 @@ const ContactPage = () => {
                 </p>
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                    <GraduationCap className="text-emerald-600" size={24} />
+                    <img src="/logo.png" alt="iAfrica logo" className="w-8 h-8 object-contain" />
                   </div>
                   <div>
                     <p className="font-semibold">Expert Support Resources</p>

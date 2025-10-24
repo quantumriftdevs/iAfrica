@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getCertificates } from '../utils/api';
+import { useToast } from '../components/ui/ToastContext';
 import { TrendingUp, Users, BarChart3, Target, CheckCircle, ArrowRight, Phone, Mail } from 'lucide-react';
 
 
@@ -111,10 +112,12 @@ const CertificatesPage = ({ navigate }) => {
     return () => { mounted = false; };
   }, []);
 
+  const toast = useToast();
+
   const handleSubmit = () => {
     // Validate required fields
     if (!formData.name || !formData.email || !formData.phone || !formData.CertificatesAmount || !formData.sector) {
-      alert('Please fill in all required fields marked with *');
+      toast.push('Please fill in all required fields marked with *', { type: 'error' });
       return;
     }
 
@@ -164,7 +167,7 @@ const CertificatesPage = ({ navigate }) => {
     });
     
     // Show success message
-    alert('Your email client will open with the Certificates inquiry. Please review and send the email to complete your request.');
+    toast.push('Your email client will open with the Certificates inquiry. Please review and send the email to complete your request.', { type: 'info' });
   };
 
   return (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getLecturers } from '../utils/api';
-import { ChevronRight, Award, BookOpen, Users, Mail, Linkedin, Star, Eye, X, GraduationCap, Video, CheckCircle } from 'lucide-react';
+import { ChevronRight, Award, BookOpen, Users, Mail, Linkedin, Star, Eye, X, School, Video, CheckCircle } from 'lucide-react';
 
 // Animation hooks
 const useScrollAnimation = () => {
@@ -44,14 +44,14 @@ const LecturerModal = ({ lecturer, isOpen, onClose, navigate }) => {
   if (!isOpen || !lecturer) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Modal Header */}
         <div className="relative">
           <div className="h-48 bg-gradient-to-r from-emerald-600 to-green-600"></div>
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all"
+            className="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all"
           >
             <X size={24} />
           </button>
@@ -162,10 +162,10 @@ const LecturersPage = ({navigate}) => {
             <div className="flex flex-wrap gap-4">
               {categories.map((category) => (
                 <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
+                  key={category._id}
+                  onClick={() => setSelectedCategory(category._id)}
                   className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                    selectedCategory === category.id
+                    selectedCategory === category._id
                       ? 'bg-emerald-600 text-white shadow-lg'
                       : 'bg-gray-100 text-gray-700 hover:bg-emerald-100 hover:text-emerald-600'
                   }`}
@@ -180,7 +180,7 @@ const LecturersPage = ({navigate}) => {
           <div ref={lecturersRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredLecturers.map((lecturer, index) => (
               <div
-                key={lecturer.id}
+                key={lecturer._id}
                 className={`bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden group
                            ${lecturersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
                 style={{ transitionDelay: `${index * 150}ms` }}
