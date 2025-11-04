@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/student/DataTable';
-import { getPayments } from '../../utils/api';
+import { getUserPayments } from '../../utils/api';
 
 const Payments = () => {
   const [loading, setLoading] = useState(true);
   const [payments, setPayments] = useState([]);
 
   const columns = [
-    { key: 'id', label: 'ID' },
     { key: 'amount', label: 'Amount' },
+    { key: 'paymentMethod', label: 'Payment Method' },
     { key: 'status', label: 'Status' }
   ];
 
@@ -16,7 +16,7 @@ const Payments = () => {
     let mounted = true;
     (async () => {
       try {
-        const res = await getPayments();
+        const res = await getUserPayments();
         if (!mounted) return;
         setPayments(Array.isArray(res) ? res : []);
       } catch (e) {

@@ -5,6 +5,7 @@ import { X } from 'lucide-react';
 import { useToast } from '../../components/ui/ToastContext';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import { useAuth } from '../../contexts/AuthContext';
+import { formatDate, toInputDate } from '../../utils/helpers';
 
 const SeasonsPage = () => {
   const [loading, setLoading] = useState(true);
@@ -13,12 +14,20 @@ const SeasonsPage = () => {
 
   const columns = [
     { key: 'name', label: 'Name' },
-    { key: 'startDate', label: 'Start' },
-    { key: 'endDate', label: 'End' },
+    {
+      key: 'startDate',
+      label: 'Start',
+      render: (v, row) => formatDate(v || row.startDate || row.start || row.start_date)
+    },
+    {
+      key: 'endDate',
+      label: 'End',
+      render: (v, row) => formatDate(v || row.endDate || row.end || row.end_date)
+    },
     { key: 'actions', label: 'Actions', render: (_v, row) => (
       <div className="flex items-center gap-3">
         <button onClick={() => openEdit(row)} className="text-blue-600 hover:underline">Edit</button>
-        <button onClick={() => handleDelete(row._id || row._id)} className="text-red-600 hover:underline">Delete</button>
+        <button onClick={() => handleDelete(row._id || row.id)} className="text-red-600 hover:underline">Delete</button>
       </div>
     ) }
   ];
@@ -30,7 +39,6 @@ const SeasonsPage = () => {
         const res = await getSeasons();
         if (!mounted) return;
         setSeasons(Array.isArray(res) ? res : []);
-        // also fetch programs for the create/edit form
         try {
           const p = await getPrograms();
           if (!mounted) return;
@@ -56,7 +64,15 @@ const SeasonsPage = () => {
   // create modal
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ name: '', description: '', program: '', startDate: '', endDate: '', isVisible: true, isActive: true });
+  const [form, setForm] = useState({
+    name: '',
+    description: '',
+    program: '',
+    startDate: '',
+    endDate: '',
+    isVisible: true,
+    isActive: true
+  });
 
   const { user } = useAuth();
 
@@ -103,7 +119,16 @@ const SeasonsPage = () => {
 
   const openEdit = (s) => {
     const programId = typeof s.program === 'string' ? s.program : (s.program && (s.program._id || s.program.id));
-    setEditingSeason({ _id: s._id || s.id, name: s.name || '', description: s.description || '', program: programId || '', startDate: s.startDate || s.start || '', endDate: s.endDate || s.end || '', isVisible: s.isVisible === undefined ? true : !!s.isVisible, isActive: s.isActive === undefined ? true : !!s.isActive });
+    setEditingSeason({
+      _id: s._id || s.id,
+      name: s.name || '',
+      description: s.description || '',
+      program: programId || '',
+      startDate: toInputDate(s.startDate || s.start || s.start_date || ''),
+      endDate: toInputDate(s.endDate || s.end || s.end_date || ''),
+      isVisible: s.isVisible === undefined ? true : !!s.isVisible,
+      isActive: s.isActive === undefined ? true : !!s.isActive
+    });
     setIsEditOpen(true);
   };
 
@@ -118,7 +143,15 @@ const SeasonsPage = () => {
     setEditing(true);
     try {
       const id = editingSeason._id || editingSeason.id;
-      await updateSeason(id, { name: editingSeason.name, description: editingSeason.description || undefined, program: editingSeason.program || undefined, startDate: editingSeason.startDate || undefined, endDate: editingSeason.endDate || undefined, isVisible: editingSeason.isVisible === undefined ? true : !!editingSeason.isVisible, isActive: editingSeason.isActive === undefined ? true : !!editingSeason.isActive });
+      await updateSeason(id, {
+        name: editingSeason.name,
+        description: editingSeason.description || undefined,
+        program: editingSeason.program || undefined,
+        startDate: editingSeason.startDate || undefined,
+        endDate: editingSeason.endDate || undefined,
+        isVisible: editingSeason.isVisible === undefined ? true : !!editingSeason.isVisible,
+        isActive: editingSeason.isActive === undefined ? true : !!editingSeason.isActive
+      });
       const res = await getSeasons();
       setSeasons(Array.isArray(res) ? res : []);
       setIsEditOpen(false);
@@ -188,8 +221,8 @@ const SeasonsPage = () => {
                   <option key={prog._id || prog.id || prog.name} value={prog._id || prog.id}>{prog.name || prog.title}</option>
                 ))}
               </select>
-              <input name="startDate" value={form.startDate} onChange={handleChange} placeholder="Start date (YYYY-MM-DD)" className="p-3 border rounded" />
-              <input name="endDate" value={form.endDate} onChange={handleChange} placeholder="End date (YYYY-MM-DD)" className="p-3 border rounded" />
+              <input type="date" name="startDate" value={form.startDate} onChange={handleChange} placeholder="Start date" className="p-3 border rounded" />
+              <input type="date" name="endDate" value={form.endDate} onChange={handleChange} placeholder="End date" className="p-3 border rounded" />
               <div className="flex justify-end gap-3">
                 <button type="button" onClick={() => setIsCreateOpen(false)} className="px-4 py-2 rounded border">Cancel</button>
                 <button type="submit" disabled={creating} className="bg-emerald-600 text-white px-4 py-2 rounded disabled:opacity-50">{creating ? 'Creating...' : 'Create Season'}</button>
@@ -216,8 +249,8 @@ const SeasonsPage = () => {
                   <option key={prog._id || prog.id || prog.name} value={prog._id || prog.id}>{prog.name || prog.title || prog._id}</option>
                 ))}
               </select>
-              <input name="startDate" value={editingSeason.startDate} onChange={handleEditChange} placeholder="Start date (YYYY-MM-DD)" className="p-3 border rounded" />
-              <input name="endDate" value={editingSeason.endDate} onChange={handleEditChange} placeholder="End date (YYYY-MM-DD)" className="p-3 border rounded" />
+              <input type="date" name="startDate" value={editingSeason.startDate} onChange={handleEditChange} placeholder="Start date" className="p-3 border rounded" />
+              <input type="date" name="endDate" value={editingSeason.endDate} onChange={handleEditChange} placeholder="End date" className="p-3 border rounded" />
               <div className="flex justify-end gap-3">
                 <button type="button" onClick={() => { setIsEditOpen(false); setEditingSeason(null); }} className="px-4 py-2 rounded border">Cancel</button>
                 <button type="submit" disabled={editing} className="bg-emerald-600 text-white px-4 py-2 rounded disabled:opacity-50">{editing ? 'Updating...' : 'Update Season'}</button>

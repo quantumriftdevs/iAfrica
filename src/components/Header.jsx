@@ -33,7 +33,7 @@ const Header = () => {
     { name: 'About', path: '/about' },
     { name: 'Programs', path: '/Programs' },
     { name: 'Courses', path: '/Courses' },
-    { name: 'Lecturers', path: '/Lecturers' },
+    // { name: 'Lecturers', path: '/Lecturers' },
     { name: 'Enroll', path: '/Enroll' },
     { name: 'Resources', path: '/Resources' },
     { name: 'Certificates', path: '/Certificates' },
@@ -55,9 +55,22 @@ const Header = () => {
             ))}
           </nav>
 
-          <button className="lg:hidden p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Right side controls: login button (responsive) and mobile menu toggle */}
+          <div className="flex items-center">
+            {/* Login button for large screens (far right) */}
+            <Link to="/Login" className="hidden lg:inline-flex ml-4 px-4 py-2 rounded bg-emerald-600 text-white hover:bg-emerald-500">
+              Login
+            </Link>
+
+            {/* On small screens show a compact login button to the left of the menu icon */}
+            <Link to="/Login" className="lg:hidden mr-2 px-3 py-2 rounded border text-sm">
+              Login
+            </Link>
+
+            <button className="lg:hidden p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {isMenuOpen && (

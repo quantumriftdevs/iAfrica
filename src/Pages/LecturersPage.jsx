@@ -181,8 +181,7 @@ const LecturersPage = ({navigate}) => {
             {filteredLecturers.map((lecturer, index) => (
               <div
                 key={lecturer._id}
-                className={`bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden group
-                           ${lecturersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                className={`bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden group ${lecturersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
                 style={{ transitionDelay: `${index * 150}ms` }}
               >
                 <div className="relative h-64 overflow-hidden bg-gradient-to-br from-emerald-600 to-green-600">

@@ -21,7 +21,6 @@ const StudentSidebar = () => {
     { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/my-courses', label: 'My Courses', icon: BookOpen },
     { to: '/my-classes', label: 'My Classes', icon: School },
-  { to: '/grades', label: 'Grades', icon: School },
     { to: '/my-certificates', label: 'Certificates', icon: Award },
     { to: '/payments', label: 'Payments', icon: CreditCard }
   ];

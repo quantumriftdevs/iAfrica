@@ -7,7 +7,6 @@ const CertificatesPage = () => {
   const [certs, setCerts] = useState([]);
 
   const columns = [
-    { key: 'id', label: 'ID' },
     { key: 'title', label: 'Title' },
     { key: 'issued', label: 'Issued' }
   ];

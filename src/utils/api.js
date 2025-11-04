@@ -7,7 +7,7 @@ const client = axios.create({
   headers: {
     'Content-Type': 'application/json'
   },
-  timeout: 15000
+  timeout: 1500000
 });
 
 // Helper to resolve bearer token based on role or current path
@@ -340,9 +340,13 @@ export async function updateClass(id, payload) {
 }
 
 export async function updateClassRecording(id, payload) {
-  if (!id) throw new Error('Missing id for updateClassRecording');
-  const data = await request(`/api/v1/classes/${encodeURIComponent(id)}/recording`, { method: 'put', body: payload });
-  return data && data.data ? data.data : data;
+  try {
+    if (!id) throw new Error('Missing id for updateClassRecording');
+    const data = await request(`/api/v1/classes/${encodeURIComponent(id)}/recording`, { method: 'put', body: payload });
+    return data && data.data ? data.data : data;
+  } catch (error) {
+    console.log({ recordingError: error });
+  }
 }
 
 export async function updateClassStatus(id, payload) {
@@ -377,22 +381,20 @@ export async function getGrades() {
 }
 
 export async function createGrade(payload) {
-  if (!payload) throw new Error('Missing payload for createGrade');
+  if (!payload) throw new Error('Missing payload for creating Grade');
 
-  const body = {
-    ...payload,
-    // default flags
-    isVisible: payload.isVisible === undefined ? true : payload.isVisible,
-    isActive: payload.isActive === undefined ? true : payload.isActive
-  };
-
-  const data = await request('/api/v1/grades', { method: 'post', body });
+  const data = await request('/api/v1/grades', { method: 'post', body: payload });
   return data && data.data ? data.data : data;
 }
 
 
 export async function getPayments() {
   const data = await request('/api/v1/payments');
+  return data && data.data ? data.data : data;
+}
+
+export async function getUserPayments() {
+  const data = await request('/api/v1/payments/user');
   return data && data.data ? data.data : data;
 }
 

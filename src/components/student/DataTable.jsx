@@ -42,6 +42,9 @@ const DataTable = ({ columns = [], data = [], pageSize = 10 }) => {
         <table className="min-w-full">
           <thead>
             <tr className="bg-gray-50">
+              <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                ID
+              </th>
               {columns.map((col) => (
                 <th key={col.key} className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
                   {col.label}
@@ -55,6 +58,7 @@ const DataTable = ({ columns = [], data = [], pageSize = 10 }) => {
                 key={row._id || idx} 
                 className="hover:bg-gray-50 transition-colors duration-150"
               >
+                <td className="px-6 py-4 text-sm text-gray-800">{ idx + 1}</td>
                 {columns.map((col) => (
                   <td key={col.key} className="px-6 py-4 text-sm text-gray-800">
                     {col.render ? col.render(row[col.key], row) : row[col.key]}

@@ -4,7 +4,6 @@ import HomePage from './Pages/HomePage';
 import AboutPage from './Pages/AboutPage';
 import ProgramsPage from './Pages/ProgramsPage';
 import CoursesPage from './Pages/CoursesPage';
-import LecturersPage from './Pages/LecturersPage';
 import EnrollPage from './Pages/Enroll';
 import ResourcesPage from './Pages/ResourcesPage';
 import CertificatesPage from './Pages/Certificatespage';
@@ -29,11 +28,11 @@ import LecturerDashboard from './Pages/lecturer/Dashboard';
 import LecturerClasses from './Pages/lecturer/Classes';
 import AdminGrades from './Pages/admin/Grades';
 import LecturerResources from './Pages/lecturer/Resources';
+import LecturerClassroom from './Pages/lecturer/Classroom';
 // Student pages
 import StudentDashboard from './Pages/student/Dashboard';
 import MyCourses from './Pages/student/MyCourses';
 import MyClasses from './Pages/student/MyClasses';
-import StudentGrades from './Pages/student/Grades';
 import StudentCertificates from './Pages/student/Certificates';
 import StudentPayments from './Pages/student/Payments';
 import ProfileEdit from './Pages/student/ProfileEdit';
@@ -63,7 +62,7 @@ const App = () => {
           <Route path="about" element={<PageWrapper><AboutPage /></PageWrapper>} />
           <Route path="programs" element={<PageWrapper><ProgramsPage /></PageWrapper>} />
           <Route path="Courses" element={<PageWrapper><CoursesPage /></PageWrapper>} />
-          <Route path="Lecturers" element={<PageWrapper><LecturersPage /></PageWrapper>} />
+          {/* <Route path="Lecturers" element={<PageWrapper><LecturersPage /></PageWrapper>} /> */}
           <Route path="Enroll" element={<PageWrapper><EnrollPage /></PageWrapper>} />
           <Route path="Resources" element={<PageWrapper><ResourcesPage /></PageWrapper>} />
           <Route path="Certificates" element={<PageWrapper><CertificatesPage /></PageWrapper>} />
@@ -93,6 +92,7 @@ const App = () => {
         <Route element={<LecturerLayout />}>
           <Route path="/lecturer/dashboard" element={<LecturerDashboard />} />
           <Route path="/lecturer/classes" element={<LecturerClasses />} />
+          <Route path="/lecturer/classroom" element={<LecturerClassroom />} />
           <Route path="/lecturer/resources" element={<LecturerResources />} />
         </Route>
 
@@ -101,7 +101,6 @@ const App = () => {
           <Route path="/dashboard" element={<StudentDashboard />} />
           <Route path="/my-courses" element={<MyCourses />} />
           <Route path="/my-classes" element={<MyClasses />} />
-          <Route path="/grades" element={<StudentGrades />} />
           <Route path="/my-certificates" element={<StudentCertificates />} />
           <Route path="/payments" element={<StudentPayments />} />
           <Route path="/profile/edit" element={<ProfileEdit />} />

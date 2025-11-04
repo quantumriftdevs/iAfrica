@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/lecturer/DataTable';
 import { getClasses, getGrades, createGrade, updateGrade, formatApiError, getPrograms } from '../../utils/api';
 import { useToast } from '../../components/ui/ToastContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 const AdminGrades = () => {
   const [loading, setLoading] = useState(true);
@@ -12,6 +13,8 @@ const AdminGrades = () => {
   const [saving, setSaving] = useState(false);
   const [creating, setCreating] = useState(false);
   const [programs, setPrograms] = useState([]);
+
+  const { getCurrentUser } = useAuth();
 
   const columns = [
     { key: 'name', label: 'Name' },
@@ -97,12 +100,13 @@ const AdminGrades = () => {
               <button disabled={saving} onClick={async () => {
                 setSaving(true);
                 try {
+                  const user = await getCurrentUser();
                   const payload = {
                     name: formData.name,
                     description: formData.description,
                     program: formData.program,
+                    createdBy: user._id,
                     price: formData.price,
-                    isVisible: true,
                     isActive: true
                   };
                   const created = await createGrade(payload);

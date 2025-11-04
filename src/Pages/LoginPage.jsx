@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLocation } from 'react-router-dom';
 import { useToast } from '../components/ui/ToastContext';
 import { formatApiError } from '../utils/api';
-import { Mail, Lock, User, ArrowRight, BookOpen, Users, Award } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, BookOpen, Users, Award, Phone } from 'lucide-react';
 
 const LoginPage = ({ navigate }) => {
-  const [isLogin, setIsLogin] = useState(true);
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const redirectTo = params.get('redirect') || null;
+  const mode = params.get('mode') || null;
+  const [isLogin, setIsLogin] = useState(mode === 'signup' ? false : true);
   const [isAnimating, setIsAnimating] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     fullName: '',
+    phone: '',
     confirmPassword: ''
   });
 
@@ -22,6 +28,7 @@ const LoginPage = ({ navigate }) => {
         email: '',
         password: '',
         fullName: '',
+        phone: '',
         confirmPassword: ''
       });
     }, 400);
@@ -39,6 +46,8 @@ const LoginPage = ({ navigate }) => {
 
   const toast = useToast();
 
+  const auth = useAuth();
+
   const handleLogin = (e) => {
     e.preventDefault();
 
@@ -52,7 +61,13 @@ const LoginPage = ({ navigate }) => {
         setIsAnimating(true);
         const res = await auth.login(formData.email, formData.password);
 
-        // on success, redirect based on user role
+        // if redirect param present, go there first
+        if (redirectTo) {
+          navigate(redirectTo);
+          return;
+        }
+
+        // otherwise, redirect based on user role
         const role = res.user?.role;
         if (role === 'admin') navigate('/admin/dashboard');
         else if (role === 'lecturer') navigate('/lecturer/dashboard');
@@ -67,10 +82,10 @@ const LoginPage = ({ navigate }) => {
     })();
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
 
-    if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
+    if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword || !formData.phone) {
       toast.push('Please fill in all fields', { type: 'error' });
       return;
     }
@@ -80,20 +95,29 @@ const LoginPage = ({ navigate }) => {
       return;
     }
 
-    (async () => {
-      try {
-        setIsAnimating(true);
-        navigate('/Enroll');
-      } catch (err) {
-        console.error(err);
-        toast.push('Unable to proceed to enrollment', { type: 'error' });
-      } finally {
-        setIsAnimating(false);
-      }
-    })();
+    try {
+      setIsAnimating(true);
+      // call registerStudent from AuthContext
+      await auth.registerStudent({
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone
+      });
+
+      // after successful registration, redirect to provided redirect or Courses page
+      if (redirectTo) navigate(redirectTo);
+      else navigate('/Courses');
+    } catch (err) {
+      console.error('Signup error', err);
+      const msg = formatApiError(err) || 'Signup failed. Please try again.';
+      toast.push(msg, { type: 'error' });
+    } finally {
+      setIsAnimating(false);
+    }
   };
 
-  const auth = useAuth();
+  // auth defined earlier
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center p-4 pt-24">
@@ -166,7 +190,6 @@ const LoginPage = ({ navigate }) => {
               } ${!isLogin ? 'lg:order-1' : ''}`}
             >
               <div className="max-w-md mx-auto w-full">
-                
                 {/* Login Form */}
                 {isLogin ? (
                   <div>
@@ -290,6 +313,24 @@ const LoginPage = ({ navigate }) => {
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Phone Number
+                        </label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                          <input
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:outline-none transition-colors"
+                            placeholder="e.g. +2348012345678"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Password
                         </label>
                         <div className="relative">
@@ -322,12 +363,6 @@ const LoginPage = ({ navigate }) => {
                             required
                           />
                         </div>
-                      </div>
-
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <p className="text-sm text-gray-700">
-                          <strong>Note:</strong> After clicking Continue, you'll be directed to choose and enroll in a program. Your account will be created after successful payment.
-                        </p>
                       </div>
 
                       <button
