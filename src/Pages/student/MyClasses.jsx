@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/student/DataTable';
-import { getClasses, getClassToken } from '../../utils/api';
+import { getClasses, getCourses } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
-import { deriveEnrolledProgramIds, filterClassesByProgramOrCourseIds } from '../../utils/helpers';
+import { deriveEnrolledProgramIds, filterClassesByProgramOrCourseIds, getStoredProgramIds, filterCoursesByProgramIds } from '../../utils/helpers';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../components/ui/ToastContext';
 
 const MyClasses = () => {
   const [loading, setLoading] = useState(true);
   const [classes, setClasses] = useState([]);
+  const [courses, setCourses] = useState([]);
   const { user } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
-  const [joiningClassId, setJoiningClassId] = useState(null);
+  
 
   const columns = [
     { key: 'title', label: 'Title' },
@@ -30,38 +31,24 @@ const MyClasses = () => {
           <div className="flex gap-2">
             <button
               onClick={async () => {
-                if (!id) return toast.push('Unable to join: missing class id', { type: 'error' });
+                  if (!id) return toast.push('Unable to join: missing class id', { type: 'error' });
 
-                // quick auth token presence check (context may not be hydrated)
-                const token = localStorage.getItem('iafrica-token') || localStorage.getItem('token') || localStorage.getItem('accessToken') || localStorage.getItem('authToken') || localStorage.getItem('jwt');
-                if (!token) {
-                  // redirect to login and include return URL to come back to this classroom
-                  const returnUrl = encodeURIComponent(`/lecturer/classroom?classId=${encodeURIComponent(id)}`);
-                  navigate(`/login?redirect=${returnUrl}`);
-                  return;
-                }
+                  // quick auth token presence check (context may not be hydrated)
+                  const token = localStorage.getItem('iafrica-token');
 
-                try {
-                  setJoiningClassId(id);
-                  const tokenRes = await getClassToken(id);
-                  const tokenData = tokenRes && (tokenRes.data || tokenRes) ? (tokenRes.data || tokenRes) : tokenRes;
-                  const t = tokenData?.token || tokenData?.accessToken || tokenData?.jwt || '';
-                  const url = tokenData?.url || tokenData?.wsUrl || tokenData?.livekitUrl || '';
-                  const params = new URLSearchParams();
-                  params.set('classId', id);
-                  if (t) params.set('token', t);
-                  if (url) params.set('url', url);
-                  navigate(`/lecturer/classroom?${params.toString()}`);
-                } catch (e) {
-                  console.error('Join class error', e);
-                  toast.push('Failed to join class. It may not have started yet or you lack permission.', { type: 'error' });
-                } finally {
-                  setJoiningClassId(null);
-                }
-              }}
+                  if (!token) {
+                    // redirect to login and include return URL to come back to this classroom
+                    const returnUrl = encodeURIComponent(`/classroom/${encodeURIComponent(id)}`);
+                    navigate(`/login?redirect=${returnUrl}`);
+                    return;
+                  }
+
+                  // Navigate to the generic classroom page which will handle token acquisition
+                  navigate(`/classroom/${encodeURIComponent(id)}`);
+                }}
               className="px-3 py-1 rounded bg-emerald-600 text-white text-sm"
             >
-              {joiningClassId === (row._id || row.id) ? 'Joining...' : 'Join'}
+              {'Join'}
             </button>
           </div>
         );
@@ -73,12 +60,20 @@ const MyClasses = () => {
     let mounted = true;
     (async () => {
       try {
-        const res = await getClasses();
+        const [classesRes, coursesRes] = await Promise.allSettled([getClasses(), getCourses()]);
         if (!mounted) return;
-        setClasses(Array.isArray(res) ? res : []);
+
+        const classesArray = (classesRes.status === 'fulfilled' && Array.isArray(classesRes.value)) ? classesRes.value : [];
+        const coursesArray = (coursesRes.status === 'fulfilled' && Array.isArray(coursesRes.value)) ? coursesRes.value : [];
+
+        setClasses(classesArray);
+        setCourses(coursesArray);
       } catch (e) {
         console.error('MyClasses fetch error', e);
-        if (mounted) setClasses([]);
+        if (mounted) {
+          setClasses([]);
+          setCourses([]);
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -94,9 +89,14 @@ const MyClasses = () => {
         {loading ? (
           <div className="py-8 text-center">Loading classes...</div>
         ) : (() => {
-          const programIds = deriveEnrolledProgramIds(user);
+          const stored = getStoredProgramIds();
+          const derived = deriveEnrolledProgramIds(user);
+          const programIds = Array.from(new Set([...(stored || []), ...(derived || [])]));
           if (programIds.length === 0) return <div className="py-8 text-center text-gray-500">You have not enrolled in any programs yet</div>;
-          const matched = filterClassesByProgramOrCourseIds(classes, programIds, []);
+          // derive courseIds from available courses for more accurate filtering
+          const matchedCourses = filterCoursesByProgramIds(courses, programIds);
+          const courseIds = matchedCourses.map(c => String(c._id || c.id)).filter(Boolean);
+          const matched = filterClassesByProgramOrCourseIds(classes, courseIds);
           if (matched.length === 0) return <div className="py-8 text-center text-gray-500">No classes available for your enrolled programs</div>;
           return <DataTable columns={colsWithActions} data={matched.map((c, idx) => ({ id: c._id || idx+1, _id: c._id || c.id || idx+1, title: c.name || c.title || 'Untitled', schedule: c.scheduledDate || c.schedule || c.startDate || 'TBA' }))} />;
         })()}

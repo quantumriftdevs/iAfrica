@@ -73,7 +73,6 @@ const LoginPage = ({ navigate }) => {
         else if (role === 'lecturer') navigate('/lecturer/dashboard');
         else navigate('/dashboard');
       } catch (err) {
-        console.log('Login error', err);
         const msg = formatApiError(err) || 'Login failed. Check your credentials.';
         toast.push(msg, { type: 'error' });
       } finally {

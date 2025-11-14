@@ -19,6 +19,7 @@ const StudentSidebar = () => {
 
   const items = [
     { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { to: '/programs', label: 'Programs', icon: BookOpen },
     { to: '/my-courses', label: 'My Courses', icon: BookOpen },
     { to: '/my-classes', label: 'My Classes', icon: School },
     { to: '/my-certificates', label: 'Certificates', icon: Award },
@@ -63,8 +64,16 @@ const LogoutButton = () => {
   const toast = useToast();
 
   const handle = async () => {
-    try { await logout(); } catch (e) { console.debug('logout error', e); }
-    try { localStorage.removeItem('iafrica-token'); } catch (e) { console.debug('localStorage remove error', e); }
+    try {
+      await logout();
+    } catch {
+      // ignore errors
+    }
+    try {
+      localStorage.removeItem('iafrica-token');
+    } catch {
+      // ignore errors
+    }
     toast.push('Logged out', { type: 'success' });
     navigate('/login');
   };

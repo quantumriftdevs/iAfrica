@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import HomePage from './Pages/HomePage';
 import AboutPage from './Pages/AboutPage';
 import ProgramsPage from './Pages/ProgramsPage';
+import StudentPrograms from './Pages/student/Programs';
 import CoursesPage from './Pages/CoursesPage';
 import EnrollPage from './Pages/Enroll';
 import ResourcesPage from './Pages/ResourcesPage';
@@ -28,7 +29,8 @@ import LecturerDashboard from './Pages/lecturer/Dashboard';
 import LecturerClasses from './Pages/lecturer/Classes';
 import AdminGrades from './Pages/admin/Grades';
 import LecturerResources from './Pages/lecturer/Resources';
-import LecturerClassroom from './Pages/lecturer/Classroom';
+// LecturerClassroom removed from lecturer routes — using a generic Classroom page for students
+import Classroom from './Pages/Classroom';
 // Student pages
 import StudentDashboard from './Pages/student/Dashboard';
 import MyCourses from './Pages/student/MyCourses';
@@ -60,7 +62,7 @@ const App = () => {
         <Route element={<PublicLayout />}>
           <Route index element={<PageWrapper><HomePage /></PageWrapper>} />
           <Route path="about" element={<PageWrapper><AboutPage /></PageWrapper>} />
-          <Route path="programs" element={<PageWrapper><ProgramsPage /></PageWrapper>} />
+          {/* Programs listing moved to student-only area */}
           <Route path="Courses" element={<PageWrapper><CoursesPage /></PageWrapper>} />
           {/* <Route path="Lecturers" element={<PageWrapper><LecturersPage /></PageWrapper>} /> */}
           <Route path="Enroll" element={<PageWrapper><EnrollPage /></PageWrapper>} />
@@ -74,6 +76,8 @@ const App = () => {
           <Route path="reset-password" element={<PageWrapper><ResetPassword /></PageWrapper>} />
           <Route path="*" element={<PageWrapper><NotFoundPage /></PageWrapper>} />
         </Route>
+
+        <Route path="/classroom/:classId" element={<Classroom />} />
 
         {/* Admin routes inside AdminLayout (no public header/footer) */}
         <Route element={<AdminLayout />}>
@@ -92,13 +96,13 @@ const App = () => {
         <Route element={<LecturerLayout />}>
           <Route path="/lecturer/dashboard" element={<LecturerDashboard />} />
           <Route path="/lecturer/classes" element={<LecturerClasses />} />
-          <Route path="/lecturer/classroom" element={<LecturerClassroom />} />
           <Route path="/lecturer/resources" element={<LecturerResources />} />
         </Route>
 
         {/* Student routes inside StudentLayout */}
         <Route element={<StudentLayout />}>
           <Route path="/dashboard" element={<StudentDashboard />} />
+          <Route path="/programs" element={<StudentPrograms />} />
           <Route path="/my-courses" element={<MyCourses />} />
           <Route path="/my-classes" element={<MyClasses />} />
           <Route path="/my-certificates" element={<StudentCertificates />} />

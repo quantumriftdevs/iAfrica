@@ -25,10 +25,16 @@ export const AuthProvider = ({ children }) => {
       try {
         const u = await getCurrentUser();
         setUser(u);
-      } catch (e) {
-        console.error('Failed to load current user', e);
+        try {
+          const id = u && (u._id || u.id);
+          if (id) localStorage.setItem('iafrica-user-id', String(id));
+        } catch {
+          // ignore storage errors
+        }
+      } catch {
         // token invalid -> clear
         localStorage.removeItem('iafrica-token');
+        localStorage.removeItem('iafrica-user-id');
         setToken(null);
         setUser(null);
       } finally {
@@ -52,6 +58,12 @@ export const AuthProvider = ({ children }) => {
     if (token) saveToken(token);
     const user = await getCurrentUser();
     setUser(user);
+    try {
+      const id = user && (user._id || user.id);
+      if (id) localStorage.setItem('iafrica-user-id', String(id));
+    } catch {
+      // ignore storage errors
+    }
     return { token, user };
   };
 
@@ -59,18 +71,24 @@ export const AuthProvider = ({ children }) => {
     // Force role to student
     const payload = { name, email, password, phone, role: 'student' };
     const res = await registerUser(payload);
-    console.log({ registerRes: res });
     const token = res?.token || res?.data?.token;
     if (token) saveToken(token);
     // attempt to set user
     const user = await getCurrentUser();
     setUser(user);
+    try {
+      const id = user && (user._id || user.id);
+      if (id) localStorage.setItem('iafrica-user-id', String(id));
+    } catch {
+      // ignore storage errors
+    }
     return res;
   };
 
   const logout = async () => {
     await logoutUser();
     localStorage.removeItem('iafrica-token');
+    localStorage.removeItem('iafrica-user-id');
     setToken(null);
     setUser(null);
   };

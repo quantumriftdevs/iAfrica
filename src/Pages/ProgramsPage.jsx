@@ -13,8 +13,6 @@ const ProgramsPage = ({ navigate }) => {
     (async () => {
       try {
         const data = await getPrograms();
-        console.log(data);
-        if (!mounted) return;
         if (Array.isArray(data) && data.length > 0) setPrograms(data);
       } catch {
         // ignore

@@ -75,7 +75,6 @@ function buildQuery(params = {}) {
 
 export async function getPrograms() {
   const data = await request('/api/v1/programs', { method: 'get' });
-  console.log({ data });
   return data && data.data ? data.data : data;
 }
 
@@ -246,6 +245,12 @@ export async function getCertificates() {
   return data && data.data ? data.data : data;
 }
 
+export async function getUserCertificates() {
+  // Fetch certificates for the currently authenticated user
+  const data = await request('/api/v1/certificates/user');
+  return data && data.data ? data.data : data;
+}
+
 export async function verifyCertificate(payload) {
   if (!payload) throw new Error('Missing payload for verifyCertificate');
   const data = await request('/api/v1/certificates/verify', { method: 'post', body: payload });
@@ -275,7 +280,6 @@ export async function createUser(payload) {
   if (!payload) throw new Error('Missing payload for createUser');
   try {
     const data = await request('/api/v1/users', { method: 'post', body: payload });
-    console.log({ data });
     return data && data.data ? data.data : data;
   } catch (error) {
     // Re-throw so callers can handle/display the error consistently
@@ -344,8 +348,8 @@ export async function updateClassRecording(id, payload) {
     if (!id) throw new Error('Missing id for updateClassRecording');
     const data = await request(`/api/v1/classes/${encodeURIComponent(id)}/recording`, { method: 'put', body: payload });
     return data && data.data ? data.data : data;
-  } catch (error) {
-    console.log({ recordingError: error });
+  } catch {
+    // ignore errors
   }
 }
 
@@ -406,7 +410,7 @@ export async function initializePayment(payload) {
 export async function verifyPayment(reference) {
   if (!reference) throw new Error('Missing payment reference');
 
-  const data = await request(`/api/v1/payments/verify?reference=${encodeURIComponent(reference)}`);
+  const data = await request(`/api/v1/payments/verify/${encodeURIComponent(reference)}`);
   return data && data.data ? data.data : data;
 }
 

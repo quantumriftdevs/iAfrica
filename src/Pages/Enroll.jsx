@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { initializePayment, getPrograms, formatApiError, getActiveSeasons } from '../utils/api';
-import { selectActiveSeasonForProgram } from '../utils/helpers';
+import React, { useState, useEffect, useRef } from 'react';
+import { initializePayment, verifyPayment, getPrograms, formatApiError, getActiveSeasons } from '../utils/api';
+import { selectActiveSeasonForProgram, addStoredProgramId } from '../utils/helpers';
 import { ChevronRight, Users, Award, Video, CheckCircle, ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
 import { useToast } from '../components/ui/ToastContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const EnrollPage = () => {
   const [programs, setPrograms] = useState([]);
@@ -17,6 +18,12 @@ const EnrollPage = () => {
   const [seasonError, setSeasonError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [processingPayment, setProcessingPayment] = useState(false);
+
+  const verifyInProgressRef = useRef(false);
+
+  const [user, setUser] = useState();
+
+  const { getCurrentUser } = useAuth();
 
   useEffect(() => {
     // load programs via API
@@ -77,13 +84,12 @@ const EnrollPage = () => {
                 setSelectedProgram(prev => prev || { id: null, name: `Selected course: ${qCourseId}`, grades: [] });
               }
             }
-          } catch (e) {
+          } catch {
             // ignore pre-selection errors
-            console.warn('pre-selection parse error', e);
           }
         }
       } catch {
-        console.error('Programs fetch error');
+        // ignore errors
       } finally {
         if (mounted) setLoading(false);
       }
@@ -92,39 +98,83 @@ const EnrollPage = () => {
     return () => { mounted = false; };
   }, [location]);
 
+  useEffect(() => {
+    const getStudent = async () => {
+      const student = await getCurrentUser();
+      setUser(student);
+    }
+
+    getStudent();
+  }, [getCurrentUser]);
+
   // Check for payment reference in URL when returning from gateway and verify
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const ref = params.get('reference') || params.get('trxref') || params.get('payment_reference') || params.get('paymentRef');
+    const ref = localStorage.getItem('paymentReference');
     if (!ref) return;
+
+    // Prevent duplicate verification toasts/runs (React StrictMode may double-invoke effects in dev)
+    const verifyingRef = verifyInProgressRef.current;
+    if (verifyingRef) return; // already verifying
+
+    verifyInProgressRef.current = true;
+    // show a persistent info toast while verifying; remove it when done
+    const verifyingToastId = toast.push('Verifying payment...', { type: 'info', duration: 0 });
 
     let mounted = true;
     (async () => {
       try {
         setProcessingPayment(true);
-        const verifyRes = await (await import('../utils/api')).verifyPayment(ref);
-        if (!mounted) return;
-        const status = verifyRes?.status || verifyRes?.payment_status || verifyRes?.data?.status || (verifyRes?.success ? 'success' : 'failed');
-        if (status === 'success' || status === 'paid' || status === 'completed') {
-          toast.push('Payment confirmed — you are now enrolled. Check your email for access details.', { type: 'success' });
+        const verifyRes = await verifyPayment(ref);
+  // support multiple backend shapes: { status: 'success' } or { success: true } or nested data
+  const status = verifyRes?.status;
+  const ok = (status === 'success') || (verifyRes && verifyRes.success === true) || (verifyRes?.data && (verifyRes.data.status === 'success' || verifyRes.data.success === true));
+  if (ok) {
+          // remove persistent verifying toast
+          if (verifyingToastId) toast.remove(verifyingToastId);
+          // prefer backend message when available
+          const successMsg = verifyRes?.message || verifyRes?.msg || verifyRes?.data?.message || 'Payment confirmed — you are now enrolled';
+          toast.push(successMsg, { type: 'success' });
+
+          // persist the enrolled program id into stored program ids (merge & dedupe)
+          try {
+            // derive program id from selectedProgram state first, else try response payload
+            const fromSelected = selectedProgram?.id || selectedProgram?._id || selectedProgram?.programId || null;
+            const fromVerify = verifyRes?.program || verifyRes?.programId || verifyRes?.data?.program || verifyRes?.data?.programId || (verifyRes?.course && (verifyRes.course.program || verifyRes.course.programId)) || (verifyRes?.data && verifyRes.data.course && (verifyRes.data.course.program || verifyRes.data.course.programId));
+            const programIdToStore = String(fromSelected || fromVerify || '').trim();
+            if (programIdToStore) {
+              addStoredProgramId(programIdToStore);
+            }
+          } catch {
+            // ignore errors
+          }
+
           // clear selection and navigate to student dashboard
           setSelectedProgram(null);
           setSelectedGrade(null);
+          // cleanup stored payment ref so we don't re-run verification
+          try {
+            localStorage.removeItem('paymentReference');
+          } catch {
+            // ignore errors
+          }
           navigate('/dashboard');
         } else {
-          toast.push('Payment not confirmed. If you were charged, contact support.', { type: 'error' });
+          if (verifyingToastId) toast.remove(verifyingToastId);
+          const failMsg = verifyRes?.message || verifyRes?.error || verifyRes?.msg || 'Payment not confirmed. If you were charged, contact support.';
+          toast.push(failMsg, { type: 'error' });
         }
       } catch (e) {
-        console.error('Payment verification error', e);
+        if (verifyingToastId) toast.remove(verifyingToastId);
         const msg = formatApiError(e) || 'Unable to verify payment. Please try again or contact support.';
         toast.push(msg, { type: 'error' });
       } finally {
         if (mounted) setProcessingPayment(false);
+        verifyInProgressRef.current = false;
       }
     })();
 
     return () => { mounted = false; };
-  }, [navigate, toast]);
+  }, [navigate, toast, selectedProgram]);
 
   // Helper to fetch and set active season for a program
   const fetchSeasonForProgram = async (programId) => {
@@ -139,8 +189,7 @@ const EnrollPage = () => {
         setSelectedSeason(null);
         setSeasonError('No active season found for this program');
       }
-    } catch (err) {
-      console.error('Season fetch error', err);
+    } catch {
       setSelectedSeason(null);
       setSeasonError('Failed to load active seasons');
     } finally {
@@ -163,60 +212,53 @@ const EnrollPage = () => {
   const handleEnroll = async (grade) => {
     setProcessingPayment(true);
     try {
-      // Require an auth token before initializing payment. Some flows redirect here
-      // without fully hydrating `user` in context, so prefer checking localStorage for
-      // a token. If none found, send the user to signup/login and let them return.
       const token = localStorage.getItem('iafrica-token');
       if (!token) {
-        // redirect to login/signup and preserve return URL so they come back to this enroll page
         navigate('/login?redirect=/Enroll&mode=signup');
         setProcessingPayment(false);
         return;
       }
-      // Ensure an active season is selected for this program before proceeding
+
       if (!selectedSeason) {
         toast.push('No active season found for the selected program. Please contact support or retry.', { type: 'error' });
         setProcessingPayment(false);
         return;
       }
 
-      // Build payload expected by backend initialize endpoint
+      const price = parseFloat(grade.price) * 100;
+
       const payload = {
         program: selectedProgram?.id,
         grade: grade?._id,
+        student: user._id,
+        amount: price,
+        currency: "NGN",
         callbackUrl: window.location.href,
+        metadata: {
+          program: selectedProgram?.id,
+          grade: grade?._id,
+        },
       };
 
-      // Select an active season that matches the selected program (if any)
       try {
-        // If we already have selectedSeason (fetched earlier), use that; otherwise try a last-minute match
         const match = selectedSeason || await selectActiveSeasonForProgram(getActiveSeasons, payload.program);
         if (match) {
           payload.season = match._id;
+          payload.metadata.season = match._id;
         }
-      } catch (e) {
-        // ignore season selection failures; payment can still proceed if backend supports it
-        console.warn('Failed to auto-select season', e);
+      } catch {
+        // ignore errors
       }
 
-      console.log({ payload });
+      localStorage.setItem('enrollingIn', selectedProgram.id);
 
       const res = await initializePayment(payload);
 
-      console.log({ res });
+      const paymentUrl = res.authorizationUrl;
+      localStorage.setItem('paymentReference', res.reference);
 
-      // Expecting a payment url in response; common keys: authorization_url, data.authorization_url, checkout_url
-      const paymentUrl = res?.authorization_url || res?.data?.authorization_url || res?.checkout_url || res?.data?.checkout_url || res?.payment_url || res?.gateway_url;
-
-      if (paymentUrl) {
-        // redirect in same tab to make the flow simpler for verification
-        window.location.href = paymentUrl;
-      } else {
-        // If API returned inline data (e.g., paystack reference), show a toast so the user can continue
-        toast.push('Payment initialized. Please complete payment on the provided page.', { type: 'info' });
-      }
+      window.location.href = paymentUrl;
     } catch (e) {
-      console.error('Payment initialization error', e);
       const msg = formatApiError(e) || 'Failed to initialize payment. Please try again later.';
       toast.push(msg, { type: 'error' });
     } finally {

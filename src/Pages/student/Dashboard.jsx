@@ -2,18 +2,23 @@ import React, { useEffect, useState } from 'react';
 import StatsCard from '../../components/student/StatsCard';
 import DataTable from '../../components/student/DataTable';
 import { Search } from 'lucide-react';
-import { getCourses, getCertificates, getPrograms } from '../../utils/api';
+import { getCourses, getUserCertificates } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { deriveEnrolledProgramIds, filterCoursesByProgramIds } from '../../utils/helpers';
+
+import {
+  deriveEnrolledProgramIds,
+  filterCoursesByProgramIds,
+  getStoredProgramIds,
+} from '../../utils/helpers';
 
 const StudentDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [courses, setCourses] = useState([]);
   const [certificates, setCertificates] = useState([]);
-  const [programs, setPrograms] = useState([]);
+  
+  
   const { user } = useAuth();
-  const navigate = useNavigate();
+  
 
   const columns = [
     { key: 'title', label: 'Title' },
@@ -24,20 +29,16 @@ const StudentDashboard = () => {
     let mounted = true;
     (async () => {
       try {
-  const [coursesRes, certificatesRes, programsRes] = await Promise.allSettled([getCourses(), getCertificates(), getPrograms()]);
+  const [coursesRes, certificatesRes] = await Promise.allSettled([getCourses(), getUserCertificates()]);
         if (!mounted) return;
 
-  const coursesArray = (coursesRes.status === 'fulfilled' && Array.isArray(coursesRes.value)) ? coursesRes.value : [];
-  const certsArray = (certificatesRes.status === 'fulfilled' && Array.isArray(certificatesRes.value)) ? certificatesRes.value : [];
-  const programsArray = (programsRes.status === 'fulfilled' && Array.isArray(programsRes.value)) ? programsRes.value : [];
-
-  console.log({ coursesRes, certificatesRes, programsRes });
-
+        const coursesArray = (coursesRes.status === 'fulfilled' && Array.isArray(coursesRes.value)) ? coursesRes.value : [];
+        const certsArray = (certificatesRes.status === 'fulfilled' && Array.isArray(certificatesRes.value)) ? certificatesRes.value : [];
+  // we don't show raw classes on the dashboard; keep courses & certificates
   setCourses(coursesArray);
   setCertificates(certsArray);
-  setPrograms(programsArray);
-      } catch (e) {
-        console.error('Student dashboard fetch error', e);
+      } catch {
+        // ignore errors
       } finally {
         if (mounted) setLoading(false);
       }
@@ -47,8 +48,28 @@ const StudentDashboard = () => {
   }, []);
 
   const stats = [
-  { title: 'Enrolled Courses', value: loading ? '—' : (Array.isArray(courses) ? (deriveEnrolledProgramIds(user).length ? filterCoursesByProgramIds(courses, deriveEnrolledProgramIds(user)).length : 0) : '—') },
-    { title: 'Upcoming Classes', value: '—' },
+    // compute effective program ids (stored + derived) and filter courses/classes accordingly
+    // (() => {})(),
+    // { title: 'Enrolled Courses', value: loading ? '—' : (Array.isArray(courses) ? (() => {
+    //     const stored = getStoredProgramIds();
+    //     const derived = deriveEnrolledProgramIds(user);
+    //     const programIds = Array.from(new Set([...(stored || []), ...(derived || [])]));
+    //     return programIds.length ? filterCoursesByProgramIds(courses, programIds).length : 0;
+    //   })() : '—') },
+    //   { title: 'Upcoming Classes', value: loading ? '—' : (() => {
+    //     try {
+    //       const stored = getStoredProgramIds();
+    //       const derived = deriveEnrolledProgramIds(user);
+    //       const programIds = Array.from(new Set([...(stored || []), ...(derived || [])]));
+    //       if (!programIds.length) return 0;
+    //       const matchedCourses = filterCoursesByProgramIds(courses, programIds);
+    //       const courseIds = matchedCourses.map(c => String(c._id || c.id)).filter(Boolean);
+    //       const matchedClasses = filterClassesByProgramOrCourseIds(classes, [], courseIds);
+    //       return matchedClasses.length || 0;
+    //     } catch {
+    //       return '—';
+    //     }
+    //   })() },
     { title: 'Certificates', value: loading ? '—' : (certificates.length || '0') },
     { title: 'Progress', value: '—' }
   ];
@@ -77,29 +98,18 @@ const StudentDashboard = () => {
             {loading ? (
               <div className="py-8 text-center">Loading courses...</div>
             ) : (() => {
-              const programIds = deriveEnrolledProgramIds(user);
+              const stored = getStoredProgramIds();
+              const derived = deriveEnrolledProgramIds(user);
+              const programIds = Array.from(new Set([...(stored || []), ...(derived || [])]));
               if (programIds.length === 0) return <div className="py-8 text-center text-gray-500">You have not enrolled in any programs yet</div>;
               const matched = filterCoursesByProgramIds(courses, programIds);
+
               if (matched.length === 0) return <div className="py-8 text-center text-gray-500">No courses available for your enrolled programs</div>;
+
               return <DataTable columns={columns} data={matched.map((c, idx) => ({ id: c._id || idx+1, title: c.name || c.title || 'Untitled', progress: c.progress || '0%' }))} />;
             })()}
           </div>
-          <div className="bg-white rounded-lg shadow p-4 mt-6">
-            <h3 className="text-lg font-semibold mb-4">Explore Programs</h3>
-            {programs.length === 0 ? (
-              <div className="py-6 text-center text-gray-500">No programs available</div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {programs.slice(0,3).map((p, i) => (
-                  <div key={i} className="p-4 border rounded-lg">
-                    <h4 className="font-semibold mb-2">{p.name}</h4>
-                    <p className="text-sm text-gray-600 mb-4">{p.description}</p>
-                    <button onClick={() => navigate(`/Enroll?programId=${encodeURIComponent(p._id || p.id)}`, { state: { program: p } })} className="px-3 py-2 bg-emerald-600 text-white rounded">Enroll</button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Programs moved to the student-only Programs page */}
         </main>
       </div>
     </div>

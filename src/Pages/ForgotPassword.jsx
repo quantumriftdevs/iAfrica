@@ -18,7 +18,6 @@ const ForgotPassword = ({ navigate }) => {
       // navigate to reset page where user can paste token or use emailed link
       navigate('/reset-password');
     } catch (err) {
-      console.error('Forgot password error', err);
       toast.push(formatApiError(err) || 'Failed to request password reset', { type: 'error' });
     } finally {
       setSubmitting(false);

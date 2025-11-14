@@ -112,16 +112,10 @@ const LecturerClasses = () => {
                           if (!id) return toast.push('Unable to start class: missing id', { type: 'error' });
                           try {
                             setStartingClassId(id);
-                            const tokenRes = await getClassToken(id);
-                            const tokenData = tokenRes && (tokenRes.data || tokenRes) ? (tokenRes.data || tokenRes) : tokenRes;
-
-                            const token = tokenData?.token || tokenData?.accessToken || tokenData?.jwt || '';
-                            const url = tokenData?.url || tokenData?.wsUrl || tokenData?.livekitUrl || '';
-                            const params = new URLSearchParams();
-                            params.set('classId', id);
-                            if (token) params.set('token', token);
-                            if (url) params.set('url', url);
-                            navigate(`/lecturer/classroom?${params.toString()}`);
+                            // Request a class token from the server (may mark the class as started); ignore returned token here
+                            await getClassToken(id);
+                            // Navigate to generic classroom page; the classroom component will request a token as needed
+                            navigate(`/classroom/${encodeURIComponent(id)}`);
                           } catch (e) {
                             console.error('Start class error', e);
                             toast.push(formatApiError(e) || 'Failed to start class', { type: 'error' });

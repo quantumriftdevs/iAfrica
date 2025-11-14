@@ -57,8 +57,16 @@ const LogoutButton = () => {
   const toast = useToast();
 
   const handle = async () => {
-    try { await logout(); } catch (e) { console.debug('logout error', e); }
-    try { localStorage.removeItem('iafrica-token'); } catch (e) { console.debug('localStorage remove error', e); }
+    try {
+      await logout();
+    } catch {
+      // ignore errors
+    }
+    try {
+      localStorage.removeItem('iafrica-token');
+    } catch {
+      // ignore errors
+    }
     toast.push('Logged out', { type: 'success' });
     navigate('/login');
   };

@@ -72,32 +72,105 @@ export function deriveEnrolledProgramIds(user) {
   return Array.from(ids).filter(Boolean);
 }
 
+// Derive enrolled grade IDs from a user object supporting several backend shapes.
+export function deriveEnrolledGradeIds(user) {
+  if (!user || typeof user !== 'object') return [];
+  const candidates = [user.enrolledGrades, user.grades, user.enrollments, user.enrolled];
+  const ids = new Set();
+
+  for (const list of candidates) {
+    if (!Array.isArray(list)) continue;
+
+    for (const item of list) {
+      if (!item) continue;
+      // if item is string -> id
+      if (typeof item === 'string') { ids.add(item); continue; }
+
+      // try common shapes: grade, gradeId, _id, id
+      const maybe = item.grade || item.gradeId || item._id || item.id || (item.grade && (item.grade._id || item.grade.id));
+      if (maybe) ids.add(String(maybe));
+    }
+  }
+
+  return Array.from(ids).filter(Boolean);
+}
+
 // Filter courses by programIds (defensive: supports several course shapes)
 export function filterCoursesByProgramIds(courses = [], programIds = []) {
   if (!Array.isArray(courses) || programIds.length === 0) return [];
   const set = new Set(programIds.map(String));
   return courses.filter(c => {
     try {
-      const prog = c.program || c.programId || (c.program && (c.program._id || c.program.id));
+      const prog = c.program._id;
       if (!prog) return false;
       return set.has(String(prog));
-    } catch { return false; }
+    } catch {
+      return false;
+    }
   });
 }
 
 // Filter classes by programIds or courseIds (defensive)
-export function filterClassesByProgramOrCourseIds(classes = [], programIds = [], courseIds = []) {
+export function filterClassesByProgramOrCourseIds(classes = [], courseIds = []) {
   if (!Array.isArray(classes)) return [];
-  const pset = new Set((programIds || []).map(String));
   const cset = new Set((courseIds || []).map(String));
 
   return classes.filter(cl => {
     try {
-      const prog = cl.program || cl.programId || (cl.program && (cl.program._id || cl.program.id));
-      const course = cl.course || cl.courseId || (cl.course && (cl.course._id || cl.course.id));
-      if (prog && pset.size > 0 && pset.has(String(prog))) return true;
+      const course = cl.course._id;
       if (course && cset.size > 0 && cset.has(String(course))) return true;
       return false;
-    } catch { return false; }
+    } catch {
+      return false;
+    }
   });
+}
+
+// ---------------- Storage helpers for enrolled program ids -----------------
+const STORED_PROGRAMS_KEY = 'iafrica-program-ids';
+
+function normalizeId(id) {
+  if (id === undefined || id === null) return null;
+  if (typeof id === 'string') return id;
+  if (typeof id === 'number') return String(id);
+  if (typeof id === 'object') return String(id._id || id.id || '');
+  return String(id);
+}
+
+export function getStoredProgramIds() {
+  try {
+    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(STORED_PROGRAMS_KEY) : null;
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(normalizeId).filter(Boolean);
+  } catch (e) {
+    // if localStorage is unavailable or data malformed, return empty array
+    console.warn('getStoredProgramIds parse error', e);
+    return [];
+  }
+}
+
+export function setStoredProgramIds(ids = []) {
+  try {
+    const arr = Array.isArray(ids) ? ids.map(normalizeId).filter(Boolean) : [];
+    if (typeof localStorage !== 'undefined') localStorage.setItem(STORED_PROGRAMS_KEY, JSON.stringify(Array.from(new Set(arr))));
+    return true;
+  } catch (e) {
+    console.warn('setStoredProgramIds error', e);
+    return false;
+  }
+}
+
+export function addStoredProgramId(id) {
+  try {
+    const nid = normalizeId(id);
+    if (!nid) return false;
+    const existing = getStoredProgramIds();
+    const set = new Set(existing.concat([nid]));
+    return setStoredProgramIds(Array.from(set));
+  } catch (e) {
+    console.warn('addStoredProgramId error', e);
+    return false;
+  }
 }
