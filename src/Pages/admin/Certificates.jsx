@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/admin/DataTable';
 import { getCertificates } from '../../utils/api';
+import { formatDate } from '../../utils/helpers';
 
 const CertificatesPage = () => {
   const [loading, setLoading] = useState(true);
@@ -10,7 +11,7 @@ const CertificatesPage = () => {
     { key: 'id', label: 'ID' },
     { key: 'title', label: 'Title' },
     { key: 'recipient', label: 'Recipient' },
-    { key: 'date', label: 'Date' }
+    { key: 'date', label: 'Date', render: (v, row) => formatDate(v || row.issuedAt || row.createdAt || row.date) }
   ];
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/admin/DataTable';
 import { getPayments } from '../../utils/api';
+import { formatDate } from '../../utils/helpers';
 
 const PaymentsPage = () => {
   const [loading, setLoading] = useState(true);
@@ -10,7 +11,7 @@ const PaymentsPage = () => {
     { key: 'id', label: 'ID' },
     { key: 'amount', label: 'Amount' },
     { key: 'status', label: 'Status' },
-    { key: 'date', label: 'Date' }
+    { key: 'date', label: 'Date', render: (v, row) => formatDate(v || row.createdAt || row.updatedAt || row.date) }
   ];
 
   useEffect(() => {

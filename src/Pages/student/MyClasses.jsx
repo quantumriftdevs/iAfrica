@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/student/DataTable';
 import { getClasses, getCourses } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
-import { deriveEnrolledProgramIds, filterClassesByProgramOrCourseIds, getStoredProgramIds, filterCoursesByProgramIds } from '../../utils/helpers';
+import { deriveEnrolledProgramIds, filterClassesByProgramOrCourseIds, getStoredProgramIds, filterCoursesByProgramIds, formatDate } from '../../utils/helpers';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../components/ui/ToastContext';
 
@@ -13,7 +13,6 @@ const MyClasses = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
-  
 
   const columns = [
     { key: 'title', label: 'Title' },
@@ -98,7 +97,7 @@ const MyClasses = () => {
           const courseIds = matchedCourses.map(c => String(c._id || c.id)).filter(Boolean);
           const matched = filterClassesByProgramOrCourseIds(classes, courseIds);
           if (matched.length === 0) return <div className="py-8 text-center text-gray-500">No classes available for your enrolled programs</div>;
-          return <DataTable columns={colsWithActions} data={matched.map((c, idx) => ({ id: c._id || idx+1, _id: c._id || c.id || idx+1, title: c.name || c.title || 'Untitled', schedule: c.scheduledDate || c.schedule || c.startDate || 'TBA' }))} />;
+          return <DataTable columns={colsWithActions} data={matched.map((c, idx) => ({ id: c._id || idx+1, _id: c._id || c.id || idx+1, title: c.name || c.title || 'Untitled', schedule: formatDate(c.scheduledDate || c.schedule || c.startDate) || 'TBA' }))} />;
         })()}
       </div>
     </div>

@@ -3,6 +3,7 @@ import StatsCard from '../../components/lecturer/StatsCard';
 import DataTable from '../../components/lecturer/DataTable';
 import { useAuth } from '../../contexts/AuthContext';
 import { getLecturerClasses, getPrograms } from '../../utils/api';
+import { formatDate } from '../../utils/helpers';
 
 const LecturerDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -17,8 +18,8 @@ const LecturerDashboard = () => {
       key: 'scheduledDate',
       label: 'Schedule',
       render: (v, row) => {
-        // prefer scheduledDate but handle alternative fields
-        return row.scheduledDate || row.startDate || row.start || row.schedule || '-';
+        // prefer scheduledDate but handle alternative fields; display with formatDate for readability
+        return formatDate(v || row.scheduledDate || row.startDate || row.start || row.schedule) || '-';
       }
     },
     { key: 'status', label: 'Status' }

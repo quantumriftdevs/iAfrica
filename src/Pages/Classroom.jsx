@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getClass, getClassToken } from '../utils/api';
+import { formatDate } from '../utils/helpers';
 import LiveClassroom from '../components/LiveClassroom';
 
 const Classroom = () => {
@@ -65,7 +66,7 @@ const Classroom = () => {
       {classInfo ? (
         <div className="mb-4">
           <div className="font-semibold">{classInfo.name || classInfo.title || classInfo.course || 'Live Class'}</div>
-          <div className="text-sm text-gray-600">Scheduled: {classInfo.scheduledDate || classInfo.startDate || 'TBA'}</div>
+          <div className="text-sm text-gray-600">Scheduled: {formatDate(classInfo.scheduledDate || classInfo.startDate) || 'TBA'}</div>
         </div>
       ) : null}
       {!tokenInfo ? (

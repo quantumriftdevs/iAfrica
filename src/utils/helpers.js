@@ -4,7 +4,16 @@ export const formatDate = (value) => {
   if (Number.isNaN(d.getTime())) return '';
   // use the browser locale where available
   const locale = (typeof window !== 'undefined' && navigator?.language) ? navigator.language : 'en-GB';
-  return new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric' }).format(d);
+  // Use full month name and include time (hours:minutes:seconds) in 12-hour format with AM/PM
+  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true };
+  let formatted = new Intl.DateTimeFormat(locale, options).format(d);
+  // Normalize AM/PM variants to a consistent 'A.M.' / 'P.M.' representation
+  try {
+    formatted = formatted.replace(/\b(?:a\.m\.|am)\b/gi, 'A.M.').replace(/\b(?:p\.m\.|pm)\b/gi, 'P.M.');
+  } catch {
+    // if replace fails for any reason, ignore and return the Intl formatted string
+  }
+  return formatted;
 };
 
 export const toInputDate = (value) => {

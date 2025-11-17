@@ -106,7 +106,7 @@ const LoginPage = ({ navigate }) => {
 
       // after successful registration, redirect to provided redirect or Courses page
       if (redirectTo) navigate(redirectTo);
-      else navigate('/Courses');
+      else navigate('/dashboard');
     } catch (err) {
       console.error('Signup error', err);
       const msg = formatApiError(err) || 'Signup failed. Please try again.';
@@ -368,7 +368,7 @@ const LoginPage = ({ navigate }) => {
                         type="submit"
                         className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white py-3 rounded-lg font-semibold hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg"
                       >
-                        Continue to Enrollment
+                        Register
                         <ArrowRight size={20} />
                       </button>
                     </form>
