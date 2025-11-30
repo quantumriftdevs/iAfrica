@@ -4,13 +4,13 @@ import DataTable from '../../components/lecturer/DataTable';
 import { useAuth } from '../../contexts/AuthContext';
 import { getLecturerClasses, getPrograms } from '../../utils/api';
 import { formatDate } from '../../utils/helpers';
+import { Users, BookOpen, Clock } from 'lucide-react';
 
 const LecturerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [classes, setClasses] = useState([]);
   const [programs, setPrograms] = useState([]);
   const { user } = useAuth();
-  // Lecturer dashboard no longer contains class creation — moved to admin flow
 
   const columns = [
     { key: 'title', label: 'Title' },
@@ -18,7 +18,6 @@ const LecturerDashboard = () => {
       key: 'scheduledDate',
       label: 'Schedule',
       render: (v, row) => {
-        // prefer scheduledDate but handle alternative fields; display with formatDate for readability
         return formatDate(v || row.scheduledDate || row.startDate || row.start || row.schedule) || '-';
       }
     },
@@ -48,43 +47,66 @@ const LecturerDashboard = () => {
   }, []);
 
   const stats = [
-    { title: 'Students', value: '—' },
-    { title: 'Active Courses', value: loading ? '—' : (programs.length || '0') },
-    { title: 'Pending Grades', value: '—' }
+    { title: 'Students', value: '—', icon: Users, color: 'bg-blue-500' },
+    { title: 'Active Courses', value: loading ? '—' : (programs.length || '0'), icon: BookOpen, color: 'bg-orange-500' },
+    { title: 'Pending Grades', value: '—', icon: Clock, color: 'bg-purple-500' }
   ];
 
   return (
-    <div className="container mx-auto px-4">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold mb-6">Lecturer Dashboard</h2>
-
-        <div className="flex items-center space-x-3">
-          {/* Class creation is managed in the admin area now */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-8">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h2 className="text-4xl font-bold text-gray-900 mb-2">Lecturer Dashboard</h2>
+          <p className="text-gray-600">Manage your classes and track student progress</p>
         </div>
-      </div>
 
-      <div className="gap-6">
         <main className="w-full">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            {stats.map((s, i) => (
-              <StatsCard key={i} title={s.title} value={s.value} />
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {loading ? (
+              Array(3).fill(0).map((_, i) => (
+                <div key={i} className="bg-white rounded-xl shadow-md p-6 border border-gray-100 animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                  <div className="h-8 bg-gray-200 rounded w-2/3"></div>
+                </div>
+              ))
+            ) : (
+              stats.map((s, i) => (
+                <div key={i} className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-600 text-sm font-medium">{s.title}</p>
+                      <p className="text-3xl font-bold text-gray-900 mt-2">{s.value}</p>
+                    </div>
+                    <div className={`${s.color} p-3 rounded-full text-white`}>
+                      <s.icon size={24} />
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="text-lg font-semibold mb-4">My Classes</h3>
+          <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+            <div className="p-6 border-b border-gray-100">
+              <h3 className="text-xl font-bold text-gray-900">My Classes</h3>
+              <p className="text-gray-600 text-sm mt-1">Classes you're teaching this semester</p>
+            </div>
             {loading ? (
-              <div className="py-8 text-center">Loading classes...</div>
+              <div className="py-12 text-center">
+                <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-200 border-t-emerald-600"></div>
+              </div>
             ) : classes.length === 0 ? (
-              <div className="py-8 text-center text-gray-500">No classes to display</div>
+              <div className="py-12 text-center">
+                <BookOpen size={48} className="text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-600 font-medium">No classes to display</p>
+                <p className="text-gray-500 text-sm mt-2">Classes will appear here once assigned</p>
+              </div>
             ) : (
               <DataTable columns={columns} data={classes.map((c, idx) => ({ id: c._id || idx+1, title: c.title || c.name || c.name || c.courseName || 'Untitled', scheduledDate: c.scheduledDate || c.schedule || c.startDate || c.start || '-', status: c.status || c.state || '-' }))} />
             )}
           </div>
         </main>
       </div>
-
-      {/* Class creation moved to admin. */}
     </div>
   );
 };

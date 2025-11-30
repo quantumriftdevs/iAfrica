@@ -2,22 +2,25 @@ import React from 'react';
 
 const StatsCard = ({ title, value, icon: Icon, trend }) => {
   return (
-    <div
-      className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow duration-300"
-    >
-      <div className="flex items-center justify-between">
+    <div className="group relative bg-white rounded-xl shadow-lg p-7 border border-gray-100 hover:shadow-2xl transition-all duration-300 overflow-hidden">
+      {/* Background gradient on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/0 to-emerald-50/0 group-hover:from-emerald-50/50 group-hover:to-emerald-50/30 transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
+      
+      <div className="relative z-10 flex items-center justify-between">
         <div className="flex-grow">
-          <div className="text-sm font-medium text-gray-500">{title}</div>
-          <div className="text-2xl font-bold mt-2 text-gray-900">{value}</div>
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{title}</div>
+          <div className="text-3xl font-bold mt-3 text-gray-900 group-hover:text-emerald-700 transition-colors duration-200">{value}</div>
           {trend && (
-            <div className={`text-sm mt-2 ${trend.type === 'increase' ? 'text-green-600' : 'text-red-600'}`}>
-              {trend.value}
+            <div className={`text-sm mt-3 font-semibold flex items-center ${trend.type === 'increase' ? 'text-green-600' : 'text-red-600'}`}>
+              {trend.type === 'increase' ? '↑' : '↓'} {trend.value}
             </div>
           )}
         </div>
         {Icon && (
-          <div className="text-blue-600">
-            <Icon size={24} />
+          <div className="text-emerald-500 group-hover:text-emerald-600 transition-colors duration-300 ml-4">
+            <div className="p-3 bg-emerald-50 group-hover:bg-emerald-100 rounded-xl transition-all duration-300">
+              <Icon size={28} />
+            </div>
           </div>
         )}
       </div>

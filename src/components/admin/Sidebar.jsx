@@ -8,7 +8,8 @@ import {
   School, 
   CreditCard, 
   Award,
-  CalendarDays
+  CalendarDays,
+  LogOut
 } from 'lucide-react';
 import { SiteBrand } from '../Header';
 import { useAuth } from '../../contexts/AuthContext';
@@ -31,11 +32,11 @@ const AdminSidebar = () => {
   ];
 
   return (
-    <aside className="w-64 bg-white shadow-sm py-6 px-4 h-full min-h-[100dvh] lg:min-h-screen">
-      <nav className="space-y-1 flex flex-col h-full overflow-y-auto mt-2">
-        <SiteBrand />
-        {/* Logout area */}
-        
+    <aside className="w-64 bg-gradient-to-b from-slate-900 to-slate-800 text-white shadow-xl py-6 px-4 h-full min-h-[100dvh] lg:min-h-screen flex flex-col">
+      <nav className="space-y-1 flex flex-col h-full overflow-y-auto sidebar">
+        <div className="mb-8">
+          <SiteBrand className="flex items-center space-x-3" />
+        </div>
 
         {items.map((item) => {
           const isActive = location.pathname === item.to;
@@ -45,18 +46,18 @@ const AdminSidebar = () => {
             <Link
               key={item.to}
               to={item.to}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-150
+              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group
                 ${isActive 
-                  ? 'bg-green-50 text-green-600' 
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-emerald-500 text-white shadow-lg' 
+                  : 'text-gray-300 hover:bg-slate-700/50 hover:text-white'
                 }`}
             >
-              <Icon size={20} className={isActive ? 'text-green-600' : 'text-gray-400'} />
-              <span className="font-medium">{item.label}</span>
+              <Icon size={20} className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'} />
+              <span className="font-medium text-sm">{item.label}</span>
             </Link>
           );
         })}
-        <div className="mt-auto">
+        <div className="mt-auto pt-6 border-t border-slate-700">
           <LogoutButton />
         </div>
       </nav>
@@ -85,9 +86,9 @@ const LogoutButton = () => {
   };
 
   return (
-    <button onClick={handle} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-600 hover:bg-gray-50">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" /></svg>
-      <span className="font-medium">Logout</span>
+    <button onClick={handle} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-300 hover:bg-slate-700/50 hover:text-white transition-all duration-200 group font-medium text-sm">
+      <LogOut size={20} className="text-gray-400 group-hover:text-white" />
+      <span>Logout</span>
     </button>
   );
 };

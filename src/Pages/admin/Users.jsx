@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/admin/DataTable';
 import { getUsers, createUser, updateUser, formatApiError } from '../../utils/api';
-import { X } from 'lucide-react';
+import { X, Plus, Users as UsersIcon } from 'lucide-react';
 import { useToast } from '../../components/ui/ToastContext';
 
 const UsersPage = () => {
@@ -47,7 +47,7 @@ const UsersPage = () => {
         setUsers(Array.isArray(res) ? res : []);
         setForm({ name: '', email: '', password: '', role: 'student' });
         setIsModalOpen(false);
-        toast.push('User created', { type: 'success' });
+        toast.push('User created successfully', { type: 'success' });
       } catch (err) {
         console.error('Create user error', err);
         toast.push(formatApiError(err) || 'Failed to create user', { type: 'error' });
@@ -60,11 +60,6 @@ const UsersPage = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
     const [updating, setUpdating] = useState(false);
-
-    // const openEdit = (user) => {
-    //   setEditingUser({ id: user._id || user._id, name: user.name || '', email: user.email || '', role: user.role || 'student' });
-    //   setIsEditModalOpen(true);
-    // };
 
     const handleEditChange = (e) => setEditingUser({ ...editingUser, [e.target.name]: e.target.value });
 
@@ -79,7 +74,7 @@ const UsersPage = () => {
         setUsers(Array.isArray(res) ? res : []);
         setIsEditModalOpen(false);
         setEditingUser(null);
-        toast.push('User updated', { type: 'success' });
+        toast.push('User updated successfully', { type: 'success' });
       } catch (err) {
         console.error('Update user error', err);
         toast.push(formatApiError(err) || 'Failed to update user', { type: 'error' });
@@ -91,81 +86,113 @@ const UsersPage = () => {
   const columns = [
     { key: 'name', label: 'Name' },
     { key: 'role', label: 'Role' },
-    { key: 'email', label: 'Email' },
-    // { key: 'actions', label: 'Actions', render: (_val, row) => (
-    //   <div className="flex items-center gap-2">
-    //     <button onClick={() => openEdit(row)} className="text-blue-600 hover:underline">Edit</button>
-    //     <button onClick={() => handleDelete(row._id || row._id)} className="text-red-600 hover:underline">Delete</button>
-    //   </div>
-    // ) }
+    { key: 'email', label: 'Email' }
   ];
 
   return (
-    <div className="container mx-auto px-4">
-      <h2 className="text-2xl font-bold mb-6">All Users</h2>
-      <div className="bg-white rounded-lg shadow p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium">Users</h3>
-          <button onClick={() => setIsModalOpen(true)} className="bg-emerald-600 text-white px-4 py-2 rounded">Create User</button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-8">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+          <div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-2">Users Management</h2>
+            <p className="text-gray-600">Manage all users in your platform</p>
+          </div>
+          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200 font-semibold shadow-lg hover:shadow-xl">
+            <Plus size={18} /> Create User
+          </button>
         </div>
-        {loading ? (
-          <div className="py-8 text-center">Loading users...</div>
-        ) : users.length === 0 ? (
-          <div className="py-8 text-center text-gray-500">No users found</div>
-        ) : (
-          <DataTable columns={columns} data={users} />
+
+        <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+          <div className="p-6 border-b border-gray-100">
+            <h3 className="text-xl font-bold text-gray-900">All Users</h3>
+            <p className="text-gray-600 text-sm mt-1">Complete list of registered users</p>
+          </div>
+          {loading ? (
+            <div className="py-12 text-center">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-200 border-t-emerald-600"></div>
+            </div>
+          ) : users.length === 0 ? (
+            <div className="py-12 text-center">
+              <UsersIcon size={48} className="text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-600 font-medium">No users found</p>
+            </div>
+          ) : (
+            <DataTable columns={columns} data={users} />
+          )}
+        </div>
+
+        {/* Create User Modal */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
+              <div className="relative p-6 border-b border-gray-100">
+                <h4 className="text-2xl font-bold text-gray-900">Create User</h4>
+                <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg transition-colors"><X size={20} className="text-gray-500" /></button>
+              </div>
+              <form onSubmit={handleCreate} className="p-6 grid grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                  <input name="name" value={form.name} onChange={handleChange} placeholder="John Doe" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                  <input name="email" value={form.email} onChange={handleChange} placeholder="john@example.com" type="email" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Password (optional)</label>
+                  <input name="password" value={form.password} onChange={handleChange} placeholder="••••••••" type="password" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                  <select name="role" value={form.role} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                    <option value="student">Student</option>
+                    <option value="lecturer">Lecturer</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div className="flex justify-end gap-3 mt-2">
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors font-medium">Cancel</button>
+                  <button type="submit" disabled={creating} className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">{creating ? 'Creating...' : 'Create User'}</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Edit User Modal */}
+        {isEditModalOpen && editingUser && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
+              <div className="relative p-6 border-b border-gray-100">
+                <h4 className="text-2xl font-bold text-gray-900">Edit User</h4>
+                <button onClick={() => { setIsEditModalOpen(false); setEditingUser(null); }} className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg transition-colors"><X size={20} className="text-gray-500" /></button>
+              </div>
+              <form onSubmit={handleUpdate} className="p-6 grid grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                  <input name="name" value={editingUser.name} onChange={handleEditChange} placeholder="John Doe" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <input name="email" value={editingUser.email} onChange={handleEditChange} placeholder="john@example.com" type="email" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                  <select name="role" value={editingUser.role} onChange={handleEditChange} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                    <option value="student">Student</option>
+                    <option value="lecturer">Lecturer</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div className="flex justify-end gap-3 mt-2">
+                  <button type="button" onClick={() => { setIsEditModalOpen(false); setEditingUser(null); }} className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors font-medium">Cancel</button>
+                  <button type="submit" disabled={updating} className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">{updating ? 'Updating...' : 'Update User'}</button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
       </div>
-
-      {/* Create User Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl">
-            <div className="relative p-6 border-b">
-              <h4 className="text-xl font-semibold">Create User</h4>
-              <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 bg-black/10 p-2 rounded-full"><X size={20} /></button>
-            </div>
-            <form onSubmit={handleCreate} className="p-6 grid grid-cols-1 gap-4">
-              <input name="name" value={form.name} onChange={handleChange} placeholder="Full name" className="p-3 border rounded" />
-              <input name="email" value={form.email} onChange={handleChange} placeholder="Email" className="p-3 border rounded" />
-              <input name="password" value={form.password} onChange={handleChange} placeholder="Password (optional)" className="p-3 border rounded" />
-              <select name="role" value={form.role} onChange={handleChange} className="p-3 border rounded">
-                <option value="student">Student</option>
-                <option value="lecturer">Lecturer</option>
-                <option value="admin">Admin</option>
-              </select>
-              <div className="flex justify-end gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 rounded border">Cancel</button>
-                <button type="submit" disabled={creating} className="bg-emerald-600 text-white px-4 py-2 rounded disabled:opacity-50">{creating ? 'Creating...' : 'Create User'}</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-      {/* Edit User Modal */}
-      {isEditModalOpen && editingUser && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl">
-            <div className="relative p-6 border-b">
-              <h4 className="text-xl font-semibold">Edit User</h4>
-              <button onClick={() => { setIsEditModalOpen(false); setEditingUser(null); }} className="absolute top-4 right-4 bg-black/10 p-2 rounded-full"><X size={20} /></button>
-            </div>
-            <form onSubmit={handleUpdate} className="p-6 grid grid-cols-1 gap-4">
-              <input name="name" value={editingUser.name} onChange={handleEditChange} placeholder="Full name" className="p-3 border rounded" />
-              <input name="email" value={editingUser.email} onChange={handleEditChange} placeholder="Email" className="p-3 border rounded" />
-              <select name="role" value={editingUser.role} onChange={handleEditChange} className="p-3 border rounded">
-                <option value="student">Student</option>
-                <option value="lecturer">Lecturer</option>
-                <option value="admin">Admin</option>
-              </select>
-              <div className="flex justify-end gap-3">
-                <button type="button" onClick={() => { setIsEditModalOpen(false); setEditingUser(null); }} className="px-4 py-2 rounded border">Cancel</button>
-                <button type="submit" disabled={updating} className="bg-emerald-600 text-white px-4 py-2 rounded disabled:opacity-50">{updating ? 'Updating...' : 'Update User'}</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

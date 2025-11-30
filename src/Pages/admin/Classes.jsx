@@ -3,6 +3,7 @@ import DataTable from '../../components/admin/DataTable';
 import { getClasses, createClass, getLecturers, getCourses, getSeasons } from '../../utils/api';
 import { formatDate } from '../../utils/helpers';
 import { useToast } from '../../components/ui/ToastContext';
+import { Plus, X, BookOpen } from 'lucide-react';
 
 const ClassesPage = () => {
   const [loading, setLoading] = useState(true);
@@ -52,51 +53,93 @@ const ClassesPage = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Classes</h2>
-        <div>
-          <button onClick={() => setIsCreateOpen(true)} className="px-3 py-2 bg-emerald-600 text-white rounded">Create Class</button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-8">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+          <div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-2">Classes</h2>
+            <p className="text-gray-600">Manage all class schedules and assignments</p>
+          </div>
+          <button onClick={() => setIsCreateOpen(true)} className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200 font-semibold shadow-lg hover:shadow-xl">
+            <Plus size={18} /> Create Class
+          </button>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+          <div className="p-6 border-b border-gray-100">
+            <h3 className="text-xl font-bold text-gray-900">All Classes</h3>
+            <p className="text-gray-600 text-sm mt-1">Complete list of scheduled classes</p>
+          </div>
+          {loading ? (
+            <div className="py-12 text-center">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-200 border-t-emerald-600"></div>
+            </div>
+          ) : classes.length === 0 ? (
+            <div className="py-12 text-center">
+              <BookOpen size={48} className="text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-600 font-medium">No classes found</p>
+              <p className="text-gray-500 text-sm mt-2">Create a new class to get started</p>
+            </div>
+          ) : (
+            <DataTable columns={columns} data={classes} />
+          )}
         </div>
       </div>
-      <div className="bg-white rounded-lg shadow p-4">
-        {loading ? (
-          <div className="py-8 text-center">Loading classes...</div>
-        ) : classes.length === 0 ? (
-          <div className="py-8 text-center text-gray-500">No classes found</div>
-        ) : (
-          <DataTable columns={columns} data={classes} />
-        )}
-      </div>
 
-      {/* Create Class Modal (admin) */}
+      {/* Create Class Modal */}
       {isCreateOpen && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <h3 className="text-xl font-bold mb-4">Create Class (Admin)</h3>
-            <div className="space-y-3">
-              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Class title" className="w-full border rounded px-3 py-2" />
-              <textarea value={form.description || ''} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Description" className="w-full border rounded px-3 py-2" rows={3} />
-              <div className="grid grid-cols-2 gap-2">
-                <input value={form.duration || ''} onChange={(e) => setForm({ ...form, duration: e.target.value })} type="number" min="0" placeholder="Duration (minutes)" className="w-full border rounded px-3 py-2" />
-                <input value={form.schedule || ''} onChange={(e) => setForm({ ...form, schedule: e.target.value })} type="datetime-local" placeholder="Schedule" className="w-full border rounded px-3 py-2" />
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-gray-900">Create Class</h3>
+              <button onClick={() => setIsCreateOpen(false)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            <div className="space-y-4 max-h-[calc(100vh-300px)] overflow-y-auto">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Class Title *</label>
+                <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Introduction to JavaScript" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
               </div>
-              <select value={form.courseId || ''} onChange={(e) => setForm({ ...form, courseId: e.target.value })} className="w-full border rounded px-3 py-2">
-                <option value="">Select course</option>
-                {courses.map((c) => <option key={c._id || c.id} value={c._id || c.id}>{c.name || c.title}</option>)}
-              </select>
-              <select value={form.seasonId || ''} onChange={(e) => setForm({ ...form, seasonId: e.target.value })} className="w-full border rounded px-3 py-2">
-                <option value="">Select season</option>
-                {seasons.map((s) => <option key={s._id || s.id} value={s._id || s.id}>{s.name}</option>)}
-              </select>
-              <select value={form.lecturerId || ''} onChange={(e) => setForm({ ...form, lecturerId: e.target.value })} className="w-full border rounded px-3 py-2">
-                <option value="">Select lecturer (required)</option>
-                {lecturers.map((l) => <option key={l._id || l.id} value={l._id || l.id}>{l.name || l.fullName || l.email}</option>)}
-              </select>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea value={form.description || ''} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Class description" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" rows={3} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Duration (min)</label>
+                  <input value={form.duration || ''} onChange={(e) => setForm({ ...form, duration: e.target.value })} type="number" min="0" placeholder="60" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Schedule</label>
+                  <input value={form.schedule || ''} onChange={(e) => setForm({ ...form, schedule: e.target.value })} type="datetime-local" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Course</label>
+                <select value={form.courseId || ''} onChange={(e) => setForm({ ...form, courseId: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                  <option value="">Select course</option>
+                  {courses.map((c) => <option key={c._id || c.id} value={c._id || c.id}>{c.name || c.title}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Season</label>
+                <select value={form.seasonId || ''} onChange={(e) => setForm({ ...form, seasonId: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                  <option value="">Select season</option>
+                  {seasons.map((s) => <option key={s._id || s.id} value={s._id || s.id}>{s.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Lecturer *</label>
+                <select value={form.lecturerId || ''} onChange={(e) => setForm({ ...form, lecturerId: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                  <option value="">Select lecturer (required)</option>
+                  {lecturers.map((l) => <option key={l._id || l.id} value={l._id || l.id}>{l.name || l.fullName || l.email}</option>)}
+                </select>
+              </div>
             </div>
 
-            <div className="mt-4 flex justify-end gap-3">
-              <button onClick={() => setIsCreateOpen(false)} className="px-4 py-2 rounded border">Cancel</button>
+            <div className="mt-6 flex justify-end gap-3">
+              <button onClick={() => setIsCreateOpen(false)} className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors font-medium">Cancel</button>
               <button disabled={creating} onClick={async () => {
                 setCreating(true);
                 try {
@@ -118,14 +161,14 @@ const ClassesPage = () => {
                   setClasses((c) => [{ ...newClass, id: newClass._id || newClass.id || Date.now() }, ...c]);
                   setIsCreateOpen(false);
                   setForm({ title: '', description: '', duration: '', schedule: '', courseId: '', seasonId: '', lecturerId: '' });
-                  toast.push('Class created', { type: 'success' });
+                  toast.push('Class created successfully', { type: 'success' });
                 } catch (err) {
                   console.error('Create class failed', err);
                   toast.push(err.message || 'Failed to create class', { type: 'error' });
                 } finally {
                   setCreating(false);
                 }
-              }} className="px-4 py-2 rounded bg-emerald-600 text-white disabled:opacity-50">{creating ? 'Creating...' : 'Create'}</button>
+              }} className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">{creating ? 'Creating...' : 'Create Class'}</button>
             </div>
           </div>
         </div>

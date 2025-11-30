@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/admin/DataTable';
 import { getPrograms, createProgram, formatApiError, uploadProgramImage, toggleProgramActive, toggleProgramSuspension, updateProgram, deleteProgram } from '../../utils/api';
-import { X } from 'lucide-react';
+import { X, Plus, BookOpen } from 'lucide-react';
 import { useToast } from '../../components/ui/ToastContext';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 
@@ -208,48 +208,72 @@ const ProgramsPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <h2 className="text-2xl font-bold mb-6">Programs</h2>
-      <div className="bg-white rounded-lg shadow p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium">Create a new program</h3>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-8">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+          <div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-2">Programs</h2>
+            <p className="text-gray-600">Manage educational programs and their content</p>
+          </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-emerald-600 text-white px-4 py-2 rounded hover:opacity-95"
+            className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200 font-semibold shadow-lg hover:shadow-xl"
           >
-            Create Program
+            <Plus size={18} /> Create Program
           </button>
         </div>
-        {loading ? (
-          <div className="py-8 text-center">Loading programs...</div>
-        ) : programs.length === 0 ? (
-          <div className="py-8 text-center text-gray-500">No programs found</div>
-        ) : (
-          <DataTable columns={columns} data={programs} />
-        )}
+
+        <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+          <div className="p-6 border-b border-gray-100">
+            <h3 className="text-xl font-bold text-gray-900">All Programs</h3>
+            <p className="text-gray-600 text-sm mt-1">Complete list of all programs</p>
+          </div>
+          {loading ? (
+            <div className="py-12 text-center">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-200 border-t-emerald-600"></div>
+            </div>
+          ) : programs.length === 0 ? (
+            <div className="py-12 text-center">
+              <BookOpen size={48} className="text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-600 font-medium">No programs found</p>
+              <p className="text-gray-500 text-sm mt-2">Create a new program to get started</p>
+            </div>
+          ) : (
+            <DataTable columns={columns} data={programs} />
+          )}
+        </div>
       </div>
 
       {/* Program Create Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl">
-            <div className="relative p-6 border-b">
-              <h4 className="text-xl font-semibold">Create Program</h4>
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <h4 className="text-2xl font-bold text-gray-900">Create Program</h4>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="absolute top-4 right-4 bg-black/10 p-2 rounded-full"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 aria-label="Close modal"
               >
-                <X size={20} />
+                <X size={20} className="text-gray-500" />
               </button>
             </div>
-            <form onSubmit={handleCreate} className="p-6 grid grid-cols-1 gap-4">
-              <input name="name" value={form.name} onChange={handleChange} placeholder="Program name" className="p-3 border rounded" />
-              <input name="duration" value={form.duration} onChange={handleChange} placeholder="Duration (e.g. 8 weeks)" className="p-3 border rounded" />
-              <textarea name="description" value={form.description} onChange={handleChange} placeholder="Short description" className="p-3 border rounded h-28" />
-              <div className="flex justify-end gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 rounded border">Cancel</button>
-                <button type="submit" disabled={creating} className="bg-emerald-600 text-white px-4 py-2 rounded disabled:opacity-50">
+            <form onSubmit={handleCreate} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Program Name *</label>
+                <input name="name" value={form.name} onChange={handleChange} placeholder="e.g., Advanced Web Development" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
+                <input name="duration" value={form.duration} onChange={handleChange} placeholder="e.g., 8 weeks" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                <textarea name="description" value={form.description} onChange={handleChange} placeholder="Short description" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent h-28" />
+              </div>
+              <div className="flex justify-end gap-3 pt-4">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors font-medium">Cancel</button>
+                <button type="submit" disabled={creating} className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">
                   {creating ? 'Creating...' : 'Create Program'}
                 </button>
               </div>
@@ -262,11 +286,16 @@ const ProgramsPage = () => {
       {isUploadOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl p-6">
-            <h4 className="text-lg font-semibold mb-4">Upload Program Image</h4>
-            <input type="file" accept="image/*" onChange={handleFileChange} />
-            <div className="flex justify-end gap-3 mt-4">
-              <button onClick={() => { setIsUploadOpen(false); setUploadFile(null); setUploadProgramId(null); }} className="px-3 py-2 rounded border">Cancel</button>
-              <button onClick={handleUpload} disabled={uploading} className="px-3 py-2 rounded bg-emerald-600 text-white">{uploading ? 'Uploading...' : 'Upload'}</button>
+            <h4 className="text-2xl font-bold text-gray-900 mb-4">Upload Program Image</h4>
+            <div className="space-y-4">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-emerald-500 transition-colors">
+                <input type="file" accept="image/*" onChange={handleFileChange} className="block w-full text-sm text-gray-700" />
+                {uploadFile && <p className="text-sm text-emerald-600 font-medium mt-2">✓ {uploadFile.name}</p>}
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => { setIsUploadOpen(false); setUploadFile(null); setUploadProgramId(null); }} className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors font-medium">Cancel</button>
+              <button onClick={handleUpload} disabled={uploading} className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">{uploading ? 'Uploading...' : 'Upload'}</button>
             </div>
           </div>
         </div>
@@ -275,20 +304,29 @@ const ProgramsPage = () => {
       {/* Edit Program Modal */}
       {isEditModalOpen && editingProgram && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl">
-            <div className="relative p-6 border-b">
-              <h4 className="text-xl font-semibold">Edit Program</h4>
-              <button onClick={() => { setIsEditModalOpen(false); setEditingProgram(null); }} className="absolute top-4 right-4 bg-black/10 p-2 rounded-full" aria-label="Close modal">
-                <X size={20} />
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <h4 className="text-2xl font-bold text-gray-900">Edit Program</h4>
+              <button onClick={() => { setIsEditModalOpen(false); setEditingProgram(null); }} className="p-2 hover:bg-gray-100 rounded-lg transition-colors" aria-label="Close modal">
+                <X size={20} className="text-gray-500" />
               </button>
             </div>
-            <form onSubmit={handleEditSave} className="p-6 grid grid-cols-1 gap-4">
-              <input name="name" value={editingProgram.name} onChange={handleEditChange} placeholder="Program name" className="p-3 border rounded" />
-              <input name="duration" value={editingProgram.duration} onChange={handleEditChange} placeholder="Duration (e.g. 8 weeks)" className="p-3 border rounded" />
-              <textarea name="description" value={editingProgram.description} onChange={handleEditChange} placeholder="Short description" className="p-3 border rounded h-28" />
-              <div className="flex justify-end gap-3">
-                <button type="button" onClick={() => { setIsEditModalOpen(false); setEditingProgram(null); }} className="px-4 py-2 rounded border">Cancel</button>
-                <button type="submit" disabled={editingSaving} className="bg-emerald-600 text-white px-4 py-2 rounded disabled:opacity-50">
+            <form onSubmit={handleEditSave} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Program Name *</label>
+                <input name="name" value={editingProgram.name} onChange={handleEditChange} placeholder="e.g., Advanced Web Development" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
+                <input name="duration" value={editingProgram.duration} onChange={handleEditChange} placeholder="e.g., 8 weeks" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                <textarea name="description" value={editingProgram.description} onChange={handleEditChange} placeholder="Short description" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent h-28" />
+              </div>
+              <div className="flex justify-end gap-3 pt-4">
+                <button type="button" onClick={() => { setIsEditModalOpen(false); setEditingProgram(null); }} className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors font-medium">Cancel</button>
+                <button type="submit" disabled={editingSaving} className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">
                   {editingSaving ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>

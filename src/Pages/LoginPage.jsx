@@ -116,8 +116,6 @@ const LoginPage = ({ navigate }) => {
     }
   };
 
-  // auth defined earlier
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center p-4 pt-24">
       <div className="w-full max-w-4xl max-h-5xl">

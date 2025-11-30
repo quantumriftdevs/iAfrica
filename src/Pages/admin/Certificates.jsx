@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/admin/DataTable';
 import { getCertificates } from '../../utils/api';
 import { formatDate } from '../../utils/helpers';
+import { Award } from 'lucide-react';
 
 const CertificatesPage = () => {
   const [loading, setLoading] = useState(true);
@@ -32,15 +33,28 @@ const CertificatesPage = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4">
-      <h2 className="text-2xl font-bold mb-6">Certificates</h2>
-      <div className="bg-white rounded-lg shadow p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-8">
+      <div className="container mx-auto px-4 py-8">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Certificates</h1>
+          <p className="text-gray-600">View and manage student certificates</p>
+        </div>
+
         {loading ? (
-          <div className="py-8 text-center">Loading certificates...</div>
+          <div className="py-12 text-center mt-8">
+            <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-200 border-t-emerald-600"></div>
+          </div>
         ) : certificates.length === 0 ? (
-          <div className="py-8 text-center text-gray-500">No certificates found</div>
+          <div className="py-12 text-center mt-8">
+            <Award size={48} className="text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-600 font-medium">No certificates found</p>
+          </div>
         ) : (
-          <DataTable columns={columns} data={certificates} />
+          <div className="mt-8 bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+            <div className="p-6">
+              <DataTable columns={columns} data={certificates} />
+            </div>
+          </div>
         )}
       </div>
     </div>

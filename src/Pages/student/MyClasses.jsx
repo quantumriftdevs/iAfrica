@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { deriveEnrolledProgramIds, filterClassesByProgramOrCourseIds, getStoredProgramIds, filterCoursesByProgramIds, formatDate } from '../../utils/helpers';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../components/ui/ToastContext';
+import { Play, BookOpen } from 'lucide-react';
 
 const MyClasses = () => {
   const [loading, setLoading] = useState(true);
@@ -32,22 +33,19 @@ const MyClasses = () => {
               onClick={async () => {
                   if (!id) return toast.push('Unable to join: missing class id', { type: 'error' });
 
-                  // quick auth token presence check (context may not be hydrated)
                   const token = localStorage.getItem('iafrica-token');
 
                   if (!token) {
-                    // redirect to login and include return URL to come back to this classroom
                     const returnUrl = encodeURIComponent(`/classroom/${encodeURIComponent(id)}`);
                     navigate(`/login?redirect=${returnUrl}`);
                     return;
                   }
 
-                  // Navigate to the generic classroom page which will handle token acquisition
                   navigate(`/classroom/${encodeURIComponent(id)}`);
                 }}
-              className="px-3 py-1 rounded bg-emerald-600 text-white text-sm"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-700 transition-colors font-medium"
             >
-              {'Join'}
+              <Play size={16} /> Join
             </button>
           </div>
         );
@@ -82,23 +80,47 @@ const MyClasses = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4">
-      <h2 className="text-2xl font-bold mb-6">My Classes</h2>
-      <div className="bg-white rounded-lg shadow p-4">
-        {loading ? (
-          <div className="py-8 text-center">Loading classes...</div>
-        ) : (() => {
-          const stored = getStoredProgramIds();
-          const derived = deriveEnrolledProgramIds(user);
-          const programIds = Array.from(new Set([...(stored || []), ...(derived || [])]));
-          if (programIds.length === 0) return <div className="py-8 text-center text-gray-500">You have not enrolled in any programs yet</div>;
-          // derive courseIds from available courses for more accurate filtering
-          const matchedCourses = filterCoursesByProgramIds(courses, programIds);
-          const courseIds = matchedCourses.map(c => String(c._id || c.id)).filter(Boolean);
-          const matched = filterClassesByProgramOrCourseIds(classes, courseIds);
-          if (matched.length === 0) return <div className="py-8 text-center text-gray-500">No classes available for your enrolled programs</div>;
-          return <DataTable columns={colsWithActions} data={matched.map((c, idx) => ({ id: c._id || idx+1, _id: c._id || c.id || idx+1, title: c.name || c.title || 'Untitled', schedule: formatDate(c.scheduledDate || c.schedule || c.startDate) || 'TBA' }))} />;
-        })()}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-8">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h2 className="text-4xl font-bold text-gray-900 mb-2">My Classes</h2>
+          <p className="text-gray-600">View and join your scheduled classes</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+          <div className="p-6 border-b border-gray-100">
+            <h3 className="text-xl font-bold text-gray-900">Enrolled Classes</h3>
+            <p className="text-gray-600 text-sm mt-1">Classes available for your enrolled programs</p>
+          </div>
+          {loading ? (
+            <div className="py-12 text-center">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-200 border-t-emerald-600"></div>
+            </div>
+          ) : (() => {
+            const stored = getStoredProgramIds();
+            const derived = deriveEnrolledProgramIds(user);
+            const programIds = Array.from(new Set([...(stored || []), ...(derived || [])]));
+            if (programIds.length === 0) return (
+              <div className="py-12 text-center">
+                <BookOpen size={48} className="text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-600 font-medium">You have not enrolled in any programs yet</p>
+                <p className="text-gray-500 text-sm mt-2">Enroll in a program to view available classes</p>
+              </div>
+            );
+            // derive courseIds from available courses for more accurate filtering
+            const matchedCourses = filterCoursesByProgramIds(courses, programIds);
+            const courseIds = matchedCourses.map(c => String(c._id || c.id)).filter(Boolean);
+            const matched = filterClassesByProgramOrCourseIds(classes, courseIds);
+            if (matched.length === 0) return (
+              <div className="py-12 text-center">
+                <BookOpen size={48} className="text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-600 font-medium">No classes available</p>
+                <p className="text-gray-500 text-sm mt-2">Check back soon for scheduled classes</p>
+              </div>
+            );
+            return <DataTable columns={colsWithActions} data={matched.map((c, idx) => ({ id: c._id || idx+1, _id: c._id || c.id || idx+1, title: c.name || c.title || 'Untitled', schedule: formatDate(c.scheduledDate || c.schedule || c.startDate) || 'TBA' }))} />;
+          })()}
+        </div>
       </div>
     </div>
   );

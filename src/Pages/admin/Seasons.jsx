@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/admin/DataTable';
 import { getSeasons, getPrograms, createSeason, updateSeason, deleteSeason, formatApiError } from '../../utils/api';
-import { X } from 'lucide-react';
+import { X, Plus, Calendar } from 'lucide-react';
 import { useToast } from '../../components/ui/ToastContext';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import { useAuth } from '../../contexts/AuthContext';
@@ -187,20 +187,33 @@ const SeasonsPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <h2 className="text-2xl font-bold mb-6">Seasons</h2>
-      <div className="bg-white rounded-lg shadow p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium">Seasons</h3>
-          <button onClick={() => setIsCreateOpen(true)} className="bg-emerald-600 text-white px-4 py-2 rounded">Create Season</button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-8">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900">Seasons</h1>
+            <p className="text-gray-600 mt-2">Manage academic seasons and schedules</p>
+          </div>
+          <button onClick={() => setIsCreateOpen(true)} className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-semibold">
+            <Plus size={20} /> Create Season
+          </button>
         </div>
 
         {loading ? (
-          <div className="py-8 text-center">Loading seasons...</div>
+          <div className="py-12 text-center">
+            <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-200 border-t-emerald-600"></div>
+          </div>
         ) : seasons.length === 0 ? (
-          <div className="py-8 text-center text-gray-500">No seasons found</div>
+          <div className="py-12 text-center mt-8">
+            <Calendar size={48} className="text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-600 font-medium">No seasons available</p>
+          </div>
         ) : (
-          <DataTable columns={columns} data={seasons} />
+          <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+            <div className="p-6">
+              <DataTable columns={columns} data={seasons} />
+            </div>
+          </div>
         )}
       </div>
 
@@ -208,24 +221,41 @@ const SeasonsPage = () => {
       {isCreateOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl">
-            <div className="relative p-6 border-b">
-              <h4 className="text-xl font-semibold">Create Season</h4>
-              <button onClick={() => setIsCreateOpen(false)} className="absolute top-4 right-4 bg-black/10 p-2 rounded-full"><X size={20} /></button>
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h4 className="text-xl font-semibold text-gray-900">Create Season</h4>
+              <button onClick={() => setIsCreateOpen(false)} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
             </div>
-            <form onSubmit={handleCreate} className="p-6 grid grid-cols-1 gap-4">
-              <input name="name" value={form.name} onChange={handleChange} placeholder="Season name" className="p-3 border rounded" />
-              <input name="description" value={form.description} onChange={handleChange} placeholder="Description" className="p-3 border rounded" />
-              <select name="program" value={form.program} onChange={handleChange} className="p-3 border rounded">
-                <option value="">Select program</option>
-                {programs.map((prog) => (
-                  <option key={prog._id || prog.id || prog.name} value={prog._id || prog.id}>{prog.name || prog.title}</option>
-                ))}
-              </select>
-              <input type="date" name="startDate" value={form.startDate} onChange={handleChange} placeholder="Start date" className="p-3 border rounded" />
-              <input type="date" name="endDate" value={form.endDate} onChange={handleChange} placeholder="End date" className="p-3 border rounded" />
-              <div className="flex justify-end gap-3">
-                <button type="button" onClick={() => setIsCreateOpen(false)} className="px-4 py-2 rounded border">Cancel</button>
-                <button type="submit" disabled={creating} className="bg-emerald-600 text-white px-4 py-2 rounded disabled:opacity-50">{creating ? 'Creating...' : 'Create Season'}</button>
+            <form onSubmit={handleCreate} className="p-6 space-y-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Season Name</label>
+                <input id="name" name="name" value={form.name} onChange={handleChange} placeholder="e.g., Spring 2025" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+              </div>
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <input id="description" name="description" value={form.description} onChange={handleChange} placeholder="Season description" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+              </div>
+              <div>
+                <label htmlFor="program" className="block text-sm font-medium text-gray-700 mb-2">Program (Optional)</label>
+                <select id="program" name="program" value={form.program} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                  <option value="">Select program</option>
+                  {programs.map((prog) => (
+                    <option key={prog._id || prog.id || prog.name} value={prog._id || prog.id}>{prog.name || prog.title}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                  <input id="startDate" type="date" name="startDate" value={form.startDate} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                </div>
+                <div>
+                  <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                  <input id="endDate" type="date" name="endDate" value={form.endDate} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 pt-4">
+                <button type="button" onClick={() => setIsCreateOpen(false)} className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium">Cancel</button>
+                <button type="submit" disabled={creating} className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 font-semibold">{creating ? 'Creating...' : 'Create Season'}</button>
               </div>
             </form>
           </div>
@@ -236,24 +266,41 @@ const SeasonsPage = () => {
       {isEditOpen && editingSeason && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl">
-            <div className="relative p-6 border-b">
-              <h4 className="text-xl font-semibold">Edit Season</h4>
-              <button onClick={() => { setIsEditOpen(false); setEditingSeason(null); }} className="absolute top-4 right-4 bg-black/10 p-2 rounded-full"><X size={20} /></button>
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h4 className="text-xl font-semibold text-gray-900">Edit Season</h4>
+              <button onClick={() => { setIsEditOpen(false); setEditingSeason(null); }} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
             </div>
-            <form onSubmit={handleUpdate} className="p-6 grid grid-cols-1 gap-4">
-              <input name="name" value={editingSeason.name} onChange={handleEditChange} placeholder="Season name" className="p-3 border rounded" />
-              <input name="description" value={editingSeason.description} onChange={handleEditChange} placeholder="Description" className="p-3 border rounded" />
-              <select name="program" value={editingSeason.program} onChange={handleEditChange} className="p-3 border rounded">
-                <option value="">Select program</option>
-                {programs.map((prog) => (
-                  <option key={prog._id || prog.id || prog.name} value={prog._id || prog.id}>{prog.name || prog.title || prog._id}</option>
-                ))}
-              </select>
-              <input type="date" name="startDate" value={editingSeason.startDate} onChange={handleEditChange} placeholder="Start date" className="p-3 border rounded" />
-              <input type="date" name="endDate" value={editingSeason.endDate} onChange={handleEditChange} placeholder="End date" className="p-3 border rounded" />
-              <div className="flex justify-end gap-3">
-                <button type="button" onClick={() => { setIsEditOpen(false); setEditingSeason(null); }} className="px-4 py-2 rounded border">Cancel</button>
-                <button type="submit" disabled={editing} className="bg-emerald-600 text-white px-4 py-2 rounded disabled:opacity-50">{editing ? 'Updating...' : 'Update Season'}</button>
+            <form onSubmit={handleUpdate} className="p-6 space-y-4">
+              <div>
+                <label htmlFor="edit-name" className="block text-sm font-medium text-gray-700 mb-2">Season Name</label>
+                <input id="edit-name" name="name" value={editingSeason.name} onChange={handleEditChange} placeholder="e.g., Spring 2025" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+              </div>
+              <div>
+                <label htmlFor="edit-description" className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <input id="edit-description" name="description" value={editingSeason.description} onChange={handleEditChange} placeholder="Season description" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+              </div>
+              <div>
+                <label htmlFor="edit-program" className="block text-sm font-medium text-gray-700 mb-2">Program (Optional)</label>
+                <select id="edit-program" name="program" value={editingSeason.program} onChange={handleEditChange} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                  <option value="">Select program</option>
+                  {programs.map((prog) => (
+                    <option key={prog._id || prog.id || prog.name} value={prog._id || prog.id}>{prog.name || prog.title || prog._id}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="edit-startDate" className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                  <input id="edit-startDate" type="date" name="startDate" value={editingSeason.startDate} onChange={handleEditChange} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                </div>
+                <div>
+                  <label htmlFor="edit-endDate" className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                  <input id="edit-endDate" type="date" name="endDate" value={editingSeason.endDate} onChange={handleEditChange} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 pt-4">
+                <button type="button" onClick={() => { setIsEditOpen(false); setEditingSeason(null); }} className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium">Cancel</button>
+                <button type="submit" disabled={editing} className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 font-semibold">{editing ? 'Updating...' : 'Update Season'}</button>
               </div>
             </form>
           </div>
