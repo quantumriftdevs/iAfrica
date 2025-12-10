@@ -517,6 +517,21 @@ export async function resetPassword(resettoken, payload) {
   return data && data.data ? data.data : data;
 }
 
+// OTP: verify and resend helpers
+export async function verifyOtp(payload) {
+  if (!payload) throw new Error('Missing payload for verifyOtp');
+  // Backend expects { email, OTP }
+  const data = await request('/api/v1/auth/verifyemail', { method: 'post', body: payload });
+  return data && data.data ? data.data : data;
+}
+
+export async function resendOtp(payload) {
+  if (!payload) throw new Error('Missing payload for resendOtp');
+  // Backend expects { email }
+  const data = await request('/api/v1/auth/resendverification', { method: 'post', body: payload });
+  return data && data.data ? data.data : data;
+}
+
 export async function getCurrentUser() {
   const data = await request('/api/v1/auth/me');
   return data && data.data ? data.data : data;
@@ -630,6 +645,8 @@ export default {
   // Auth
   loginUser,
   registerUser,
+  verifyOtp,
+  resendOtp,
   getCurrentUser,
   logoutUser,
   updateAuthDetails,

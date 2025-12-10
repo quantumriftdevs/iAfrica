@@ -59,21 +59,33 @@ const LoginPage = ({ navigate }) => {
     (async () => {
       try {
         setIsAnimating(true);
-        const res = await auth.login(formData.email, formData.password);
+        const response = await auth.login(formData.email, formData.password);
 
-        // if redirect param present, go there first
-        if (redirectTo) {
-          navigate(redirectTo);
-          return;
+        if (response.token) {
+          const user = await auth.completeVerification(response.token);
+
+          if (user.role === 'student') {
+            return navigate('/dashboard');
+          }
+
+          if (user.role === 'admin') {
+            return navigate('/admin/dashboard');
+          }
+
+          if (user.role === 'lecturer') {
+            return navigate('/lecturer/dashboard');
+          }
         }
 
-        // otherwise, redirect based on user role
-        const role = res.user?.role;
-        if (role === 'admin') navigate('/admin/dashboard');
-        else if (role === 'lecturer') navigate('/lecturer/dashboard');
-        else navigate('/dashboard');
+        return navigate('/verify-otp', { state: { redirectTo, email: formData.email } });
       } catch (err) {
         const msg = formatApiError(err) || 'Login failed. Check your credentials.';
+        // If backend indicates verification is required, route to OTP page and include email
+        const lower = (msg || '').toString().toLowerCase();
+        if (lower.includes('verify') || lower.includes('verification') || lower.includes('please, verify your email')) {
+          navigate('/verify-otp', { state: { redirectTo, email: formData.email } });
+          return;
+        }
         toast.push(msg, { type: 'error' });
       } finally {
         setIsAnimating(false);
@@ -104,9 +116,10 @@ const LoginPage = ({ navigate }) => {
         phone: formData.phone
       });
 
-      // after successful registration, redirect to provided redirect or Courses page
-      if (redirectTo) navigate(redirectTo);
-      else navigate('/dashboard');
+      // after successful registration, send user to the login page so they can authenticate
+      // (OTP will be issued after they log in)
+      if (redirectTo) navigate(`/login?redirect=${encodeURIComponent(redirectTo)}`);
+      else navigate('/login');
     } catch (err) {
       console.error('Signup error', err);
       const msg = formatApiError(err) || 'Signup failed. Please try again.';

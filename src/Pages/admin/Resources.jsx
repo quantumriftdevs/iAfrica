@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/admin/DataTable';
-import { getResources, createResource, updateResource, deleteResource } from '../../utils/api';
+import { getResources, createResource, updateResource, deleteResource, uploadResourceFile, formatApiError } from '../../utils/api';
 import { X, Plus, BookOpen } from 'lucide-react';
 import { useToast } from '../../components/ui/ToastContext';
 import ConfirmModal from '../../components/ui/ConfirmModal';
@@ -37,7 +37,7 @@ const ResourcesAdminPage = () => {
   // create
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ title: '', type: '', url: '', visibility: 'public' });
+  const [form, setForm] = useState({ title: '', description: '', resourceType: 'document', course: '', visibility: 'public', file: null });
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -47,15 +47,41 @@ const ResourcesAdminPage = () => {
     if (!form.title) return toast.push('Title required', { type: 'error' });
     setCreating(true);
     try {
-      await createResource(form);
+      // Upload-first flow: if a file is provided upload it first to /api/v1/resources/{id}/upload
+      let uploadedFileRef = null;
+      if (form.file) {
+        try {
+          const tempId = `tmp-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+          const fd = new FormData();
+          fd.append('file', form.file);
+          const uploadRes = await uploadResourceFile(tempId, fd);
+          uploadedFileRef = (uploadRes && uploadRes.data && uploadRes.data.file) || uploadRes.file || (uploadRes && uploadRes.data) || null;
+        } catch (uErr) {
+          console.error('File upload failed', uErr);
+          toast.push(formatApiError(uErr) || 'Failed to upload file', { type: 'error' });
+          setCreating(false);
+          return;
+        }
+      }
+
+      const payload = {
+        title: form.title,
+        description: form.description || undefined,
+        resourceType: form.resourceType || 'document',
+        course: form.course || undefined,
+        visibility: form.visibility || 'public',
+        file: uploadedFileRef || undefined
+      };
+
+      await createResource(payload);
       const res = await getResources();
       setResources(Array.isArray(res) ? res : []);
       setIsCreateOpen(false);
-      setForm({ title: '', type: '', url: '', visibility: 'public' });
+      setForm({ title: '', description: '', resourceType: 'document', course: '', visibility: 'public', file: null });
       toast.push('Resource created', { type: 'success' });
     } catch (err) {
       console.error('Create resource error', err);
-      toast.push('Failed to create resource', { type: 'error' });
+      toast.push(formatApiError(err) || 'Failed to create resource', { type: 'error' });
     } finally {
       setCreating(false);
     }
@@ -161,12 +187,19 @@ const ResourcesAdminPage = () => {
                 <input id="title" name="title" value={form.title} onChange={handleChange} placeholder="Resource title" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
               </div>
               <div>
-                <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-2">Type</label>
-                <input id="type" name="type" value={form.type} onChange={handleChange} placeholder="e.g., PDF, Video, Document" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea id="description" name="description" value={form.description} onChange={handleChange} rows={3} placeholder="Short description (optional)" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
               </div>
               <div>
-                <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">URL or File Reference</label>
-                <input id="url" name="url" value={form.url} onChange={handleChange} placeholder="https://example.com/resource" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                <label htmlFor="course" className="block text-sm font-medium text-gray-700 mb-2">Course (optional)</label>
+                <input id="course" name="course" value={form.course} onChange={handleChange} placeholder="Course id or name" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">File (optional)</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-emerald-500 transition-colors">
+                  <input type="file" onChange={(e) => setForm({ ...form, file: e.target.files[0] })} className="block w-full text-sm text-gray-700" />
+                  {form.file && <p className="text-sm text-emerald-600 font-medium mt-2">✓ {form.file.name}</p>}
+                </div>
               </div>
               <div>
                 <label htmlFor="visibility" className="block text-sm font-medium text-gray-700 mb-2">Visibility</label>
@@ -221,7 +254,6 @@ const ResourcesAdminPage = () => {
         </div>
       )}
       <ConfirmModal open={isDeleteOpen} title="Delete resource" message="Delete this resource?" onCancel={() => { setIsDeleteOpen(false); setDeleteTarget(null); }} onConfirm={confirmDelete} />
-    </div>
     </div>
   );
 };

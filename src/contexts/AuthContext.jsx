@@ -53,36 +53,51 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const payload = { email, password };
     const res = await loginUser(payload);
-    // API returns token at top-level `token` per docs
-    const token = res?.token;
-    if (token) saveToken(token);
-    const user = await getCurrentUser();
-    setUser(user);
-    try {
-      const id = user && (user._id || user.id);
-      if (id) localStorage.setItem('iafrica-user-id', String(id));
-    } catch {
-      // ignore storage errors
-    }
-    return { token, user };
+    // Do not persist token here. The app will redirect user to OTP verification
+    // and the token (if issued after verification) will be saved by the
+    // verification completion helper.
+    return res;
   };
 
   const registerStudent = async ({ name, email, password, phone }) => {
     // Force role to student
     const payload = { name, email, password, phone, role: 'student' };
+    // Register but do not auto-login or persist token. User should login
+    // and complete OTP verification to obtain an auth token.
     const res = await registerUser(payload);
-    const token = res?.token || res?.data?.token;
-    if (token) saveToken(token);
-    // attempt to set user
-    const user = await getCurrentUser();
-    setUser(user);
-    try {
-      const id = user && (user._id || user.id);
-      if (id) localStorage.setItem('iafrica-user-id', String(id));
-    } catch {
-      // ignore storage errors
-    }
     return res;
+  };
+
+  const completeVerification = async (token) => {
+    if (token) {
+      try {
+        saveToken(token);
+      } catch {
+        // ignore storage errors
+      }
+    }
+
+    try {
+      const user = await getCurrentUser();
+      setUser(user);
+      try {
+        const id = user && (user._id || user.id);
+        if (id) localStorage.setItem('iafrica-user-id', String(id));
+      } catch {
+        // ignore storage errors
+      }
+      return user;
+    } catch (err) {
+      // if we couldn't fetch the user, clear token to avoid bad state
+      try {
+        localStorage.removeItem('iafrica-token');
+      } catch {
+        // ignore storage errors
+      }
+      setToken(null);
+      setUser(null);
+      throw err;
+    }
   };
 
   const logout = async () => {
@@ -94,7 +109,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ getCurrentUser, user, token, loading, login, logout, registerStudent }}>
+    <AuthContext.Provider value={{ getCurrentUser, user, token, loading, login, logout, registerStudent, completeVerification }}>
       {children}
     </AuthContext.Provider>
   );

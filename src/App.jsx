@@ -13,6 +13,7 @@ import TermsPage from './Pages/TermsPage';
 import ContactPage from './Pages/ContactPage';
 import NotFoundPage from './Pages/404';
 import LoginPage from './Pages/LoginPage';
+import OTPVerification from './Pages/OTPVerification';
 import ForgotPassword from './Pages/ForgotPassword';
 import ResetPassword from './Pages/ResetPassword';
 // Admin pages
@@ -72,6 +73,7 @@ const App = () => {
           <Route path="privacy" element={<PageWrapper><PrivacyPage /></PageWrapper>} />
           <Route path="contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
           <Route path="login" element={<PageWrapper><LoginPage /></PageWrapper>} />
+          <Route path="verify-otp" element={<PageWrapper><OTPVerification /></PageWrapper>} />
           <Route path="forgot-password" element={<PageWrapper><ForgotPassword /></PageWrapper>} />
           <Route path="reset-password" element={<PageWrapper><ResetPassword /></PageWrapper>} />
           <Route path="*" element={<PageWrapper><NotFoundPage /></PageWrapper>} />

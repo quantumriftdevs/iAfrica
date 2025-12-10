@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/lecturer/DataTable';
-import { getResources, createResource, uploadResourceFile, getCourses, getSeasons, formatApiError } from '../../utils/api';
+import { getResources, createResource, uploadResourceFile, getCourses, formatApiError } from '../../utils/api';
 import { useToast } from '../../components/ui/ToastContext';
 import { Plus, X, BookOpen } from 'lucide-react';
 
@@ -10,9 +10,8 @@ const LecturerResources = () => {
   const toast = useToast();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ title: '', course: '', season: '', file: null });
+  const [form, setForm] = useState({ title: '', description: '', course: '', file: null });
   const [courses, setCourses] = useState([]);
-  const [seasons, setSeasons] = useState([]);
 
   const columns = [
     { key: 'id', label: 'ID' },
@@ -25,11 +24,10 @@ const LecturerResources = () => {
     let mounted = true;
     (async () => {
       try {
-        const [resRes, coursesRes, seasonsRes] = await Promise.allSettled([getResources(), getCourses(), getSeasons()]);
+        const [resRes, coursesRes] = await Promise.allSettled([getResources(), getCourses()]);
         if (!mounted) return;
         setResources((resRes.status === 'fulfilled' && Array.isArray(resRes.value)) ? resRes.value : []);
         setCourses((coursesRes.status === 'fulfilled' && Array.isArray(coursesRes.value)) ? coursesRes.value : []);
-        setSeasons((seasonsRes.status === 'fulfilled' && Array.isArray(seasonsRes.value)) ? seasonsRes.value : []);
       } catch (e) {
         console.error('Resources fetch error', e);
       } finally {
@@ -89,17 +87,14 @@ const LecturerResources = () => {
                 <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g., Week 1 Lecture Notes" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
               </div>
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Short description (optional)" rows={3} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Course</label>
                 <select value={form.course} onChange={(e) => setForm({ ...form, course: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                   <option value="">Select course (optional)</option>
                   {courses.map(c => <option key={c._id || c._id} value={c._id || c._id}>{c.name || c.title}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Season</label>
-                <select value={form.season} onChange={(e) => setForm({ ...form, season: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-                  <option value="">Select season (optional)</option>
-                  {seasons.map(s => <option key={s._id || s._id} value={s._id || s._id}>{s.name}</option>)}
                 </select>
               </div>
               <div>
@@ -114,27 +109,56 @@ const LecturerResources = () => {
             <div className="mt-6 flex justify-end gap-3">
               <button onClick={() => setIsCreateOpen(false)} className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors font-medium">Cancel</button>
               <button disabled={creating} onClick={async () => {
+                // New flow: upload file first to /api/v1/resources/{id}/upload, then create resource using returned file reference
                 setCreating(true);
                 try {
-                  const payload = { title: form.title, course: form.course };
+                  if (!form.title) {
+                    toast.push('Title is required', { type: 'error' });
+                    setCreating(false);
+                    return;
+                  }
+
+                  let uploadedFileRef = null;
+
+                  // If a file was provided, upload it first
+                  if (form.file) {
+                    try {
+                      // generate a temporary id for the upload endpoint
+                      const tempId = `tmp-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+                      const fd = new FormData();
+                      fd.append('file', form.file);
+
+                      const uploadRes = await uploadResourceFile(tempId, fd);
+                      // backend may return { data: { file: ... } } or { file: ... } or { data: ... }
+                      uploadedFileRef = (uploadRes && (uploadRes.data && uploadRes.data.file)) || uploadRes.file || (uploadRes && uploadRes.data) || null;
+                    } catch (err) {
+                      console.error('File upload failed', err);
+                      toast.push(formatApiError(err) || 'Failed to upload file', { type: 'error' });
+                      setCreating(false);
+                      return;
+                    }
+                  }
+
+                  // Build payload per new backend expectations
+                  const payload = {
+                    title: form.title,
+                    description: form.description || undefined,
+                    resourceType: 'document',
+                    course: form.course || undefined,
+                    file: uploadedFileRef || undefined
+                  };
+
                   const res = await createResource(payload);
                   const created = res && res._id ? res : (res && res.data ? res.data : res);
-                  if (form.file && created && (created._id || created._id)) {
-                    const fd = new FormData();
-                    fd.append('file', form.file);
-                    try {
-                      await uploadResourceFile(created._id || created._id, fd);
-                      } catch (e) {
-                        console.warn('File upload failed', e);
-                      }
-                  }
+
+                  // Prepend created to list
                   setResources((s) => [created, ...s]);
                   setIsCreateOpen(false);
-                  setForm({ title: '', course: '', file: null });
-                    toast.push('Resource uploaded successfully', { type: 'success' });
+                  setForm({ title: '', description: '', course: '', file: null });
+                  toast.push('Resource uploaded successfully', { type: 'success' });
                 } catch (e) {
                   console.error('Create resource error', e);
-                    toast.push(formatApiError(e) || 'Failed to upload resource', { type: 'error' });
+                  toast.push(formatApiError(e) || 'Failed to upload resource', { type: 'error' });
                 } finally {
                   setCreating(false);
                 }
