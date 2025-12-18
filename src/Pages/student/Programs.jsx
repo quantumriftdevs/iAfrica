@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getPrograms } from '../../utils/api';
-import { deriveEnrolledProgramIds, getStoredProgramIds } from '../../utils/helpers';
+import { deriveEnrolledProgramIds } from '../../utils/helpers';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, BookOpen } from 'lucide-react';
@@ -28,9 +28,8 @@ const StudentPrograms = () => {
     return () => { mounted = false; };
   }, []);
 
-  const stored = getStoredProgramIds();
   const derived = deriveEnrolledProgramIds(user);
-  const enrolledSet = new Set([...(stored || []), ...(derived || [])].map(String));
+  const enrolledSet = new Set((derived || []).map(String));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-8">

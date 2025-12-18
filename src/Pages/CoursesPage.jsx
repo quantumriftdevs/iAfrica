@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getCourses } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
-import { deriveEnrolledProgramIds, getStoredProgramIds, filterCoursesByProgramIds } from '../utils/helpers';
+import { deriveEnrolledProgramIds, filterCoursesByProgramIds } from '../utils/helpers';
 import { Book, PlayCircle, Users, Star } from 'lucide-react';
 
 
@@ -19,9 +19,8 @@ const CoursesPage = ({ navigate }) => {
         if (!mounted) return;
         if (Array.isArray(data) && data.length > 0) {
           // apply stored/derived program filter when available
-          const stored = getStoredProgramIds();
           const derived = deriveEnrolledProgramIds(user);
-          const programIds = Array.from(new Set([...(stored || []), ...(derived || [])]));
+          const programIds = Array.from(new Set([...(derived || [])]));
           if (programIds.length > 0) setCourses(filterCoursesByProgramIds(data, programIds));
           else setCourses(data);
         }

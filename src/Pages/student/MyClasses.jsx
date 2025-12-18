@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/student/DataTable';
 import { getClasses, getCourses } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
-import { deriveEnrolledProgramIds, filterClassesByProgramOrCourseIds, getStoredProgramIds, filterCoursesByProgramIds, formatDate } from '../../utils/helpers';
+import { deriveEnrolledProgramIds, filterClassesByProgramOrCourseIds, filterCoursesByProgramIds, formatDate } from '../../utils/helpers';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../components/ui/ToastContext';
 import { Play, BookOpen } from 'lucide-react';
@@ -97,9 +97,8 @@ const MyClasses = () => {
               <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-200 border-t-emerald-600"></div>
             </div>
           ) : (() => {
-            const stored = getStoredProgramIds();
             const derived = deriveEnrolledProgramIds(user);
-            const programIds = Array.from(new Set([...(stored || []), ...(derived || [])]));
+            const programIds = Array.from(new Set([...(derived || [])]));
             if (programIds.length === 0) return (
               <div className="py-12 text-center">
                 <BookOpen size={48} className="text-gray-300 mx-auto mb-3" />

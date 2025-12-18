@@ -286,6 +286,26 @@ export async function getUsers() {
   return data && data.data ? data.data : data;
 }
 
+// Fetch the currently authenticated user's profile
+export async function getMe() {
+  const data = await request('/api/v1/auth/me');
+  return data && data.data ? data.data : data;
+}
+
+// Update current user's details
+export async function updateDetails(payload) {
+  if (!payload) throw new Error('Missing payload for updateDetails');
+  const data = await request('/api/v1/auth/updatedetails', { method: 'put', body: payload });
+  return data && data.data ? data.data : data;
+}
+
+// Update current user's password
+export async function updatePassword(payload) {
+  if (!payload) throw new Error('Missing payload for updatePassword');
+  const data = await request('/api/v1/auth/updatepassword', { method: 'put', body: payload });
+  return data && data.data ? data.data : data;
+}
+
 // Create a new user (admin)
 export async function createUser(payload) {
   if (!payload) throw new Error('Missing payload for createUser');

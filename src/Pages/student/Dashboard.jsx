@@ -8,7 +8,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import {
   deriveEnrolledProgramIds,
   filterCoursesByProgramIds,
-  getStoredProgramIds,
+  
 } from '../../utils/helpers';
 
 const StudentDashboard = () => {
@@ -61,10 +61,10 @@ const StudentDashboard = () => {
           </div>
 
           <div className="flex items-center space-x-3 gap-3">
-            <button className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200 font-semibold shadow-lg hover:shadow-xl">
+            <a href="/Courses" className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200 font-semibold shadow-lg hover:shadow-xl">
               <Search size={18} /> Find Courses
-            </button>
-            <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-white hover:shadow-md transition-all duration-200 font-semibold">My Profile</button>
+            </a>
+            <a href="/profile" className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-white hover:shadow-md transition-all duration-200 font-semibold">My Profile</a>
           </div>
         </div>
 
@@ -105,9 +105,8 @@ const StudentDashboard = () => {
                   <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-200 border-t-emerald-600"></div>
                 </div>
               ) : (() => {
-                const stored = getStoredProgramIds();
                 const derived = deriveEnrolledProgramIds(user);
-                const programIds = Array.from(new Set([...(stored || []), ...(derived || [])]));
+                const programIds = Array.from(new Set([...(derived || [])]));
                 if (programIds.length === 0) return (
                   <div className="py-12 text-center">
                     <UsersIcon size={48} className="text-gray-300 mx-auto mb-3" />

@@ -40,6 +40,7 @@ import MyClasses from './Pages/student/MyClasses';
 import Resources from './Pages/student/Resources';
 import StudentCertificates from './Pages/student/Certificates';
 import StudentPayments from './Pages/student/Payments';
+import Profile from './Pages/student/Profile';
 import ProfileEdit from './Pages/student/ProfileEdit';
 import ChangePassword from './Pages/student/ChangePassword';
 // sidebars are provided by the role-specific layout components
@@ -113,6 +114,7 @@ const App = () => {
           <Route path="/my-resources" element={<Resources />} />
           <Route path="/my-certificates" element={<StudentCertificates />} />
           <Route path="/payments" element={<StudentPayments />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/profile/change-password" element={<ChangePassword />} />
         </Route>

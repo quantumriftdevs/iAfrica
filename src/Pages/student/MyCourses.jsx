@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DataTable from '../../components/student/DataTable';
 import { getCourses, getProgram } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
-import { deriveEnrolledProgramIds, deriveEnrolledGradeIds, filterCoursesByProgramIds, getStoredProgramIds } from '../../utils/helpers';
+import { deriveEnrolledProgramIds, deriveEnrolledGradeIds, filterCoursesByProgramIds } from '../../utils/helpers';
 import { BookOpen } from 'lucide-react';
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -62,8 +62,8 @@ const MyCourses = () => {
   // Fetch program objects for stored program ids so we can derive grade ids
   useEffect(() => {
     let mounted = true;
-    const stored = getStoredProgramIds();
-    if (!Array.isArray(stored) || stored.length === 0) {
+    const programIds = deriveEnrolledProgramIds(user);
+    if (!Array.isArray(programIds) || programIds.length === 0) {
       setPrograms([]);
       setProgramsLoading(false);
       return () => { mounted = false; };
@@ -72,12 +72,12 @@ const MyCourses = () => {
     (async () => {
       setProgramsLoading(true);
       try {
-        const results = await Promise.allSettled(stored.map(id => getProgram(id)));
+        const results = await Promise.allSettled(programIds.map(id => getProgram(id)));
         if (!mounted) return;
         const loaded = results.map(r => (r.status === 'fulfilled' ? r.value : null)).filter(Boolean);
         setPrograms(Array.isArray(loaded) ? loaded : []);
       } catch (e) {
-        console.error('Failed to load programs for stored ids', e);
+        console.error('Failed to load programs for enrolled ids', e);
         if (mounted) setPrograms([]);
       } finally {
         if (mounted) setProgramsLoading(false);
@@ -85,16 +85,15 @@ const MyCourses = () => {
     })();
 
     return () => { mounted = false; };
-  }, []);
+  }, [user]);
 
   // derive enrolled courses via enrolled program and grade ids (prefer program+grade filtering)
   useEffect(() => {
-    const stored = getStoredProgramIds();
     const derivedPrograms = deriveEnrolledProgramIds(user);
-    const programIds = Array.from(new Set([...(stored || []), ...(derivedPrograms || [])]));
+    const programIds = Array.from(new Set([...(derivedPrograms || [])]));
 
     // If stored program ids exist but program objects are still loading, wait
-    if (Array.isArray(stored) && stored.length > 0 && programsLoading) {
+    if (Array.isArray(programIds) && programIds.length > 0 && programsLoading) {
       // don't set enrolled yet until we have program grade information
       return;
     }

@@ -9,17 +9,23 @@ const Payments = () => {
 
   const columns = [
     { key: 'amount', label: 'Amount' },
-    { key: 'paymentMethod', label: 'Payment Method' },
+    {
+      key: 'paymentMethod',
+      label: 'Payment Method',
+      render: (v) => (
+        <span>{v || '-'}</span>
+      )
+    },
     { 
       key: 'status', 
       label: 'Status', 
       render: (v) => (
         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-          (v || '').toLowerCase() === 'completed' ? 'bg-green-100 text-green-800' :
+          (v || '').toLowerCase() === 'success' ? 'bg-green-100 text-green-800' :
           (v || '').toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-800' :
           'bg-red-100 text-red-800'
         }`}>
-          {v || 'Unknown'}
+          {v || '-'}
         </span>
       )
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { initializePayment, verifyPayment, getPrograms, formatApiError, getActiveSeasons } from '../utils/api';
-import { selectActiveSeasonForProgram, addStoredProgramId } from '../utils/helpers';
+import { selectActiveSeasonForProgram } from '../utils/helpers';
 import { ChevronRight, Users, Award, Video, CheckCircle, ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
 import { useToast } from '../components/ui/ToastContext';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -124,17 +124,7 @@ const EnrollPage = () => {
           toast.push(successMsg, { type: 'success' });
 
           // persist the enrolled program id into stored program ids (merge & dedupe)
-          try {
-            // derive program id from selectedProgram state first, else try response payload
-            const fromSelected = selectedProgram?.id || selectedProgram?._id || selectedProgram?.programId || null;
-            const fromVerify = verifyRes?.program || verifyRes?.programId || verifyRes?.data?.program || verifyRes?.data?.programId || (verifyRes?.course && (verifyRes.course.program || verifyRes.course.programId)) || (verifyRes?.data && verifyRes.data.course && (verifyRes.data.course.program || verifyRes.data.course.programId));
-            const programIdToStore = String(fromSelected || fromVerify || '').trim();
-            if (programIdToStore) {
-              addStoredProgramId(programIdToStore);
-            }
-          } catch {
-            // ignore errors
-          }
+          // previously we persisted enrolled program ids to localStorage here; no longer needed
 
           // clear selection and navigate to student dashboard
           setSelectedProgram(null);
@@ -232,8 +222,6 @@ const EnrollPage = () => {
       } catch {
         // ignore errors
       }
-
-      localStorage.setItem('enrollingIn', selectedProgram.id);
 
       const res = await initializePayment(payload);
 
